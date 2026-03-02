@@ -20,7 +20,7 @@ export default function NewsletterPopup() {
 
     const timer = setTimeout(() => {
       setVisible(true);
-    }, 1000);
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, []);

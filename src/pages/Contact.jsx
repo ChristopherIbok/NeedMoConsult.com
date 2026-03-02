@@ -26,6 +26,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/api/supabaseClient";
 
 const services = [
   "Content Creation",
@@ -83,7 +84,35 @@ export default function Contact() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    // persist submission in database
+    const { error: insertError } = await supabase.from("contacts").insert({
+      name: formData.name,
+      email: formData.email,
+      company: formData.company,
+      service: formData.service,
+      budget: formData.budget,
+      message: formData.message,
+      timezone,
+      localTime,
+    });
+
+    if (insertError) {
+      console.error("DB insert error", insertError);
+      toast.error("Failed to save your message. Please try again later.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // send notification email via edge function
+    try {
+      await supabase.functions.invoke("contact-form", {
+        body: { ...formData, timezone, localTime },
+      });
+    } catch (err) {
+      console.error("contact function error", err);
+      toast.error("Failed to send notification. Please try again later.");
+      // continue, don't block user from seeing success
+    }
 
     setIsSubmitting(false);
     setIsSubmitted(true);

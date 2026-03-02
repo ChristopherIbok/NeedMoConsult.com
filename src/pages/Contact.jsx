@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import Cal, { getCalApi } from "@calcom/embed-react";
 import {
   Select,
   SelectContent,
@@ -76,11 +77,21 @@ export default function Contact() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    (async function () {
+      const cal = await getCalApi();
+      cal("ui", {
+        theme: "light",
+        styles: { branding: { brandColor: "#FF6B35" } },
+        hideEventTypeDetails: false,
+      });
+    })();
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
     setIsSubmitting(false);
@@ -99,6 +110,7 @@ export default function Contact() {
         description="Get in touch to discuss your social media goals. Book a free 30-minute strategy call with our team."
         canonical="https://needmoconsult.com/contact"
       />
+
       {/* Hero */}
       <section className="py-20 md:py-28 bg-gradient-to-b from-white to-[#F7F7F7] dark:from-[#0F1419] dark:to-[#1A2332]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -189,8 +201,7 @@ export default function Contact() {
 
                 <div className="mt-8 p-4 bg-white/5 rounded-xl">
                   <p className="text-sm text-gray-400 italic">
-                    Our team typically responds within 24 hours during business
-                    days.
+                    Our team typically responds within 24 hours during business days.
                   </p>
                 </div>
               </div>
@@ -275,9 +286,7 @@ export default function Contact() {
                       <Label>Service Interested In *</Label>
                       <Select
                         value={formData.service}
-                        onValueChange={(value) =>
-                          handleChange("service", value)
-                        }
+                        onValueChange={(value) => handleChange("service", value)}
                         required
                       >
                         <SelectTrigger className="h-12">
@@ -349,28 +358,32 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* Map / CTA Section */}
+      {/* Cal.com Booking Section */}
       <section className="py-20 bg-[#F7F7F7] dark:bg-[#1A2332]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            className="text-center mb-12"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-[#1A2332] dark:text-white mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#1A2332] dark:text-white mb-4">
               Prefer a Quick Chat?
             </h2>
-            <p className="text-lg text-[#333333] dark:text-gray-400 mb-8">
+            <p className="text-lg text-[#333333] dark:text-gray-400">
               Book a free 30-minute strategy call and let's discuss how we can
               help your brand grow.
             </p>
-            <Button
-              size="lg"
-              className="bg-[#FF6B35] hover:bg-[#E55A2B] text-white font-semibold px-10"
-            >
-              Schedule a Call
-            </Button>
           </motion.div>
+
+          {/* Cal.com Embed */}
+          <div className="bg-white dark:bg-[#0F1419] rounded-3xl overflow-hidden shadow-lg">
+            <Cal
+              calLink="needmo-consult/Strategy-Call"
+              style={{ width: "100%", height: "700px", overflow: "scroll" }}
+              config={{ layout: "month_view" }}
+            />
+          </div>
         </div>
       </section>
     </main>

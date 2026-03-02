@@ -52,11 +52,11 @@ const stats = [
 
 const team = [
   {
-    name: "Alex Rivera",
-    role: "Founder & Strategy Lead",
+    name: "Christopher Ibok",
+    role: "Founder & Media Consultant",
     image:
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face",
-    bio: "10+ years in digital marketing. Built strategies for Fortune 500 brands.",
+    bio: "10+ years in Media and Production. Produced for Fortune 500 brands.",
   },
   {
     name: "Jordan Kim",
@@ -85,8 +85,8 @@ export default function About() {
   return (
     <main className="pt-20">
       <SEO
-        title="About Us | NEEDMO CONSULT"
-        description="NEEDMO CONSULT is a results-driven social media agency built for brands that refuse to settle. Learn about our mission, values, and team."
+        title="About Us | NeedMo Consult"
+        description="NeedMo Consult is a results-driven social media agency built for brands that refuse to settle. Learn about our mission, values, and team."
         canonical="https://needmoconsult.com/about"
       />
       {/* Hero */}
@@ -104,7 +104,7 @@ export default function About() {
                 Built for Brands That Refuse to Settle
               </h1>
               <p className="text-lg text-[#333333] dark:text-gray-400 leading-relaxed mb-6">
-                NEEDMO CONSULT is a results-driven social media agency for
+                NeedMo Consult is a results-driven social media agency for
                 businesses, creators, and brands that know they deserve more. We
                 don't believe in vanity metrics. We believe in strategy,
                 creativity, and consistency — and we measure success by the
@@ -243,7 +243,7 @@ export default function About() {
                 <div className="aspect-square overflow-hidden">
                   <img
                     src={member.image}
-                    alt={`${member.name} - ${member.role} at NEEDMO CONSULT`}
+                    alt={`${member.name} - ${member.role} at NeedMo Consult`}
                     className="w-full h-full object-cover"
                     loading="lazy"
                     width="300"
@@ -333,7 +333,7 @@ export default function About() {
             >
               <img
                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=500&fit=crop"
-                alt="NEEDMO CONSULT team collaborating on social media strategy"
+                alt="NeedMo Consult team collaborating on social media strategy"
                 className="rounded-2xl shadow-2xl"
                 loading="lazy"
                 width="600"

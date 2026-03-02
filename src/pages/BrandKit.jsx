@@ -234,8 +234,7 @@ export default function BrandKit() {
             Typography Scale
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">
-            Font family: Montserrat / Poppins for headings · Inter / system-ui
-            for body
+            Font family: Figtree for headings and body (minimalist sans-serif)
           </p>
 
           <div className="bg-white dark:bg-[#1E2830] rounded-2xl border border-gray-200 dark:border-gray-700 p-8 space-y-6">

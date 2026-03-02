@@ -28,9 +28,17 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // lock background scrolling when mobile menu open
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
+
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed inset-x-0 top-0 z-50 w-full transition-all duration-300 ${
         isScrolled
           ? "bg-white/90 dark:bg-[#0F1419]/90 backdrop-blur-md shadow-lg"
           : "bg-transparent"
@@ -117,7 +125,7 @@ export default function Header() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="fixed inset-0 z-50 lg:hidden"
+            className="fixed inset-0 z-40 lg:hidden" /* below header z-50 */
             style={{ backgroundColor: "rgba(26, 35, 50, 0.97)" }}
           >
             {/* Top bar */}

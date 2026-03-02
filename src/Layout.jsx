@@ -9,12 +9,12 @@ export default function Layout({ children }) {
   return (
     <ThemeProvider>
       <style>{`
-		@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+		@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600;700&display=swap');
 		body, h1, h2, h3, h4, h5, h6 {
-		  font-family: 'Montserrat', 'Poppins', system-ui, sans-serif;
+		  font-family: 'Figtree', system-ui, sans-serif;
 		}
 		p, span, a, li, input, textarea, select, button {
-		  font-family: 'Inter', system-ui, sans-serif;
+		  font-family: 'Figtree', system-ui, sans-serif;
 		}
 		/* Prevent iOS zoom on input focus */
 		input, select, textarea {

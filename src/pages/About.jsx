@@ -309,7 +309,7 @@ export default function About() {
                     transition={{ delay: index * 0.1 }}
                     className="flex gap-4"
                   >
-                    <div className="w-8 h-8 rounded-full bg-[#FF6B35]/10 flex items-center justify-center flex-shrink-0 mt-1">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 hover:bg-[#FF6B35]/10 transition-colors">
                       <TrendingUp className="w-4 h-4 text-[#FF6B35]" />
                     </div>
                     <div>

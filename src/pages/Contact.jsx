@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import Cal, { getCalApi } from "@calcom/embed-react";
+// Cal.com booking widget removed
 import {
   Select,
   SelectContent,
@@ -77,16 +77,7 @@ export default function Contact() {
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    (async function () {
-      const cal = await getCalApi();
-      cal("ui", {
-        theme: "light",
-        styles: { branding: { brandColor: "#FF6B35" } },
-        hideEventTypeDetails: false,
-      });
-    })();
-  }, []);
+  // Cal.com widget removed; no runtime setup required
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -191,7 +182,7 @@ export default function Contact() {
                       <a
                         key={i}
                         href="#"
-                        className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#FF6B35] transition-colors"
+                        className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-[#FF6B35] transition-colors"
                       >
                         <Icon className="w-5 h-5" />
                       </a>
@@ -358,34 +349,7 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* Cal.com Booking Section */}
-      <section className="py-20 bg-[#F7F7F7] dark:bg-[#1A2332]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-[#1A2332] dark:text-white mb-4">
-              Prefer a Quick Chat?
-            </h2>
-            <p className="text-lg text-[#333333] dark:text-gray-400">
-              Book a free 30-minute strategy call and let's discuss how we can
-              help your brand grow.
-            </p>
-          </motion.div>
-
-          {/* Cal.com Embed */}
-          <div className="bg-white dark:bg-[#0F1419] rounded-3xl overflow-hidden shadow-lg">
-            <Cal
-              calLink="needmo-consult/Strategy-Call"
-              style={{ width: "100%", height: "700px", overflow: "scroll" }}
-              config={{ layout: "month_view" }}
-            />
-          </div>
-        </div>
-      </section>
+      {/* Cal.com booking section removed */}
     </main>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { getCaseStudyBySlug } from "@/components/casestudy/caseStudyData";
+import { getCaseStudyBySlug } from "@/components/casestudy/CaseStudyData";
 
 import CaseStudyHero from "@/components/casestudy/CaseStudyHero";
 import CaseStudyOverview from "@/components/casestudy/CaseStudyOverview";

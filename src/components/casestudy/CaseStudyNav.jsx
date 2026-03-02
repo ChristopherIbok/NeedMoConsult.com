@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { ChevronLeft, ChevronRight, LayoutGrid } from "lucide-react";
-import { caseStudies } from "./caseStudyData";
+import { caseStudies } from "./CaseStudyData";
 
 export default function CaseStudyNav({ currentSlug }) {
   const currentIndex = caseStudies.findIndex((cs) => cs.slug === currentSlug);

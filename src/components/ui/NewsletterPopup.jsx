@@ -16,14 +16,14 @@ export default function NewsletterPopup() {
   const [done, setDone] = useState(false);
 
   useEffect(() => {
-    if (localStorage.getItem(STORAGE_KEY)) return;
+  if (localStorage.getItem(STORAGE_KEY)) return;
 
-    const handleMouseLeave = (e) => {
-      if (e.clientY <= 0) {
-        setVisible(true);
-        document.removeEventListener("mouseleave", handleMouseLeave);
-      }
-    };
+  const timer = setTimeout(() => {
+    setVisible(true);
+  }, 5000);
+
+  return () => clearTimeout(timer);
+}, []);
 
     const timer = setTimeout(() => {
       document.addEventListener("mouseleave", handleMouseLeave);

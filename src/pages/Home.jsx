@@ -13,7 +13,7 @@ const homepageStructuredData = [
   {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
-    name: "NEEDMO CONSULT",
+    name: "NeedMo Consult",
     image: "https://needmoconsult.com/images/logo.png",
     description:
       "Strategic social media management agency for businesses, creators, and brands",

@@ -94,7 +94,7 @@ export default function HeroSection() {
               transition={{ delay: 0.3 }}
               className="text-base sm:text-lg text-[#333333] dark:text-gray-300 leading-relaxed max-w-xl"
             >
-              NEEDMO CONSULT is a strategic social media agency helping
+              NeedMo Consult is a strategic social media agency helping
               businesses, creators, and brands turn their online presence into
               real growth — with content that performs, strategies that work,
               and results you can measure.
@@ -219,7 +219,7 @@ export default function HeroSection() {
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FF6B35] to-[#FF8F65]" />
                   <div>
                     <p className="font-semibold text-[#1A2332] dark:text-white text-sm">
-                      @yourbrand
+                      @needmoconsult
                     </p>
                     <p className="text-xs text-gray-500">Just now</p>
                   </div>

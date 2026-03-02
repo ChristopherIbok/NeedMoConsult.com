@@ -44,7 +44,7 @@ const homepageStructuredData = [
   {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "NEEDMO CONSULT",
+    name: "NeedMo Consult",
     aggregateRating: {
       "@type": "AggregateRating",
       ratingValue: "5",
@@ -67,7 +67,7 @@ export default function Home() {
   return (
     <main>
       <SEO
-        title="NEEDMO CONSULT | Social Media Management Agency"
+        title="NeedMo Consult | Social Media Management Agency"
         description="Strategic social media management for businesses, creators, and brands. Content creation, account management, paid ads, and consulting. Your brand deserves more."
         canonical="https://needmoconsult.com/"
         structuredData={homepageStructuredData}

@@ -36,22 +36,39 @@ export default function NewsletterPopup() {
 
     try {
       // Save to Supabase database
-      const { error } = await supabase
+      const { error: dbError } = await supabase
         .from("newsletter_subscribers")
         .insert({ email, name, status: "active" });
 
-      if (error) throw error;
+      if (dbError) throw dbError;
 
       // Send welcome email via Supabase Edge Function
-      await supabase.functions.invoke("send-welcome-email", {
-        body: { email, name },
-      });
+      const { data, error: emailError } = await supabase.functions.invoke(
+        "send-welcome-email",
+        {
+          body: { email, name },
+        }
+      );
+
+      if (emailError) {
+        console.error("Email function error:", emailError);
+        throw new Error(emailError.message || "Failed to send welcome email");
+      }
+
+      if (data?.ok === false) {
+        throw new Error(data.error || "Failed to send welcome email");
+      }
 
       setDone(true);
       localStorage.setItem(STORAGE_KEY, "subscribed");
       setTimeout(() => setVisible(false), 2500);
     } catch (err) {
       console.error("Subscription error:", err);
+      alert(
+        err instanceof Error
+          ? err.message
+          : "An error occurred. Please try again."
+      );
     } finally {
       setSubmitting(false);
     }

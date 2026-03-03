@@ -7,6 +7,7 @@ import { useTheme } from "@/components/ui/ThemeProvider";
 import { motion, AnimatePresence } from "framer-motion";
 import { LogoHorizontal } from "@/components/brand/Logo";
 import { LogoBadge } from "@/components/brand/Logo";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const navItems = [
   { name: "Home", page: "Home" },
@@ -21,6 +22,7 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -38,7 +40,7 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 w-full transition-all duration-300 ${
+      className={`${isMobile ? "absolute" : "fixed"} inset-x-0 top-0 z-50 w-full transition-all duration-300 ${
         isScrolled
           ? "bg-white/90 dark:bg-[#0F1419]/90 backdrop-blur-md shadow-lg"
           : "bg-transparent"

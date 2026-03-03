@@ -27,6 +27,9 @@ export default function NavigationTracker() {
       // Simple console log — or replace with your analytics tool
       console.log("Page visited:", pageName);
     }
+
+    // Scroll to top on page navigation
+    window.scrollTo({ top: 0, behavior: "instant" });
   }, [location, Pages, mainPageKey]);
 
   return null;

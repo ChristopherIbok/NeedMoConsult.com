@@ -123,6 +123,7 @@ export default function PortfolioSection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
+          transition={{ delay: 1 }}
           className="text-center mb-12"
         >
           <p className="text-[#FF6B35] text-sm font-semibold uppercase tracking-widest mb-4">
@@ -162,7 +163,7 @@ export default function PortfolioSection() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ delay: index * 0.1 }}
+                transition={{ delay: 1 + index * 0.1 }}
                 whileHover={{ y: -8 }}
                 className={`group relative bg-white dark:bg-[#1E2830] rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl ${
                   item.featured ? "md:col-span-2 lg:col-span-1" : ""
@@ -238,6 +239,7 @@ export default function PortfolioSection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
+          transition={{ delay: 1 }}
           className="bg-white dark:bg-[#1E2830] rounded-2xl p-8 md:p-12"
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">

@@ -176,6 +176,7 @@ export default function HeroSection() {
                   duration: 4,
                   repeat: Infinity,
                   ease: "easeInOut",
+                  delay: 1,
                 }}
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-gradient-to-br from-[#FF6B35] to-[#FF8F65] shadow-2xl shadow-orange-500/30"
               />
@@ -187,7 +188,7 @@ export default function HeroSection() {
                   duration: 3.5,
                   repeat: Infinity,
                   ease: "easeInOut",
-                  delay: 0.5,
+                  delay: 1.5,
                 }}
                 className="absolute top-20 right-10 w-32 h-32 rounded-full bg-[#1A2332] dark:bg-white/10"
               />
@@ -199,7 +200,7 @@ export default function HeroSection() {
                   duration: 3,
                   repeat: Infinity,
                   ease: "easeInOut",
-                  delay: 1,
+                  delay: 5,
                 }}
                 className="absolute bottom-32 left-10 w-20 h-20 rounded-full bg-[#FF6B35]/30"
               />
@@ -211,7 +212,7 @@ export default function HeroSection() {
                   duration: 4,
                   repeat: Infinity,
                   ease: "easeInOut",
-                  delay: 0.3,
+                  delay: 1.3,
                 }}
                 className="absolute bottom-20 right-0 bg-white dark:bg-[#1E2830] rounded-2xl shadow-2xl p-6 w-64"
               >
@@ -242,7 +243,7 @@ export default function HeroSection() {
                   duration: 3.5,
                   repeat: Infinity,
                   ease: "easeInOut",
-                  delay: 0.7,
+                  delay: 1.7,
                 }}
                 className="absolute top-10 left-0 bg-white dark:bg-[#1E2830] rounded-2xl shadow-2xl p-5 w-48"
               >

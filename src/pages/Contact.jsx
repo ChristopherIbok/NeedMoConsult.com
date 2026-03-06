@@ -34,6 +34,8 @@ const services = [
   "Paid Advertising",
   "Strategy & Consulting",
   "Full-Service Package",
+  "Social Media Audit",
+  "Web Development",
   "Custom Solution",
 ];
 

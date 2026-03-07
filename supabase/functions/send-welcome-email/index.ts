@@ -52,7 +52,7 @@ serve(async (req) => {
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td>
-                    <img src="https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/NeedMo_Consult_Logo.svg" alt="NEEDMO CONSULT" width="160" style="display:block;" />
+                    <img src="https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/logo-dark.svg" alt="NEEDMO CONSULT" width="160" style="display:block;" />
                   </td>
                   <td align="right" style="vertical-align:middle;">
                     <p style="margin:0;font-size:12px;color:#999999;text-transform:uppercase;letter-spacing:1px;">${date}</p>

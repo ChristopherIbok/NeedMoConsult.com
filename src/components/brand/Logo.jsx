@@ -13,6 +13,10 @@ import { useTheme } from "@/components/ui/ThemeProvider";
  * Sizes: "sm" | "md" | "lg" | "xl"
  */
 
+// ─── Hosted logo URLs ──────────────────────────────────────────────────────────
+const LOGO_DARK = "https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/logo-dark.svg";
+const LOGO_LIGHT = "https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/logo-light.svg";
+
 // ─── NM Monogram Icon ──────────────────────────────────────────────────────────
 export function NMIcon({ size = 40, className = "" }) {
   return (
@@ -51,7 +55,7 @@ export function NMIcon({ size = 40, className = "" }) {
   );
 }
 
-// ─── Orange accent triangle ────────────────────────────────────────────────────
+// ─── Orange accent dot ─────────────────────────────────────────────────────────
 function AccentDot({ className = "" }) {
   return (
     <svg
@@ -77,50 +81,17 @@ export function LogoHorizontal({
   const { theme } = useTheme() || { theme: "light" };
   const isDark = forceDark || (!forceLight && theme === "dark");
 
-  const sizeMap = {
-    sm: { icon: 28, needmo: "text-lg", consult: "text-sm", gap: "gap-2" },
-    md: {
-      icon: 34,
-      needmo: "text-xl md:text-2xl",
-      consult: "text-sm md:text-base",
-      gap: "gap-2.5",
-    },
-    lg: { icon: 44, needmo: "text-3xl", consult: "text-lg", gap: "gap-3" },
-    xl: { icon: 56, needmo: "text-4xl", consult: "text-xl", gap: "gap-4" },
-  };
-  const s = sizeMap[size] || sizeMap.md;
+  const heightMap = { sm: 28, md: 36, lg: 48, xl: 60 };
+  const h = heightMap[size] || heightMap.md;
 
   return (
-    <div
-      className={`flex items-center ${s.gap} ${className}`}
-      role="img"
-      aria-label="NEEDMO CONSULT"
-    >
-      <NMIcon size={s.icon} />
-      <div className="flex flex-col leading-none">
-        <span
-          className={`${s.needmo} font-black tracking-tight leading-none`}
-          style={{
-            fontFamily: "'Montserrat', 'Poppins', sans-serif",
-            color: isDark ? "#FFFFFF" : "#1A2332",
-            letterSpacing: "-0.02em",
-          }}
-        >
-          NEEDMO
-        </span>
-        <span
-          className={`${s.consult} font-normal tracking-widest leading-none mt-0.5`}
-          style={{
-            fontFamily: "'Montserrat', 'Poppins', sans-serif",
-            color: isDark ? "#E0E0E0" : "#333333",
-            letterSpacing: "0.18em",
-            fontSize: "calc(0.52em)",
-          }}
-        >
-          CONSULT
-        </span>
-      </div>
-    </div>
+    <img
+      src={isDark ? LOGO_LIGHT : LOGO_DARK}
+      alt="NEEDMO CONSULT"
+      height={h}
+      style={{ height: h, width: "auto", display: "block" }}
+      className={className}
+    />
   );
 }
 
@@ -178,36 +149,13 @@ export function LogoStacked({
 // ─── Footer Logo (always white) ────────────────────────────────────────────────
 export function LogoFooter({ className = "" }) {
   return (
-    <div
-      className={`flex items-center gap-2.5 ${className}`}
-      role="img"
-      aria-label="NEEDMO CONSULT"
-    >
-      <NMIcon size={34} />
-      <div className="flex flex-col leading-none">
-        <span
-          className="text-xl font-black tracking-tight leading-none"
-          style={{
-            fontFamily: "'Montserrat', 'Poppins', sans-serif",
-            color: "#FFFFFF",
-            letterSpacing: "-0.02em",
-          }}
-        >
-          NEEDMO
-        </span>
-        <span
-          className="font-normal tracking-widest leading-none mt-0.5"
-          style={{
-            fontFamily: "'Montserrat', 'Poppins', sans-serif",
-            color: "#E0E0E0",
-            letterSpacing: "0.18em",
-            fontSize: "0.6rem",
-          }}
-        >
-          CONSULT
-        </span>
-      </div>
-    </div>
+    <img
+      src={LOGO_LIGHT}
+      alt="NEEDMO CONSULT"
+      height={36}
+      style={{ height: 36, width: "auto", display: "block" }}
+      className={className}
+    />
   );
 }
 

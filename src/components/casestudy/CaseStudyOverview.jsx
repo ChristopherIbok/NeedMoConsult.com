@@ -54,7 +54,7 @@ export default function CaseStudyOverview({ study }) {
             <div className="space-y-4">
               {study.results.map((r, i) => (
                 <div key={i}>
-                  <div className="text-3xl font-bold text-[#FF6B35]">
+                  <div className="text-3xl font-bold text-[#D4AF7A]">
                     {r.metric}
                   </div>
                   <div className="text-[#1A2332] dark:text-white font-semibold text-sm">

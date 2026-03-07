@@ -54,7 +54,7 @@ export default function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-500 hover:text-[#FF6B35] transition-colors"
+                  className="min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-500 hover:text-[#D4AF7A] transition-colors"
                   aria-label={social.label}
                 >
                   <social.icon className="w-5 h-5" />
@@ -71,7 +71,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <Link
                     to={createPageUrl(link.page)}
-                    className="block min-h-[44px] flex items-center justify-center md:justify-start text-gray-400 text-sm hover:text-[#FF6B35] transition-colors leading-[2.2]"
+                    className="block min-h-[44px] flex items-center justify-center md:justify-start text-gray-400 text-sm hover:text-[#D4AF7A] transition-colors leading-[2.2]"
                   >
                     {link.name}
                   </Link>
@@ -88,7 +88,7 @@ export default function Footer() {
                 <li key={service.name}>
                   <Link
                     to={createPageUrl(service.page)}
-                    className="block min-h-[44px] flex items-center justify-center md:justify-start text-gray-400 text-sm hover:text-[#FF6B35] transition-colors leading-[2.2]"
+                    className="block min-h-[44px] flex items-center justify-center md:justify-start text-gray-400 text-sm hover:text-[#D4AF7A] transition-colors leading-[2.2]"
                   >
                     {service.name}
                   </Link>
@@ -104,23 +104,23 @@ export default function Footer() {
               <li>
                 <a
                   href="mailto:hello@needmoconsult.com"
-                  className="min-h-[44px] flex items-center justify-center md:justify-start gap-3 text-gray-400 text-sm hover:text-[#FF6B35] transition-colors"
+                  className="min-h-[44px] flex items-center justify-center md:justify-start gap-3 text-gray-400 text-sm hover:text-[#D4AF7A] transition-colors"
                 >
-                  <Mail className="w-4 h-4 text-[#FF6B35] flex-shrink-0" />
+                  <Mail className="w-4 h-4 text-[#D4AF7A] flex-shrink-0" />
                   hello@needmoconsult.com
                 </a>
               </li>
               <li>
                 <a
                   href="tel:+15551234567"
-                  className="min-h-[44px] flex items-center justify-center md:justify-start gap-3 text-gray-400 text-sm hover:text-[#FF6B35] transition-colors"
+                  className="min-h-[44px] flex items-center justify-center md:justify-start gap-3 text-gray-400 text-sm hover:text-[#D4AF7A] transition-colors"
                 >
-                  <Phone className="w-4 h-4 text-[#FF6B35] flex-shrink-0" />
+                  <Phone className="w-4 h-4 text-[#D4AF7A] flex-shrink-0" />
                   +1 (555) 123-4567
                 </a>
               </li>
               <li className="min-h-[44px] flex items-center justify-center md:justify-start gap-3">
-                <MapPin className="w-4 h-4 text-[#FF6B35] flex-shrink-0" />
+                <MapPin className="w-4 h-4 text-[#D4AF7A] flex-shrink-0" />
                 <span className="text-gray-400 text-sm">Los Angeles, CA</span>
               </li>
             </ul>
@@ -135,14 +135,14 @@ export default function Footer() {
           <div className="flex items-center gap-4">
             <Link
               to={createPageUrl("PrivacyPolicy")}
-              className="text-gray-500 text-xs sm:text-sm hover:text-[#FF6B35] transition-colors"
+              className="text-gray-500 text-xs sm:text-sm hover:text-[#D4AF7A] transition-colors"
             >
               Privacy Policy
             </Link>
             <span className="text-gray-600">·</span>
             <Link
               to={createPageUrl("TermsOfUse")}
-              className="text-gray-500 text-xs sm:text-sm hover:text-[#FF6B35] transition-colors"
+              className="text-gray-500 text-xs sm:text-sm hover:text-[#D4AF7A] transition-colors"
             >
               Terms of Use
             </Link>

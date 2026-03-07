@@ -51,7 +51,7 @@ export default function Contact() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <p className="text-[#FF6B35] text-sm font-semibold uppercase tracking-widest mb-4">
+            <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
               Get In Touch
             </p>
             <h1 className="text-4xl md:text-5xl font-bold text-[#1A2332] dark:text-white mb-6">
@@ -82,9 +82,9 @@ export default function Contact() {
                 <div className="space-y-6">
                   <a
                     href="mailto:hello@needmoconsult.com"
-                    className="flex items-start gap-4 hover:text-[#FF6B35] transition-colors"
+                    className="flex items-start gap-4 hover:text-[#D4AF7A] transition-colors"
                   >
-                    <Mail className="w-5 h-5 mt-1 text-[#FF6B35]" />
+                    <Mail className="w-5 h-5 mt-1 text-[#D4AF7A]" />
                     <div>
                       <p className="font-medium">Email</p>
                       <p className="text-gray-400">hello@needmoconsult.com</p>
@@ -92,7 +92,7 @@ export default function Contact() {
                   </a>
 
                   <div className="flex items-start gap-4">
-                    <Phone className="w-5 h-5 mt-1 text-[#FF6B35]" />
+                    <Phone className="w-5 h-5 mt-1 text-[#D4AF7A]" />
                     <div>
                       <p className="font-medium">Phone</p>
                       <p className="text-gray-400">+1 (555) 123-4567</p>
@@ -100,7 +100,7 @@ export default function Contact() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <MapPin className="w-5 h-5 mt-1 text-[#FF6B35]" />
+                    <MapPin className="w-5 h-5 mt-1 text-[#D4AF7A]" />
                     <div>
                       <p className="font-medium">Location</p>
                       <p className="text-gray-400">Los Angeles, CA</p>
@@ -108,7 +108,7 @@ export default function Contact() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <Clock className="w-5 h-5 mt-1 text-[#FF6B35]" />
+                    <Clock className="w-5 h-5 mt-1 text-[#D4AF7A]" />
                     <div>
                       <p className="font-medium">Your Local Time</p>
                       <p className="text-gray-400">{localTime}</p>
@@ -124,7 +124,7 @@ export default function Contact() {
                       <a
                         key={i}
                         href="#"
-                        className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-[#FF6B35] transition-colors"
+                        className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-[#D4AF7A] transition-colors"
                       >
                         <Icon className="w-5 h-5" />
                       </a>

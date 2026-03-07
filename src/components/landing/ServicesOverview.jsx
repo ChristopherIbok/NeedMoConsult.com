@@ -50,7 +50,7 @@ export default function ServicesOverview() {
           transition={{ delay: 1 }}
           className="text-center mb-16"
         >
-          <p className="text-[#FF6B35] text-sm font-semibold uppercase tracking-widest mb-4">
+          <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
             What We Do
           </p>
           <h2 className="text-3xl md:text-4xl font-bold text-[#1A2332] dark:text-white mb-4">
@@ -79,8 +79,8 @@ export default function ServicesOverview() {
               className="group relative bg-white dark:bg-[#1E2830] border border-gray-200 dark:border-[#2A3540] rounded-2xl p-8 transition-shadow duration-300 hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-black/20"
             >
               <div className="flex items-start gap-5">
-                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-[#FF6B35]/10 flex items-center justify-center group-hover:bg-[#FF6B35] transition-colors">
-                  <service.icon className="w-6 h-6 text-[#FF6B35] group-hover:text-white transition-colors" />
+                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-[#D4AF7A]/10 flex items-center justify-center group-hover:bg-[#D4AF7A] transition-colors">
+                  <service.icon className="w-6 h-6 text-[#D4AF7A] group-hover:text-white transition-colors" />
                 </div>
                 <div className="flex-1">
                   <h3 className="text-xl font-bold text-[#1A2332] dark:text-white mb-3">
@@ -91,7 +91,7 @@ export default function ServicesOverview() {
                   </p>
                   <Link
                     to={createPageUrl("Services")}
-                    className="inline-flex items-center text-[#FF6B35] font-medium text-sm hover:underline group-hover:gap-2 transition-all"
+                    className="inline-flex items-center text-[#D4AF7A] font-medium text-sm hover:underline group-hover:gap-2 transition-all"
                   >
                     Learn More
                     <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
@@ -113,7 +113,7 @@ export default function ServicesOverview() {
           <Link to={createPageUrl("Services")}>
             <Button
               size="lg"
-              className="bg-[#FF6B35] hover:bg-[#E55A2B] text-white font-semibold px-8 transition-all hover:scale-105 btn-ripple"
+              className="bg-[#D4AF7A] hover:bg-[#C49A5E] text-white font-semibold px-8 transition-all hover:scale-105 btn-ripple"
             >
               View All Services
               <ArrowRight className="ml-2 w-5 h-5" />

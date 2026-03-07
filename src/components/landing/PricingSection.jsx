@@ -118,7 +118,7 @@ export default function PricingSection() {
           transition={{ delay: 1 }}
           className="text-center mb-4"
         >
-          <p className="text-[#FF6B35] text-sm font-semibold uppercase tracking-widest mb-4">
+          <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
             Transparent Pricing
           </p>
           <h2 className="text-3xl md:text-4xl font-bold text-[#1A2332] dark:text-white mb-4">
@@ -158,14 +158,14 @@ export default function PricingSection() {
                 scale: pkg.popular ? 1.04 : 1.02,
                 transition: { duration: 0.2 },
               }}
-              className={`relative bg-white dark:bg-[#1E2830] rounded-2xl p-6 border-2 transition-colors duration-300 hover:border-[#FF6B35] hover:shadow-xl hover:shadow-orange-500/10 cursor-pointer ${
+              className={`relative bg-white dark:bg-[#1E2830] rounded-2xl p-6 border-2 transition-colors duration-300 hover:border-[#D4AF7A] hover:shadow-xl hover:shadow-orange-500/10 cursor-pointer ${
                 pkg.popular
-                  ? "border-[#FF6B35] shadow-xl shadow-orange-500/10"
+                  ? "border-[#D4AF7A] shadow-xl shadow-orange-500/10"
                   : "border-gray-200 dark:border-[#2A3540]"
               }`}
             >
               {pkg.popular && (
-                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FF6B35] text-white px-4 py-1">
+                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#D4AF7A] text-white px-4 py-1">
                   <Star className="w-3 h-3 mr-1 fill-current" />
                   Most Popular
                 </Badge>
@@ -192,7 +192,7 @@ export default function PricingSection() {
               <ul className="space-y-3 mb-8">
                 {pkg.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-[#FF6B35] flex-shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 text-[#D4AF7A] flex-shrink-0 mt-0.5" />
                     <span className="text-sm text-[#333333] dark:text-gray-300">
                       {feature}
                     </span>
@@ -204,7 +204,7 @@ export default function PricingSection() {
                 <Button
                   className={`w-full font-semibold transition-all hover:scale-[1.02] btn-ripple ${
                     pkg.popular
-                      ? "bg-[#FF6B35] hover:bg-[#E55A2B] text-white"
+                      ? "bg-[#D4AF7A] hover:bg-[#C49A5E] text-white"
                       : "bg-[#1A2332] hover:bg-[#2A3342] text-white dark:bg-white dark:text-[#1A2332] dark:hover:bg-gray-100"
                   }`}
                 >
@@ -228,7 +228,7 @@ export default function PricingSection() {
           </p>
           <Link
             to={createPageUrl("Contact")}
-            className="text-[#FF6B35] font-medium hover:underline"
+            className="text-[#D4AF7A] font-medium hover:underline"
           >
             Contact us for custom pricing
           </Link>

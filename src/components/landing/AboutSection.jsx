@@ -30,7 +30,7 @@ export default function AboutSection() {
             viewport={{ once: true }}
             transition={{ delay: 1 }}
           >
-            <p className="text-[#FF6B35] text-sm font-semibold uppercase tracking-widest mb-4">
+            <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
               Who We Are
             </p>
 
@@ -68,7 +68,7 @@ export default function AboutSection() {
 
             <Link
               to={createPageUrl("About")}
-              className="inline-flex items-center text-[#FF6B35] font-semibold hover:underline group"
+              className="inline-flex items-center text-[#D4AF7A] font-semibold hover:underline group"
             >
               Learn More About Us
               <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -94,8 +94,8 @@ export default function AboutSection() {
                     transition={{ delay: 1 + index * 0.1 }}
                     className="flex items-center gap-5"
                   >
-                    <div className="w-14 h-14 rounded-2xl bg-[#FF6B35]/10 flex items-center justify-center flex-shrink-0">
-                      <stat.icon className="w-7 h-7 text-[#FF6B35]" />
+                    <div className="w-14 h-14 rounded-2xl bg-[#D4AF7A]/10 flex items-center justify-center flex-shrink-0">
+                      <stat.icon className="w-7 h-7 text-[#D4AF7A]" />
                     </div>
                     <div>
                       <p className="text-3xl md:text-4xl font-bold text-[#1A2332] dark:text-white">
@@ -111,7 +111,7 @@ export default function AboutSection() {
             </div>
 
             {/* Decorative Elements */}
-            <div className="absolute -top-4 -right-4 w-24 h-24 bg-[#FF6B35]/10 rounded-full blur-xl" />
+            <div className="absolute -top-4 -right-4 w-24 h-24 bg-[#D4AF7A]/10 rounded-full blur-xl" />
             <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-[#1A2332]/5 dark:bg-white/5 rounded-full blur-xl" />
           </motion.div>
         </div>

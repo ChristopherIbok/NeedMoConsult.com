@@ -97,7 +97,7 @@ export default function About() {
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
             >
-              <p className="text-[#FF6B35] text-sm font-semibold uppercase tracking-widest mb-4">
+              <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
                 About Us
               </p>
               <h1 className="text-4xl md:text-5xl font-bold text-[#1A2332] dark:text-white mb-6 leading-tight">
@@ -132,7 +132,7 @@ export default function About() {
                     transition={{ delay: index * 0.1 + 0.2 }}
                     className="bg-white dark:bg-[#1E2830] rounded-2xl p-6 text-center shadow-lg"
                   >
-                    <p className="text-3xl font-bold text-[#FF6B35]">
+                    <p className="text-3xl font-bold text-[#D4AF7A]">
                       {stat.value}
                     </p>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -154,7 +154,7 @@ export default function About() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <Award className="w-12 h-12 text-[#FF6B35] mx-auto mb-6" />
+            <Award className="w-12 h-12 text-[#D4AF7A] mx-auto mb-6" />
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
               Our Mission
             </h2>
@@ -176,7 +176,7 @@ export default function About() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <p className="text-[#FF6B35] text-sm font-semibold uppercase tracking-widest mb-4">
+            <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
               What We Stand For
             </p>
             <h2 className="text-3xl md:text-4xl font-bold text-[#1A2332] dark:text-white">
@@ -194,8 +194,8 @@ export default function About() {
                 transition={{ delay: index * 0.1 }}
                 className="text-center"
               >
-                <div className="w-14 h-14 rounded-2xl bg-[#FF6B35]/10 flex items-center justify-center mx-auto mb-5">
-                  <value.icon className="w-7 h-7 text-[#FF6B35]" />
+                <div className="w-14 h-14 rounded-2xl bg-[#D4AF7A]/10 flex items-center justify-center mx-auto mb-5">
+                  <value.icon className="w-7 h-7 text-[#D4AF7A]" />
                 </div>
                 <h3 className="text-lg font-bold text-[#1A2332] dark:text-white mb-3">
                   {value.title}
@@ -218,7 +218,7 @@ export default function About() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <p className="text-[#FF6B35] text-sm font-semibold uppercase tracking-widest mb-4">
+            <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
               Meet The Team
             </p>
             <h2 className="text-3xl md:text-4xl font-bold text-[#1A2332] dark:text-white mb-4">
@@ -254,7 +254,7 @@ export default function About() {
                   <h3 className="text-lg font-bold text-[#1A2332] dark:text-white mb-1">
                     {member.name}
                   </h3>
-                  <p className="text-[#FF6B35] text-sm font-medium mb-3">
+                  <p className="text-[#D4AF7A] text-sm font-medium mb-3">
                     {member.role}
                   </p>
                   <p className="text-[#333333] dark:text-gray-400 text-sm">
@@ -276,7 +276,7 @@ export default function About() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <p className="text-[#FF6B35] text-sm font-semibold uppercase tracking-widest mb-4">
+              <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
                 Why Choose Us
               </p>
               <h2 className="text-3xl md:text-4xl font-bold text-[#1A2332] dark:text-white mb-6">
@@ -309,8 +309,8 @@ export default function About() {
                     transition={{ delay: index * 0.1 }}
                     className="flex gap-4"
                   >
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 hover:bg-[#FF6B35]/10 transition-colors">
-                      <TrendingUp className="w-4 h-4 text-[#FF6B35]" />
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 hover:bg-[#D4AF7A]/10 transition-colors">
+                      <TrendingUp className="w-4 h-4 text-[#D4AF7A]" />
                     </div>
                     <div>
                       <h3 className="font-bold text-[#1A2332] dark:text-white mb-1">
@@ -339,7 +339,7 @@ export default function About() {
                 width="600"
                 height="500"
               />
-              <div className="absolute -bottom-6 -left-6 bg-[#FF6B35] text-white rounded-2xl p-6 shadow-xl">
+              <div className="absolute -bottom-6 -left-6 bg-[#D4AF7A] text-white rounded-2xl p-6 shadow-xl">
                 <p className="text-4xl font-bold">5+</p>
                 <p className="text-sm opacity-90">Years of Excellence</p>
               </div>

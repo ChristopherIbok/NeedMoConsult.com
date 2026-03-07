@@ -13,14 +13,14 @@ export default function CaseStudyHero({ study }) {
           <nav className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
             <Link
               to={createPageUrl("Home")}
-              className="hover:text-[#FF6B35] transition-colors"
+              className="hover:text-[#D4AF7A] transition-colors"
             >
               Home
             </Link>
             <ChevronRight className="w-3.5 h-3.5" />
             <Link
               to={createPageUrl("Portfolio")}
-              className="hover:text-[#FF6B35] transition-colors"
+              className="hover:text-[#D4AF7A] transition-colors"
             >
               Portfolio
             </Link>

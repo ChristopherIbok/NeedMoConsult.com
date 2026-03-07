@@ -47,7 +47,7 @@ export default function BrandKit() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-16"
         >
-          <p className="text-[#FF6B35] text-sm font-semibold uppercase tracking-widest mb-3">
+          <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-3">
             Brand Assets
           </p>
           <h1 className="text-4xl md:text-5xl font-bold text-[#1A2332] dark:text-white mb-4">
@@ -170,10 +170,10 @@ export default function BrandKit() {
               { bg: "#F7F7F7", label: "Warm White", dark: false },
               { bg: "#1A2332", label: "Navy (Primary)", dark: true },
               { bg: "#0F1419", label: "Dark Navy", dark: true },
-              { bg: "#FF6B35", label: "Orange Accent", dark: true },
+              { bg: "#D4AF7A", label: "Orange Accent", dark: true },
               { bg: "#333333", label: "Dark Gray", dark: true },
               {
-                bg: "linear-gradient(135deg, #1A2332, #FF6B35)",
+                bg: "linear-gradient(135deg, #1A2332, #D4AF7A)",
                 label: "Brand Gradient",
                 dark: true,
               },
@@ -217,14 +217,14 @@ export default function BrandKit() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6">
             <Swatch hex="#1A2332" name="Deep Navy" role="Primary / Headers" />
             <Swatch
-              hex="#FF6B35"
+              hex="#D4AF7A"
               name="Electric Orange"
               role="CTAs / Accents"
             />
             <Swatch hex="#F7F7F7" name="Warm White" role="Backgrounds" />
             <Swatch hex="#333333" name="Dark Gray" role="Body Text" />
             <Swatch hex="#0F1419" name="Dark Mode BG" role="Dark Backgrounds" />
-            <Swatch hex="#E55A2B" name="Orange Hover" role="Hover State" />
+            <Swatch hex="#C49A5E" name="Orange Hover" role="Hover State" />
           </div>
         </section>
 
@@ -299,7 +299,7 @@ export default function BrandKit() {
                 <span
                   className={`${size} ${weight} ${
                     accent
-                      ? "tracking-widest text-[#FF6B35]"
+                      ? "tracking-widest text-[#D4AF7A]"
                       : "text-[#1A2332] dark:text-white"
                   } leading-tight`}
                 >
@@ -378,7 +378,7 @@ export default function BrandKit() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-red-500 font-bold mt-0.5">✕</span>
-                  Change the orange (#FF6B35) accent icon to any other color
+                  Change the orange (#D4AF7A) accent icon to any other color
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-red-500 font-bold mt-0.5">✕</span>

@@ -8,7 +8,7 @@ import { ArrowRight } from "lucide-react";
 export default function CaseStudyCTA() {
   return (
     <section className="relative py-20 md:py-28 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#1A2332] via-[#2A3342] to-[#FF6B35]" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#1A2332] via-[#2A3342] to-[#D4AF7A]" />
       <div className="absolute inset-0 opacity-5">
         <div
           className="absolute inset-0"

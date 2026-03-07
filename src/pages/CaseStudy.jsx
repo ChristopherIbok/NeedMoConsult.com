@@ -39,7 +39,7 @@ export default function CaseStudy() {
           </p>
           <Link
             to={createPageUrl("Portfolio")}
-            className="bg-[#FF6B35] text-white px-8 py-3 rounded-full font-semibold hover:bg-[#E55A2B] transition-colors"
+            className="bg-[#D4AF7A] text-white px-8 py-3 rounded-full font-semibold hover:bg-[#C49A5E] transition-colors"
           >
             Back to Portfolio
           </Link>
@@ -73,7 +73,7 @@ export default function CaseStudy() {
                       key={i}
                       className="bg-white dark:bg-[#1E2830] rounded-xl p-5"
                     >
-                      <div className="text-3xl font-bold text-[#FF6B35] mb-1">
+                      <div className="text-3xl font-bold text-[#D4AF7A] mb-1">
                         {r.metric}
                       </div>
                       <div className="font-semibold text-[#1A2332] dark:text-white text-sm">

@@ -41,7 +41,7 @@ export default function TestimonialsSection() {
           transition={{ delay: 1 }}
           className="text-center mb-16"
         >
-          <p className="text-[#FF6B35] text-sm font-semibold uppercase tracking-widest mb-4">
+          <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
             Client Success
           </p>
           <h2 className="text-3xl md:text-4xl font-bold text-[#1A2332] dark:text-white mb-4">
@@ -64,7 +64,7 @@ export default function TestimonialsSection() {
               whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.2 } }}
               className="bg-white dark:bg-[#1E2830] rounded-2xl p-6 md:p-8 shadow-lg shadow-black/5 dark:shadow-black/20 flex-shrink-0 w-[calc(100vw-56px)] sm:w-[340px] md:w-auto snap-start cursor-default hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30 transition-shadow duration-300"
             >
-              <Quote className="w-8 h-8 md:w-10 md:h-10 text-[#FF6B35] mb-4 md:mb-6" />
+              <Quote className="w-8 h-8 md:w-10 md:h-10 text-[#D4AF7A] mb-4 md:mb-6" />
 
               <p className="text-[#333333] dark:text-gray-300 leading-relaxed italic mb-5 text-sm md:text-base">
                 "{testimonial.quote}"
@@ -74,7 +74,7 @@ export default function TestimonialsSection() {
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className="w-4 h-4 text-[#FF6B35] fill-current"
+                    className="w-4 h-4 text-[#D4AF7A] fill-current"
                   />
                 ))}
               </div>

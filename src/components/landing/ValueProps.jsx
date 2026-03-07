@@ -39,9 +39,9 @@ export default function ValueProps() {
             >
               <motion.div
                 whileHover={{ scale: 1.1, rotate: 5 }}
-                className="inline-flex items-center justify-center w-16 h-16 mb-6 rounded-2xl bg-[#FF6B35]/10"
+                className="inline-flex items-center justify-center w-16 h-16 mb-6 rounded-2xl bg-[#D4AF7A]/10"
               >
-                <value.icon className="w-8 h-8 text-[#FF6B35]" />
+                <value.icon className="w-8 h-8 text-[#D4AF7A]" />
               </motion.div>
 
               <h3 className="text-xl font-bold text-[#1A2332] dark:text-white mb-4">

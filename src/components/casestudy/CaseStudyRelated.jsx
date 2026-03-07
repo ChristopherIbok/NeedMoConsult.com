@@ -61,7 +61,7 @@ export default function CaseStudyRelated({ relatedSlugs }) {
                   </div>
                 </div>
                 <div className="p-6">
-                  <p className="text-[#FF6B35] text-xs font-semibold uppercase tracking-wider mb-1">
+                  <p className="text-[#D4AF7A] text-xs font-semibold uppercase tracking-wider mb-1">
                     {cs.industry}
                   </p>
                   <h3 className="font-bold text-[#1A2332] dark:text-white text-lg mb-2">
@@ -72,7 +72,7 @@ export default function CaseStudyRelated({ relatedSlugs }) {
                   </p>
                   <Link
                     to={createPageUrl(`CaseStudy?slug=${cs.slug}`)}
-                    className="inline-flex items-center gap-1.5 text-[#FF6B35] text-sm font-semibold hover:underline"
+                    className="inline-flex items-center gap-1.5 text-[#D4AF7A] text-sm font-semibold hover:underline"
                   >
                     View Case Study <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
@@ -93,7 +93,7 @@ export default function CaseStudyRelated({ relatedSlugs }) {
               }}
               className={`w-2 h-2 rounded-full transition-all ${
                 i === current % related.length
-                  ? "bg-[#FF6B35] w-6"
+                  ? "bg-[#D4AF7A] w-6"
                   : "bg-gray-300 dark:bg-white/20"
               }`}
             />

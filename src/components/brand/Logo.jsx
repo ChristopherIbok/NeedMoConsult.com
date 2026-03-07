@@ -29,7 +29,7 @@ export function NMIcon({ size = 40, className = "" }) {
       aria-label="NEEDMO CONSULT icon"
     >
       {/* Background square with rounded corners */}
-      <rect width="40" height="40" rx="10" fill="#FF6B35" />
+      <rect width="40" height="40" rx="10" fill="#D4AF7A" />
 
       {/* N letterform */}
       <path d="M7 30V10H11L19 22V10H23V30H19L11 18V30H7Z" fill="white" />
@@ -65,7 +65,7 @@ function AccentDot({ className = "" }) {
       xmlns="http://www.w3.org/2000/svg"
       className={`inline-block ${className}`}
     >
-      <rect width="8" height="8" rx="2" fill="#FF6B35" />
+      <rect width="8" height="8" rx="2" fill="#D4AF7A" />
     </svg>
   );
 }
@@ -167,7 +167,7 @@ export function LogoBadge({ size = 120, className = "" }) {
         width: size,
         height: size,
         background:
-          "linear-gradient(135deg, #1A2332 0%, #2A3342 60%, #FF6B35 100%)",
+          "linear-gradient(135deg, #1A2332 0%, #2A3342 60%, #D4AF7A 100%)",
       }}
     >
       <div className="flex flex-col items-center">

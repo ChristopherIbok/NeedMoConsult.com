@@ -94,7 +94,7 @@ export default function NewsletterPopup() {
             className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
           >
             <div className="bg-white dark:bg-[#1A2332] rounded-3xl shadow-2xl w-full max-w-md pointer-events-auto overflow-hidden">
-              <div className="h-2 bg-gradient-to-r from-[#FF6B35] to-[#FF9A6C]" />
+              <div className="h-2 bg-gradient-to-r from-[#D4AF7A] to-[#FF9A6C]" />
 
               <div className="p-8 relative">
                 <button
@@ -106,8 +106,8 @@ export default function NewsletterPopup() {
 
                 {!done ? (
                   <>
-                    <div className="w-14 h-14 rounded-2xl bg-[#FF6B35]/10 flex items-center justify-center mb-5">
-                      <Mail className="w-7 h-7 text-[#FF6B35]" />
+                    <div className="w-14 h-14 rounded-2xl bg-[#D4AF7A]/10 flex items-center justify-center mb-5">
+                      <Mail className="w-7 h-7 text-[#D4AF7A]" />
                     </div>
 
                     <h2 className="text-2xl font-bold text-[#1A2332] dark:text-white mb-2">
@@ -135,7 +135,7 @@ export default function NewsletterPopup() {
                       />
                       <Button
                         type="submit"
-                        className="w-full h-11 bg-[#FF6B35] hover:bg-[#E55A2B] text-white font-semibold"
+                        className="w-full h-11 bg-[#D4AF7A] hover:bg-[#C49A5E] text-white font-semibold"
                         disabled={submitting}
                       >
                         {submitting ? "Subscribing..." : "Subscribe — It's Free"}

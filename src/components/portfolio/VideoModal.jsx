@@ -47,7 +47,7 @@ export default function VideoModal({ item, onClose }) {
             {/* Close button */}
             <button
               onClick={onClose}
-              className="absolute -top-12 right-0 text-white/70 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B35] rounded-full p-1"
+              className="absolute -top-12 right-0 text-white/70 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF7A] rounded-full p-1"
               aria-label="Close video"
             >
               <X className="w-7 h-7" />
@@ -67,7 +67,7 @@ export default function VideoModal({ item, onClose }) {
             {/* Info bar */}
             <div className="mt-4 bg-white/5 backdrop-blur rounded-xl px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <p className="text-[#FF6B35] text-xs font-semibold uppercase tracking-widest mb-0.5">
+                <p className="text-[#D4AF7A] text-xs font-semibold uppercase tracking-widest mb-0.5">
                   {item.client}
                 </p>
                 <h3 className="text-white font-bold text-lg leading-tight">

@@ -46,7 +46,7 @@ export default function CaseStudySidebar({ study }) {
               href={study.website}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm font-medium text-[#FF6B35] hover:underline"
+              className="text-sm font-medium text-[#D4AF7A] hover:underline"
             >
               {study.website.replace("https://", "")}
             </a>

@@ -21,7 +21,7 @@ export default function CaseStudyNav({ currentSlug }) {
             {prev ? (
               <Link
                 to={createPageUrl(`CaseStudy?slug=${prev.slug}`)}
-                className="flex items-center gap-2 text-sm text-[#555] dark:text-gray-400 hover:text-[#FF6B35] dark:hover:text-[#FF6B35] transition-colors group"
+                className="flex items-center gap-2 text-sm text-[#555] dark:text-gray-400 hover:text-[#D4AF7A] dark:hover:text-[#D4AF7A] transition-colors group"
               >
                 <ChevronLeft className="w-4 h-4 flex-shrink-0 group-hover:-translate-x-1 transition-transform" />
                 <span className="hidden sm:block truncate">{prev.client}</span>
@@ -34,7 +34,7 @@ export default function CaseStudyNav({ currentSlug }) {
           {/* Back to Portfolio */}
           <Link
             to={createPageUrl("Portfolio")}
-            className="flex items-center gap-2 px-5 py-2 bg-[#1A2332] dark:bg-white/10 text-white rounded-full text-sm font-medium hover:bg-[#FF6B35] transition-colors flex-shrink-0"
+            className="flex items-center gap-2 px-5 py-2 bg-[#1A2332] dark:bg-white/10 text-white rounded-full text-sm font-medium hover:bg-[#D4AF7A] transition-colors flex-shrink-0"
           >
             <LayoutGrid className="w-4 h-4" />
             <span className="hidden sm:inline">All Work</span>
@@ -45,7 +45,7 @@ export default function CaseStudyNav({ currentSlug }) {
             {next ? (
               <Link
                 to={createPageUrl(`CaseStudy?slug=${next.slug}`)}
-                className="flex items-center gap-2 text-sm text-[#555] dark:text-gray-400 hover:text-[#FF6B35] dark:hover:text-[#FF6B35] transition-colors group"
+                className="flex items-center gap-2 text-sm text-[#555] dark:text-gray-400 hover:text-[#D4AF7A] dark:hover:text-[#D4AF7A] transition-colors group"
               >
                 <span className="hidden sm:block truncate">{next.client}</span>
                 <ChevronRight className="w-4 h-4 flex-shrink-0 group-hover:translate-x-1 transition-transform" />

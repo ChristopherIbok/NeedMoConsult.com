@@ -10,7 +10,7 @@ export default function CaseStudyTestimonial({ testimonial }) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <div className="text-6xl text-[#FF6B35]/30 font-serif leading-none mb-4">
+          <div className="text-6xl text-[#D4AF7A]/30 font-serif leading-none mb-4">
             "
           </div>
           <blockquote className="text-xl md:text-2xl text-[#1A2332] dark:text-white italic leading-[1.8] mb-10 font-light">
@@ -21,7 +21,7 @@ export default function CaseStudyTestimonial({ testimonial }) {
             <img
               src={testimonial.avatar}
               alt={testimonial.name}
-              className="w-16 h-16 rounded-full object-cover border-2 border-[#FF6B35]/30"
+              className="w-16 h-16 rounded-full object-cover border-2 border-[#D4AF7A]/30"
             />
             <div className="text-left">
               <div className="font-bold text-[#1A2332] dark:text-white">
@@ -30,7 +30,7 @@ export default function CaseStudyTestimonial({ testimonial }) {
               <div className="text-sm text-[#555] dark:text-gray-400">
                 {testimonial.title}
               </div>
-              <div className="text-sm text-[#FF6B35] font-medium">
+              <div className="text-sm text-[#D4AF7A] font-medium">
                 {testimonial.company}
               </div>
             </div>
@@ -38,7 +38,7 @@ export default function CaseStudyTestimonial({ testimonial }) {
 
           <div className="mt-6 flex justify-center gap-1">
             {Array.from({ length: 5 }).map((_, i) => (
-              <span key={i} className="text-[#FF6B35] text-xl">
+              <span key={i} className="text-[#D4AF7A] text-xl">
                 ★
               </span>
             ))}

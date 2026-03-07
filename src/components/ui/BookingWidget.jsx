@@ -122,7 +122,7 @@ export default function BookingWidget() {
         <p className="text-gray-500 dark:text-gray-400 mb-2">
           Your call is scheduled for
         </p>
-        <p className="text-[#FF6B35] font-semibold text-lg mb-6">
+        <p className="text-[#D4AF7A] font-semibold text-lg mb-6">
           {formatDate(selectedDate)} at {selectedTime}
         </p>
         <p className="text-gray-500 dark:text-gray-400 text-sm">
@@ -147,7 +147,7 @@ export default function BookingWidget() {
   return (
     <div className="bg-white dark:bg-[#0F1419] rounded-3xl shadow-lg overflow-hidden">
       {/* Header */}
-      <div className="h-2 bg-gradient-to-r from-[#FF6B35] to-[#FF9A6C]" />
+      <div className="h-2 bg-gradient-to-r from-[#D4AF7A] to-[#FF9A6C]" />
       <div className="p-8">
         <h3 className="text-2xl font-bold text-[#1A2332] dark:text-white mb-2">
           Book a Free Strategy Call
@@ -163,7 +163,7 @@ export default function BookingWidget() {
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors ${
                   step >= s
-                    ? "bg-[#FF6B35] text-white"
+                    ? "bg-[#D4AF7A] text-white"
                     : "bg-gray-100 dark:bg-white/10 text-gray-400"
                 }`}
               >
@@ -185,7 +185,7 @@ export default function BookingWidget() {
             {/* Date Picker */}
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-4">
-                <Calendar className="w-4 h-4 text-[#FF6B35]" />
+                <Calendar className="w-4 h-4 text-[#D4AF7A]" />
                 <Label className="text-[#1A2332] dark:text-white font-medium">
                   Select a Date
                 </Label>
@@ -197,8 +197,8 @@ export default function BookingWidget() {
                     onClick={() => setSelectedDate(date)}
                     className={`p-2 rounded-xl text-center text-xs transition-all border ${
                       selectedDate?.toDateString() === date.toDateString()
-                        ? "bg-[#FF6B35] text-white border-[#FF6B35]"
-                        : "border-gray-200 dark:border-white/10 hover:border-[#FF6B35] text-[#1A2332] dark:text-white"
+                        ? "bg-[#D4AF7A] text-white border-[#D4AF7A]"
+                        : "border-gray-200 dark:border-white/10 hover:border-[#D4AF7A] text-[#1A2332] dark:text-white"
                     }`}
                   >
                     <p className="font-medium">
@@ -221,7 +221,7 @@ export default function BookingWidget() {
                 className="mb-8"
               >
                 <div className="flex items-center gap-2 mb-4">
-                  <Clock className="w-4 h-4 text-[#FF6B35]" />
+                  <Clock className="w-4 h-4 text-[#D4AF7A]" />
                   <Label className="text-[#1A2332] dark:text-white font-medium">
                     Select a Time
                   </Label>
@@ -233,8 +233,8 @@ export default function BookingWidget() {
                       onClick={() => setSelectedTime(time)}
                       className={`py-2 px-3 rounded-xl text-sm transition-all border ${
                         selectedTime === time
-                          ? "bg-[#FF6B35] text-white border-[#FF6B35]"
-                          : "border-gray-200 dark:border-white/10 hover:border-[#FF6B35] text-[#1A2332] dark:text-white"
+                          ? "bg-[#D4AF7A] text-white border-[#D4AF7A]"
+                          : "border-gray-200 dark:border-white/10 hover:border-[#D4AF7A] text-[#1A2332] dark:text-white"
                       }`}
                     >
                       {time}
@@ -247,7 +247,7 @@ export default function BookingWidget() {
             <Button
               onClick={() => setStep(2)}
               disabled={!selectedDate || !selectedTime}
-              className="w-full bg-[#FF6B35] hover:bg-[#E55A2B] text-white font-semibold h-12 disabled:opacity-40"
+              className="w-full bg-[#D4AF7A] hover:bg-[#C49A5E] text-white font-semibold h-12 disabled:opacity-40"
             >
               Continue
             </Button>
@@ -261,8 +261,8 @@ export default function BookingWidget() {
             className="space-y-4"
           >
             {/* Selected time summary */}
-            <div className="flex items-center gap-3 p-4 bg-[#FF6B35]/10 rounded-xl mb-6">
-              <Calendar className="w-5 h-5 text-[#FF6B35]" />
+            <div className="flex items-center gap-3 p-4 bg-[#D4AF7A]/10 rounded-xl mb-6">
+              <Calendar className="w-5 h-5 text-[#D4AF7A]" />
               <div>
                 <p className="text-sm font-semibold text-[#1A2332] dark:text-white">
                   {formatDate(selectedDate)} at {selectedTime}
@@ -271,7 +271,7 @@ export default function BookingWidget() {
               </div>
               <button
                 onClick={() => setStep(1)}
-                className="ml-auto text-xs text-[#FF6B35] hover:underline"
+                className="ml-auto text-xs text-[#D4AF7A] hover:underline"
               >
                 Change
               </button>
@@ -353,7 +353,7 @@ export default function BookingWidget() {
               <Button
                 onClick={handleSubmit}
                 disabled={!formData.name || !formData.email || submitting}
-                className="flex-1 h-12 bg-[#FF6B35] hover:bg-[#E55A2B] text-white font-semibold disabled:opacity-40"
+                className="flex-1 h-12 bg-[#D4AF7A] hover:bg-[#C49A5E] text-white font-semibold disabled:opacity-40"
               >
                 {submitting ? "Booking..." : "Confirm Booking"}
               </Button>

@@ -178,7 +178,7 @@ export default function Portfolio() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <p className="text-[#FF6B35] text-sm font-semibold uppercase tracking-widest mb-4">
+            <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
               Our Work
             </p>
             <h1 className="text-4xl md:text-5xl font-bold text-[#1A2332] dark:text-white mb-6">
@@ -204,7 +204,7 @@ export default function Portfolio() {
                 transition={{ delay: index * 0.1 }}
                 className="text-center"
               >
-                <stat.icon className="w-8 h-8 text-[#FF6B35] mx-auto mb-3" />
+                <stat.icon className="w-8 h-8 text-[#D4AF7A] mx-auto mb-3" />
                 <p className="text-3xl md:text-4xl font-bold text-[#1A2332] dark:text-white">
                   {stat.value}
                 </p>
@@ -228,8 +228,8 @@ export default function Portfolio() {
                 onClick={() => setActiveCategory(cat.id)}
                 className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
                   activeCategory === cat.id
-                    ? "bg-[#FF6B35] text-white"
-                    : "bg-white dark:bg-[#1E2830] text-[#333333] dark:text-gray-300 border border-gray-200 dark:border-[#2A3540] hover:border-[#FF6B35]"
+                    ? "bg-[#D4AF7A] text-white"
+                    : "bg-white dark:bg-[#1E2830] text-[#333333] dark:text-gray-300 border border-gray-200 dark:border-[#2A3540] hover:border-[#D4AF7A]"
                 }`}
               >
                 {cat.label}
@@ -282,7 +282,7 @@ export default function Portfolio() {
                     {item.type === "video" && (
                       <button
                         onClick={() => setSelectedItem(item)}
-                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-[#FF6B35] rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-lg"
+                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-[#D4AF7A] rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110 shadow-lg"
                       >
                         <Play className="w-6 h-6 text-white fill-white ml-1" />
                       </button>
@@ -290,7 +290,7 @@ export default function Portfolio() {
 
                     {/* Badges */}
                     {item.featured && (
-                      <Badge className="absolute top-4 left-4 bg-[#FF6B35] text-white">
+                      <Badge className="absolute top-4 left-4 bg-[#D4AF7A] text-white">
                         Featured
                       </Badge>
                     )}
@@ -301,7 +301,7 @@ export default function Portfolio() {
 
                   {/* Content */}
                   <div className="p-6">
-                    <p className="text-sm text-[#FF6B35] font-medium mb-1">
+                    <p className="text-sm text-[#D4AF7A] font-medium mb-1">
                       {item.client}
                     </p>
                     <h3 className="text-lg font-bold text-[#1A2332] dark:text-white mb-2">
@@ -312,12 +312,12 @@ export default function Portfolio() {
                         to={createPageUrl(
                           `CaseStudy?slug=${clientToSlug[item.client]}`
                         )}
-                        className="text-sm text-[#FF6B35] font-medium flex items-center gap-1 hover:underline"
+                        className="text-sm text-[#D4AF7A] font-medium flex items-center gap-1 hover:underline"
                       >
                         View Case Study <ExternalLink className="w-3 h-3" />
                       </Link>
                     ) : (
-                      <button className="text-sm text-[#FF6B35] font-medium flex items-center gap-1 hover:underline">
+                      <button className="text-sm text-[#D4AF7A] font-medium flex items-center gap-1 hover:underline">
                         View Details <ExternalLink className="w-3 h-3" />
                       </button>
                     )}
@@ -347,7 +347,7 @@ export default function Portfolio() {
             <Link to={createPageUrl("Contact")}>
               <Button
                 size="lg"
-                className="bg-[#FF6B35] hover:bg-[#E55A2B] text-white font-semibold px-8"
+                className="bg-[#D4AF7A] hover:bg-[#C49A5E] text-white font-semibold px-8"
               >
                 Start Your Project
                 <ArrowRight className="w-5 h-5 ml-2" />

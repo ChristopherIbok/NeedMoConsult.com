@@ -47,10 +47,10 @@ export default function HeroSection() {
 
       {/* Floating Background Shapes */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="floating-shape absolute w-64 h-64 rounded-full bg-[#FF6B35] opacity-[0.06] -top-16 -left-16" />
+        <div className="floating-shape absolute w-64 h-64 rounded-full bg-[#D4AF7A] opacity-[0.06] -top-16 -left-16" />
         <div className="floating-shape-reverse absolute w-48 h-48 rounded-full bg-[#1A2332] dark:bg-white opacity-[0.04] top-1/2 right-0 translate-x-1/2" />
         <div
-          className="floating-shape absolute w-32 h-32 rounded-full bg-[#FF6B35] opacity-[0.08] bottom-20 left-1/3"
+          className="floating-shape absolute w-32 h-32 rounded-full bg-[#D4AF7A] opacity-[0.08] bottom-20 left-1/3"
           style={{ animationDelay: "2s" }}
         />
       </div>
@@ -68,7 +68,7 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-[#FF6B35] text-xs sm:text-sm font-semibold uppercase tracking-widest"
+              className="text-[#D4AF7A] text-xs sm:text-sm font-semibold uppercase tracking-widest"
             >
               Serving clients in {region} and beyond
             </motion.p>
@@ -83,7 +83,7 @@ export default function HeroSection() {
               <br />
               <span className="relative">
                 Deserves More
-                <span className="absolute -bottom-2 left-0 w-full h-1 bg-[#FF6B35] rounded-full" />
+                <span className="absolute -bottom-2 left-0 w-full h-1 bg-[#D4AF7A] rounded-full" />
               </span>
               .
             </motion.h1>
@@ -109,7 +109,7 @@ export default function HeroSection() {
               <Link to={createPageUrl("Contact")} className="block">
                 <Button
                   size="lg"
-                  className="w-full sm:w-auto bg-[#FF6B35] hover:bg-[#E55A2B] active:scale-[0.98] text-white font-semibold px-8 py-4 text-base sm:text-lg transition-all min-h-[52px] btn-ripple"
+                  className="w-full sm:w-auto bg-[#D4AF7A] hover:bg-[#C49A5E] active:scale-[0.98] text-white font-semibold px-8 py-4 text-base sm:text-lg transition-all min-h-[52px] btn-ripple"
                 >
                   Book a Free Strategy Call
                   <ArrowRight className="ml-2 w-5 h-5" />
@@ -178,7 +178,7 @@ export default function HeroSection() {
                   ease: "easeInOut",
                   delay: 1,
                 }}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-gradient-to-br from-[#FF6B35] to-[#FF8F65] shadow-2xl shadow-orange-500/30"
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-gradient-to-br from-[#D4AF7A] to-[#E0C48A] shadow-2xl shadow-orange-500/30"
               />
 
               {/* Navy Circle */}
@@ -202,7 +202,7 @@ export default function HeroSection() {
                   ease: "easeInOut",
                   delay: 5,
                 }}
-                className="absolute bottom-32 left-10 w-20 h-20 rounded-full bg-[#FF6B35]/30"
+                className="absolute bottom-32 left-10 w-20 h-20 rounded-full bg-[#D4AF7A]/30"
               />
 
               {/* Content Card Preview */}
@@ -217,7 +217,7 @@ export default function HeroSection() {
                 className="absolute bottom-20 right-0 bg-white dark:bg-[#1E2830] rounded-2xl shadow-2xl p-6 w-64"
               >
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#FF6B35] to-[#FF8F65]" />
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#D4AF7A] to-[#E0C48A]" />
                   <div>
                     <p className="font-semibold text-[#1A2332] dark:text-white text-sm">
                       @needmoconsult
@@ -248,10 +248,10 @@ export default function HeroSection() {
                 className="absolute top-10 left-0 bg-white dark:bg-[#1E2830] rounded-2xl shadow-2xl p-5 w-48"
               >
                 <p className="text-xs text-gray-500 mb-1">Engagement Rate</p>
-                <p className="text-2xl font-bold text-[#FF6B35]">+250%</p>
+                <p className="text-2xl font-bold text-[#D4AF7A]">+250%</p>
                 <div className="flex items-center gap-1 mt-2">
                   <div className="w-full h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                    <div className="w-[85%] h-full bg-[#FF6B35] rounded-full" />
+                    <div className="w-[85%] h-full bg-[#D4AF7A] rounded-full" />
                   </div>
                 </div>
               </motion.div>
@@ -277,7 +277,7 @@ export default function HeroSection() {
           transition={{ duration: 1.5, repeat: Infinity }}
           className="w-6 h-10 border-2 border-[#1A2332]/30 dark:border-white/30 rounded-full flex items-start justify-center p-2"
         >
-          <div className="w-1 h-2 bg-[#FF6B35] rounded-full" />
+          <div className="w-1 h-2 bg-[#D4AF7A] rounded-full" />
         </motion.div>
       </motion.div>
     </section>

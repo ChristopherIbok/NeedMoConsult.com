@@ -30,7 +30,7 @@ export default function ContactCTA() {
   return (
     <section className="relative py-20 md:py-28 overflow-hidden">
       {/* Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#1A2332] via-[#2A3342] to-[#FF6B35] dark:from-[#0F1419] dark:via-[#1A2332] dark:to-[#E55A2B]" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#1A2332] via-[#2A3342] to-[#D4AF7A] dark:from-[#0F1419] dark:via-[#1A2332] dark:to-[#C49A5E]" />
 
       {/* Pattern Overlay */}
       <div className="absolute inset-0 opacity-5">

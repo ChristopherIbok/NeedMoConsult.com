@@ -36,9 +36,9 @@ export default function CaseStudyTimeline({ timeline }) {
                   transition={{ delay: i * 0.1 }}
                   className="relative pt-12"
                 >
-                  <div className="absolute top-3 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-[#FF6B35] border-4 border-white dark:border-[#1A2332] shadow-md z-10" />
+                  <div className="absolute top-3 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-[#D4AF7A] border-4 border-white dark:border-[#1A2332] shadow-md z-10" />
                   <div className="bg-white dark:bg-[#1E2830] rounded-xl p-5 shadow-sm">
-                    <div className="text-[#FF6B35] text-xs font-bold uppercase tracking-wider mb-1">
+                    <div className="text-[#D4AF7A] text-xs font-bold uppercase tracking-wider mb-1">
                       {phase.phase}
                     </div>
                     <h4 className="font-bold text-[#1A2332] dark:text-white mb-2 text-sm">
@@ -66,13 +66,13 @@ export default function CaseStudyTimeline({ timeline }) {
               className="flex gap-4"
             >
               <div className="flex flex-col items-center">
-                <div className="w-5 h-5 rounded-full bg-[#FF6B35] border-4 border-white dark:border-[#1A2332] shadow-md flex-shrink-0 mt-6" />
+                <div className="w-5 h-5 rounded-full bg-[#D4AF7A] border-4 border-white dark:border-[#1A2332] shadow-md flex-shrink-0 mt-6" />
                 {i < timeline.length - 1 && (
                   <div className="w-0.5 flex-1 bg-gray-200 dark:bg-white/10 my-1" />
                 )}
               </div>
               <div className="bg-white dark:bg-[#1E2830] rounded-xl p-5 shadow-sm mb-4 flex-1">
-                <div className="text-[#FF6B35] text-xs font-bold uppercase tracking-wider mb-1">
+                <div className="text-[#D4AF7A] text-xs font-bold uppercase tracking-wider mb-1">
                   {phase.phase}
                 </div>
                 <h4 className="font-bold text-[#1A2332] dark:text-white mb-2">

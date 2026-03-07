@@ -175,7 +175,7 @@ export default function Services() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <p className="text-[#FF6B35] text-sm font-semibold uppercase tracking-widest mb-4">
+            <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
               Our Services
             </p>
             <h1 className="text-4xl md:text-5xl font-bold text-[#1A2332] dark:text-white mb-6">
@@ -205,14 +205,14 @@ export default function Services() {
               >
                 {/* Content */}
                 <div className={index % 2 === 1 ? "lg:col-start-2" : ""}>
-                  <div className="w-14 h-14 rounded-2xl bg-[#FF6B35]/10 flex items-center justify-center mb-6">
-                    <service.icon className="w-7 h-7 text-[#FF6B35]" />
+                  <div className="w-14 h-14 rounded-2xl bg-[#D4AF7A]/10 flex items-center justify-center mb-6">
+                    <service.icon className="w-7 h-7 text-[#D4AF7A]" />
                   </div>
 
                   <h2 className="text-3xl md:text-4xl font-bold text-[#1A2332] dark:text-white mb-3">
                     {service.title}
                   </h2>
-                  <p className="text-lg text-[#FF6B35] font-medium mb-4">
+                  <p className="text-lg text-[#D4AF7A] font-medium mb-4">
                     {service.subtitle}
                   </p>
                   <p className="text-[#333333] dark:text-gray-400 leading-relaxed mb-8">
@@ -222,7 +222,7 @@ export default function Services() {
                   <ul className="grid sm:grid-cols-2 gap-3 mb-8">
                     {service.features.map((feature) => (
                       <li key={feature} className="flex items-start gap-3">
-                        <Check className="w-5 h-5 text-[#FF6B35] flex-shrink-0 mt-0.5" />
+                        <Check className="w-5 h-5 text-[#D4AF7A] flex-shrink-0 mt-0.5" />
                         <span className="text-sm text-[#333333] dark:text-gray-300">
                           {feature}
                         </span>
@@ -231,7 +231,7 @@ export default function Services() {
                   </ul>
 
                   <Link to={createPageUrl("Contact")}>
-                    <Button className="bg-[#FF6B35] hover:bg-[#E55A2B] text-white font-semibold">
+                    <Button className="bg-[#D4AF7A] hover:bg-[#C49A5E] text-white font-semibold">
                       Get Started
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
@@ -255,7 +255,7 @@ export default function Services() {
                           transition={{ delay: i * 0.1 }}
                           className="bg-white dark:bg-[#0F1419] rounded-2xl p-6 text-center shadow-lg"
                         >
-                          <sub.icon className="w-8 h-8 text-[#FF6B35] mx-auto mb-3" />
+                          <sub.icon className="w-8 h-8 text-[#D4AF7A] mx-auto mb-3" />
                           <p className="text-sm font-medium text-[#1A2332] dark:text-white">
                             {sub.name}
                           </p>
@@ -265,7 +265,7 @@ export default function Services() {
                   </div>
 
                   {/* Decorative */}
-                  <div className="absolute -top-4 -right-4 w-24 h-24 bg-[#FF6B35]/10 rounded-full blur-xl" />
+                  <div className="absolute -top-4 -right-4 w-24 h-24 bg-[#D4AF7A]/10 rounded-full blur-xl" />
                 </div>
               </motion.div>
             ))}
@@ -282,7 +282,7 @@ export default function Services() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <p className="text-[#FF6B35] text-sm font-semibold uppercase tracking-widest mb-4">
+            <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
               Our Process
             </p>
             <h2 className="text-3xl md:text-4xl font-bold text-[#1A2332] dark:text-white mb-4">
@@ -321,7 +321,7 @@ export default function Services() {
                 transition={{ delay: index * 0.1 }}
                 className="relative"
               >
-                <p className="text-6xl font-bold text-[#FF6B35]/20 mb-4">
+                <p className="text-6xl font-bold text-[#D4AF7A]/20 mb-4">
                   {item.step}
                 </p>
                 <h3 className="text-xl font-bold text-[#1A2332] dark:text-white mb-2">
@@ -331,7 +331,7 @@ export default function Services() {
                   {item.desc}
                 </p>
                 {index < 3 && (
-                  <div className="hidden md:block absolute top-8 right-0 w-1/2 border-t-2 border-dashed border-[#FF6B35]/30" />
+                  <div className="hidden md:block absolute top-8 right-0 w-1/2 border-t-2 border-dashed border-[#D4AF7A]/30" />
                 )}
               </motion.div>
             ))}

@@ -89,7 +89,7 @@ export default function VideoPlayer({
             onClick={handlePlay}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.97 }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#FF6B35] rounded-full"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#D4AF7A] rounded-full"
             aria-label={`Play video: ${title}`}
           >
             <svg
@@ -99,11 +99,11 @@ export default function VideoPlayer({
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <circle cx="36" cy="36" r="36" fill="#FF6B35" />
+              <circle cx="36" cy="36" r="36" fill="#D4AF7A" />
               <polygon points="28,20 28,52 54,36" fill="white" />
             </svg>
             {/* Pulse ring */}
-            <span className="absolute inset-0 rounded-full animate-ping bg-[#FF6B35]/30 pointer-events-none" />
+            <span className="absolute inset-0 rounded-full animate-ping bg-[#D4AF7A]/30 pointer-events-none" />
           </motion.button>
         </>
       ) : (

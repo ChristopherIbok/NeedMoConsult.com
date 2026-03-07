@@ -41,11 +41,11 @@ export default function CaseStudyStrategy({ strategy }) {
                 <span className="flex-1 text-lg font-semibold text-[#1A2332] dark:text-white">
                   {section.title}
                 </span>
-                <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 hover:bg-[#FF6B35]/10 transition-colors">
+                <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 hover:bg-[#D4AF7A]/10 transition-colors">
                   {open === i ? (
-                    <Minus className="w-4 h-4 text-[#FF6B35]" />
+                    <Minus className="w-4 h-4 text-[#D4AF7A]" />
                   ) : (
-                    <Plus className="w-4 h-4 text-[#FF6B35]" />
+                    <Plus className="w-4 h-4 text-[#D4AF7A]" />
                   )}
                 </div>
               </button>

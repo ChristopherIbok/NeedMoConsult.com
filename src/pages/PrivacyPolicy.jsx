@@ -58,7 +58,7 @@ export default function PrivacyPolicy() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center"
           >
-            <p className="text-[#FF6B35] text-sm font-semibold uppercase tracking-widest mb-4">
+            <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
               Legal
             </p>
             <h1 className="text-4xl md:text-5xl font-bold text-[#1A2332] dark:text-white mb-4">

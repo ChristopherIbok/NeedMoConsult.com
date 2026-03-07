@@ -63,9 +63,9 @@ export default function CaseStudyResults({ study }) {
                 <Line
                   type="monotone"
                   dataKey="followers"
-                  stroke="#FF6B35"
+                  stroke="#D4AF7A"
                   strokeWidth={3}
-                  dot={{ fill: "#FF6B35", r: 5 }}
+                  dot={{ fill: "#D4AF7A", r: 5 }}
                   activeDot={{ r: 7 }}
                 />
               </LineChart>
@@ -144,7 +144,7 @@ export default function CaseStudyResults({ study }) {
                     alt={post.caption}
                     className="w-full aspect-square object-cover"
                   />
-                  <div className="absolute top-3 left-3 w-8 h-8 bg-[#FF6B35] rounded-full flex items-center justify-center">
+                  <div className="absolute top-3 left-3 w-8 h-8 bg-[#D4AF7A] rounded-full flex items-center justify-center">
                     <span className="text-white text-xs font-bold">
                       #{post.rank}
                     </span>

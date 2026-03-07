@@ -181,7 +181,7 @@ export default function Pricing() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-3xl mx-auto"
           >
-            <p className="text-[#FF6B35] text-sm font-semibold uppercase tracking-widest mb-4">
+            <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
               Transparent Pricing
             </p>
             <h1 className="text-4xl md:text-5xl font-bold text-[#1A2332] dark:text-white mb-6">
@@ -209,14 +209,14 @@ export default function Pricing() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className={`relative bg-white dark:bg-[#1E2830] rounded-2xl p-6 border-2 transition-all duration-300 hover:border-[#FF6B35] ${
+                className={`relative bg-white dark:bg-[#1E2830] rounded-2xl p-6 border-2 transition-all duration-300 hover:border-[#D4AF7A] ${
                   pkg.popular
-                    ? "border-[#FF6B35] scale-[1.02] shadow-xl shadow-orange-500/10"
+                    ? "border-[#D4AF7A] scale-[1.02] shadow-xl shadow-orange-500/10"
                     : "border-gray-200 dark:border-[#2A3540]"
                 }`}
               >
                 {pkg.popular && (
-                  <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FF6B35] text-white px-4 py-1">
+                  <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#D4AF7A] text-white px-4 py-1">
                     <Star className="w-3 h-3 mr-1 fill-current" />
                     Most Popular
                   </Badge>
@@ -250,7 +250,7 @@ export default function Pricing() {
                     <ul className="space-y-2.5">
                       {pkg.features.map((feature) => (
                         <li key={feature} className="flex items-start gap-2.5">
-                          <Check className="w-4 h-4 text-[#FF6B35] flex-shrink-0 mt-0.5" />
+                          <Check className="w-4 h-4 text-[#D4AF7A] flex-shrink-0 mt-0.5" />
                           <span className="text-sm text-[#333333] dark:text-gray-300">
                             {feature}
                           </span>
@@ -287,7 +287,7 @@ export default function Pricing() {
                   <Button
                     className={`w-full font-semibold transition-all hover:scale-[1.02] ${
                       pkg.popular
-                        ? "bg-[#FF6B35] hover:bg-[#E55A2B] text-white"
+                        ? "bg-[#D4AF7A] hover:bg-[#C49A5E] text-white"
                         : "bg-[#1A2332] hover:bg-[#2A3342] text-white dark:bg-white dark:text-[#1A2332] dark:hover:bg-gray-100"
                     }`}
                   >
@@ -310,7 +310,7 @@ export default function Pricing() {
             </p>
             <Link
               to={createPageUrl("Contact")}
-              className="text-[#FF6B35] font-medium hover:underline inline-flex items-center gap-1"
+              className="text-[#D4AF7A] font-medium hover:underline inline-flex items-center gap-1"
             >
               Contact us for custom pricing
               <ArrowRight className="w-4 h-4" />
@@ -328,7 +328,7 @@ export default function Pricing() {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <HelpCircle className="w-10 h-10 text-[#FF6B35] mx-auto mb-4" />
+            <HelpCircle className="w-10 h-10 text-[#D4AF7A] mx-auto mb-4" />
             <h2 className="text-3xl md:text-4xl font-bold text-[#1A2332] dark:text-white mb-4">
               Frequently Asked Questions
             </h2>

@@ -155,7 +155,7 @@ export const caseStudies = [
     ],
     engagementData: [
       { label: "Before", value: 1.8, color: "#94a3b8" },
-      { label: "After", value: 8.5, color: "#FF6B35" },
+      { label: "After", value: 8.5, color: "#D4AF7A" },
     ],
     topPosts: [
       {
@@ -377,7 +377,7 @@ export const caseStudies = [
     ],
     engagementData: [
       { label: "Before", value: 0, color: "#94a3b8" },
-      { label: "After", value: 12.4, color: "#FF6B35" },
+      { label: "After", value: 12.4, color: "#D4AF7A" },
     ],
     topPosts: [
       {
@@ -550,7 +550,7 @@ export const caseStudies = [
     ],
     engagementData: [
       { label: "Before", value: 2.1, color: "#94a3b8" },
-      { label: "After", value: 7.9, color: "#FF6B35" },
+      { label: "After", value: 7.9, color: "#D4AF7A" },
     ],
     topPosts: [
       {

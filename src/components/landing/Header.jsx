@@ -65,10 +65,10 @@ export default function Header() {
                 <Link
                   key={item.name}
                   to={createPageUrl(item.page)}
-                  className="text-sm font-medium text-[#333333] dark:text-gray-300 hover:text-[#FF6B35] dark:hover:text-[#FF6B35] transition-colors relative group"
+                  className="text-sm font-medium text-[#333333] dark:text-gray-300 hover:text-[#D4AF7A] dark:hover:text-[#D4AF7A] transition-colors relative group"
                 >
                   {item.name}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#FF6B35] transition-all group-hover:w-full" />
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#D4AF7A] transition-all group-hover:w-full" />
                 </Link>
               ))}
             </nav>
@@ -108,7 +108,7 @@ export default function Header() {
               </motion.button>
 
               <Link to={createPageUrl("Contact")} className="hidden md:block">
-                <Button className="bg-[#FF6B35] hover:bg-[#E55A2B] text-white font-semibold px-6 transition-all hover:scale-105 btn-ripple">
+                <Button className="bg-[#D4AF7A] hover:bg-[#C49A5E] text-white font-semibold px-6 transition-all hover:scale-105 btn-ripple">
                   Book Free Strategy Call
                 </Button>
               </Link>
@@ -182,7 +182,7 @@ export default function Header() {
     color: menuText,
     borderBottom: `1px solid ${menuBorder}`,
   }}
-  onMouseEnter={e => e.currentTarget.style.color = "#FF6B35"}
+  onMouseEnter={e => e.currentTarget.style.color = "#D4AF7A"}
   onMouseLeave={e => e.currentTarget.style.color = menuText}
 >
   {item.name}
@@ -197,7 +197,7 @@ export default function Header() {
                 to={createPageUrl("Contact")}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <Button className="w-full bg-[#FF6B35] hover:bg-[#E55A2B] text-white font-bold py-4 text-lg min-h-[56px] active:scale-[0.98] transition-transform">
+                <Button className="w-full bg-[#D4AF7A] hover:bg-[#C49A5E] text-white font-bold py-4 text-lg min-h-[56px] active:scale-[0.98] transition-transform">
                   Book Free Strategy Call
                 </Button>
               </Link>

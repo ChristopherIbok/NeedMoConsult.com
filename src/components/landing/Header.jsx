@@ -39,87 +39,89 @@ export default function Header() {
   }, [mobileMenuOpen]);
 
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 w-full transition-all duration-300 ${
-        isScrolled
-          ? "bg-white/90 dark:bg-[#0F1419]/90 backdrop-blur-md shadow-lg"
-          : "bg-transparent"
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Logo */}
-          <Link to={createPageUrl("Home")} className="flex items-center">
-            <LogoHorizontal size="md" />
-          </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                to={createPageUrl(item.page)}
-                className="text-sm font-medium text-[#333333] dark:text-gray-300 hover:text-[#FF6B35] dark:hover:text-[#FF6B35] transition-colors relative group"
-              >
-                {item.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#FF6B35] transition-all group-hover:w-full" />
-              </Link>
-            ))}
-          </nav>
-
-          {/* Right Section */}
-          <div className="flex items-center gap-2">
-            <motion.button
-              onClick={toggleTheme}
-              whileTap={{ rotate: 180, scale: 0.85 }}
-              transition={{ duration: 0.3 }}
-              className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-              aria-label="Toggle theme"
-            >
-              <AnimatePresence mode="wait" initial={false}>
-                {theme === "light" ? (
-                  <motion.span
-                    key="moon"
-                    initial={{ rotate: -90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: 90, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Moon className="w-5 h-5 text-[#1A2332]" />
-                  </motion.span>
-                ) : (
-                  <motion.span
-                    key="sun"
-                    initial={{ rotate: 90, opacity: 0 }}
-                    animate={{ rotate: 0, opacity: 1 }}
-                    exit={{ rotate: -90, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Sun className="w-5 h-5 text-white" />
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </motion.button>
-
-            <Link to={createPageUrl("Contact")} className="hidden md:block">
-              <Button className="bg-[#FF6B35] hover:bg-[#E55A2B] text-white font-semibold px-6 transition-all hover:scale-105 btn-ripple">
-                Book Free Strategy Call
-              </Button>
+    <>
+      <header
+        className={`fixed inset-x-0 top-0 z-50 w-full transition-all duration-300 ${
+          isScrolled
+            ? "bg-white/90 dark:bg-[#0F1419]/90 backdrop-blur-md shadow-lg"
+            : "bg-transparent"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 md:h-20">
+            {/* Logo */}
+            <Link to={createPageUrl("Home")} className="flex items-center">
+              <LogoHorizontal size="md" />
             </Link>
 
-            {/* Mobile Menu Button - 44x44px touch target */}
-            <button
-              onClick={() => setMobileMenuOpen(true)}
-              className="lg:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg transition-colors"
-              aria-label="Open menu"
-            >
-              <Menu className="w-6 h-6 text-[#1A2332] dark:text-white" />
-            </button>
+            {/* Desktop Navigation */}
+            <nav className="hidden lg:flex items-center gap-8">
+              {navItems.map((item) => (
+                <Link
+                  key={item.name}
+                  to={createPageUrl(item.page)}
+                  className="text-sm font-medium text-[#333333] dark:text-gray-300 hover:text-[#FF6B35] dark:hover:text-[#FF6B35] transition-colors relative group"
+                >
+                  {item.name}
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#FF6B35] transition-all group-hover:w-full" />
+                </Link>
+              ))}
+            </nav>
+
+            {/* Right Section */}
+            <div className="flex items-center gap-2">
+              <motion.button
+                onClick={toggleTheme}
+                whileTap={{ rotate: 180, scale: 0.85 }}
+                transition={{ duration: 0.3 }}
+                className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                aria-label="Toggle theme"
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  {theme === "light" ? (
+                    <motion.span
+                      key="moon"
+                      initial={{ rotate: -90, opacity: 0 }}
+                      animate={{ rotate: 0, opacity: 1 }}
+                      exit={{ rotate: 90, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Moon className="w-5 h-5 text-[#1A2332]" />
+                    </motion.span>
+                  ) : (
+                    <motion.span
+                      key="sun"
+                      initial={{ rotate: 90, opacity: 0 }}
+                      animate={{ rotate: 0, opacity: 1 }}
+                      exit={{ rotate: -90, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Sun className="w-5 h-5 text-white" />
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </motion.button>
+
+              <Link to={createPageUrl("Contact")} className="hidden md:block">
+                <Button className="bg-[#FF6B35] hover:bg-[#E55A2B] text-white font-semibold px-6 transition-all hover:scale-105 btn-ripple">
+                  Book Free Strategy Call
+                </Button>
+              </Link>
+
+              {/* Mobile Menu Button - 44x44px touch target */}
+              <button
+                onClick={() => setMobileMenuOpen(true)}
+                className="lg:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg transition-colors"
+                aria-label="Open menu"
+              >
+                <Menu className="w-6 h-6 text-[#1A2332] dark:text-white" />
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Mobile Full-Screen Overlay Menu */}
+      {/* Mobile Full-Screen Overlay Menu — outside <header> to avoid backdrop-blur stacking context */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -127,7 +129,7 @@ export default function Header() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="fixed inset-0 z-[60] lg:hidden" /* below header z-50 */
+            className="fixed inset-0 z-[60] lg:hidden"
             style={{ backgroundColor: "rgba(26, 35, 50, 0.97)" }}
           >
             {/* Top bar */}
@@ -191,6 +193,6 @@ export default function Header() {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </>
   );
 }

@@ -175,16 +175,18 @@ export default function Header() {
                   transition={{ delay: i * 0.06 }}
                 >
                   <Link
-                    to={createPageUrl(item.page)}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block py-4 text-2xl font-bold transition-colors active:scale-[0.98] hover:text-[#FF6B35]"
-                    style={{
-                      color: menuText,
-                      borderBottom: `1px solid ${menuBorder}`,
-                    }}
-                  >
-                    {item.name}
-                  </Link>
+  to={createPageUrl(item.page)}
+  onClick={() => setMobileMenuOpen(false)}
+  className="block py-4 text-2xl font-bold transition-colors active:scale-[0.98]"
+  style={{
+    color: menuText,
+    borderBottom: `1px solid ${menuBorder}`,
+  }}
+  onMouseEnter={e => e.currentTarget.style.color = "#FF6B35"}
+  onMouseLeave={e => e.currentTarget.style.color = menuText}
+>
+  {item.name}
+</Link>
                 </motion.div>
               ))}
             </nav>

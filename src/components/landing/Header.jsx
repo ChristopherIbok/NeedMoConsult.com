@@ -24,18 +24,23 @@ export default function Header() {
   const { theme, toggleTheme } = useTheme();
   const isMobile = useIsMobile();
 
+  const isDark = theme === "dark";
+
+  // Menu colors based on theme
+  const menuBg       = isDark ? "rgba(26, 35, 50, 0.97)" : "#F7F7F7";
+  const menuText     = isDark ? "#FFFFFF" : "#1A2332";
+  const menuMuted    = isDark ? "rgba(255,255,255,0.5)" : "rgba(26,35,50,0.5)";
+  const menuBorder   = isDark ? "rgba(255,255,255,0.1)" : "rgba(26,35,50,0.1)";
+
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // lock background scrolling when mobile menu open
   useEffect(() => {
     document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = ""; };
   }, [mobileMenuOpen]);
 
   return (
@@ -108,7 +113,7 @@ export default function Header() {
                 </Button>
               </Link>
 
-              {/* Mobile Menu Button - 44x44px touch target */}
+              {/* Mobile Menu Button */}
               <button
                 onClick={() => setMobileMenuOpen(true)}
                 className="lg:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg transition-colors"
@@ -121,7 +126,7 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Mobile Full-Screen Overlay Menu — outside <header> to avoid backdrop-blur stacking context */}
+      {/* Mobile Full-Screen Overlay — outside <header> to escape backdrop-blur stacking context */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -130,28 +135,29 @@ export default function Header() {
             exit={{ x: "100%" }}
             transition={{ duration: 0.3, ease: "easeOut" }}
             className="fixed inset-0 z-[60] lg:hidden"
-            style={{ backgroundColor: "rgba(26, 35, 50, 0.97)" }}
+            style={{ backgroundColor: menuBg }}
           >
             {/* Top bar */}
-            <div className="flex items-center justify-between px-6 h-16">
-              <LogoHorizontal size="md" forceLight />
+            <div
+              className="flex items-center justify-between px-6 h-16"
+              style={{ borderBottom: `1px solid ${menuBorder}` }}
+            >
+              <LogoHorizontal size="md" forceLight={isDark} forceDark={!isDark} />
               <div className="flex items-center gap-2">
-                {/* Dark mode toggle in menu */}
+                {/* Theme toggle */}
                 <button
                   onClick={toggleTheme}
-                  className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full text-white/70 hover:text-white transition-colors"
+                  className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full transition-colors"
+                  style={{ color: menuMuted }}
                   aria-label="Toggle theme"
                 >
-                  {theme === "light" ? (
-                    <Moon className="w-5 h-5" />
-                  ) : (
-                    <Sun className="w-5 h-5" />
-                  )}
+                  {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                 </button>
-                {/* Close X */}
+                {/* Close */}
                 <button
                   onClick={() => setMobileMenuOpen(false)}
-                  className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full text-white hover:text-[#FF6B35] transition-colors"
+                  className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full transition-colors"
+                  style={{ color: menuText }}
                   aria-label="Close menu"
                 >
                   <X className="w-6 h-6" />
@@ -160,7 +166,7 @@ export default function Header() {
             </div>
 
             {/* Nav Links */}
-            <nav className="flex flex-col px-8 pt-8 gap-2 flex-1">
+            <nav className="flex flex-col px-8 pt-8 gap-2">
               {navItems.map((item, i) => (
                 <motion.div
                   key={item.name}
@@ -171,7 +177,11 @@ export default function Header() {
                   <Link
                     to={createPageUrl(item.page)}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="block py-4 text-2xl font-bold text-white hover:text-[#FF6B35] border-b border-white/10 transition-colors active:scale-[0.98]"
+                    className="block py-4 text-2xl font-bold transition-colors active:scale-[0.98] hover:text-[#FF6B35]"
+                    style={{
+                      color: menuText,
+                      borderBottom: `1px solid ${menuBorder}`,
+                    }}
                   >
                     {item.name}
                   </Link>

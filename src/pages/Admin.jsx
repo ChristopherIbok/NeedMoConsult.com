@@ -80,6 +80,7 @@ export default function Admin() {
     articleTitle: "",
     articleBody: "",
     articleUrl: "",
+    pullQuote: "",
     offerTitle: "",
     offerBody: "",
     offerUrl: "https://needmoconsult.com/Contact",
@@ -301,6 +302,9 @@ export default function Admin() {
                     <Field label="Article URL">
                       <input value={form.articleUrl} onChange={e => set("articleUrl", e.target.value)} placeholder="https://needmoconsult.com/blog/..." />
                     </Field>
+                    <Field label="Pull Quote (optional)">
+                      <input value={form.pullQuote} onChange={e => set("pullQuote", e.target.value)} placeholder="e.g. Your audience doesn't need more content. They need better content." />
+                    </Field>
                   </Card>
 
                   {/* Tips */}
@@ -471,66 +475,141 @@ function Field({ label, children }) {
 // ─── Inline Newsletter Preview ────────────────────────────────────────────────
 function NewsletterPreview({ form, tips }) {
   const date = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  const year = new Date().getFullYear();
   const activeTips = tips.filter(t => t.title);
 
   return (
-    <div style={{ fontFamily: "Arial,sans-serif", backgroundColor: "#F2F2F0", padding: "20px 16px" }}>
-      <div style={{ maxWidth: 600, margin: "0 auto", backgroundColor: "#fff", borderRadius: 16, overflow: "hidden" }}>
-        <div style={{ background: "linear-gradient(90deg,#1A2332,#D4AF7A)", height: 5 }} />
-        <div style={{ backgroundColor: "#1A2332", padding: "24px 32px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-            <img src="https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Light.svg" alt="NEEDMO" height={30} style={{ height: 30 }} />
-            <div style={{ textAlign: "right" }}>
-              <p style={{ margin: 0, fontSize: 10, color: "#D4AF7A", textTransform: "uppercase", letterSpacing: 2 }}>Weekly Insights</p>
-              <p style={{ margin: "3px 0 0", fontSize: 10, color: "rgba(255,255,255,0.4)" }}>{date} · Issue #{form.issue || "001"}</p>
-            </div>
+    <div style={{ fontFamily: "Arial,sans-serif", backgroundColor: "#EBEBEB", padding: "20px 16px" }}>
+      <div style={{ maxWidth: 600, margin: "0 auto", backgroundColor: "#fff" }}>
+
+        {/* Top Bar */}
+        <div style={{ backgroundColor: "#1A2332" }}>
+          <div style={{ background: "linear-gradient(90deg,#D4AF7A 0%,#C49A5E 50%,#1A2332 100%)", height: 4 }} />
+          <div style={{ padding: "18px 32px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <img src="https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Light.svg" alt="NEEDMO" height={28} style={{ height: 28 }} />
+            <p style={{ margin: 0, fontSize: 10, color: "rgba(255,255,255,0.4)", letterSpacing: 1.5, textTransform: "uppercase" }}>
+              Weekly Insights · Issue #{form.issue || "001"} · {date}
+            </p>
           </div>
-          <p style={{ margin: "0 0 10px", fontSize: 10, color: "#D4AF7A", textTransform: "uppercase", letterSpacing: 3, fontWeight: 700 }}>This Week</p>
-          <h1 style={{ margin: "0 0 12px", fontSize: 24, fontWeight: 800, color: "#fff", lineHeight: 1.2 }}>{form.heroTitle || "Your Newsletter Headline"}</h1>
-          <p style={{ margin: 0, fontSize: 13, color: "rgba(255,255,255,0.6)", lineHeight: 1.7 }}>{form.heroIntro || "Intro text will appear here."}</p>
         </div>
-        <div style={{ backgroundColor: "#1A2332", padding: "0 32px 24px" }}>
-          <div style={{ height: 1, backgroundColor: "rgba(212,175,122,0.2)" }} />
+
+        {/* Hero */}
+        <div style={{ backgroundColor: "#1A2332", padding: "0 32px 40px" }}>
+          <p style={{ margin: "0 0 14px", fontSize: 10, fontWeight: 700, color: "#D4AF7A", textTransform: "uppercase", letterSpacing: 4 }}>This Week's Edition</p>
+          <h1 style={{ margin: "0 0 16px", fontSize: 28, fontWeight: 900, color: "#fff", lineHeight: 1.15, letterSpacing: -0.5 }}>{form.heroTitle || "Your Newsletter Headline"}</h1>
+          <div style={{ width: 40, height: 3, backgroundColor: "#D4AF7A", marginBottom: 16, borderRadius: 2 }} />
+          <p style={{ margin: "0 0 24px", fontSize: 14, color: "rgba(255,255,255,0.7)", lineHeight: 1.75 }}>{form.heroIntro || "Intro text will appear here."}</p>
+          <a href="https://needmoconsult.com/Contact" style={{ display: "inline-block", backgroundColor: "#D4AF7A", color: "#1A2332", fontSize: 13, fontWeight: 800, textDecoration: "none", padding: "12px 28px", borderRadius: 4 }}>Book a Free Strategy Call →</a>
         </div>
+
+        {/* Intro Strip */}
+        <div style={{ backgroundColor: "#F8F6F2", borderTop: "3px solid #D4AF7A", borderBottom: "1px solid #E8E4DC", padding: "16px 32px" }}>
+          <p style={{ margin: 0, fontSize: 12, color: "#888", lineHeight: 1.6, fontStyle: "italic" }}>
+            👋 You're receiving this because you subscribed at needmoconsult.com. Every week we share actionable tips, case studies and exclusive offers.
+          </p>
+        </div>
+
+        {/* Featured Article */}
         {form.articleTitle && (
-          <div style={{ padding: "28px 32px 0" }}>
-            <p style={{ margin: "0 0 6px", fontSize: 10, color: "#D4AF7A", textTransform: "uppercase", letterSpacing: 3, fontWeight: 700 }}>Featured Article</p>
-            <h2 style={{ margin: "0 0 10px", fontSize: 18, fontWeight: 800, color: "#1A2332" }}>{form.articleTitle}</h2>
-            <p style={{ margin: "0 0 16px", fontSize: 13, color: "#555", lineHeight: 1.7 }}>{form.articleBody}</p>
-            {form.articleUrl && <a href={form.articleUrl} style={{ display: "inline-block", border: "2px solid #D4AF7A", color: "#D4AF7A", fontSize: 12, fontWeight: 700, textDecoration: "none", padding: "8px 20px", borderRadius: 50 }}>Read Full Article →</a>}
+          <div style={{ padding: "32px 32px 0" }}>
+            <div style={{ borderLeft: "3px solid #D4AF7A", paddingLeft: 12, marginBottom: 16 }}>
+              <p style={{ margin: "0 0 2px", fontSize: 10, fontWeight: 700, color: "#D4AF7A", textTransform: "uppercase", letterSpacing: 4 }}>Featured Article</p>
+              <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: "#1A2332", lineHeight: 1.3 }}>{form.articleTitle}</h2>
+            </div>
+            <p style={{ margin: "0 0 20px", fontSize: 14, color: "#444", lineHeight: 1.8 }}>{form.articleBody}</p>
+            {form.pullQuote && (
+              <div style={{ borderLeft: "4px solid #D4AF7A", backgroundColor: "#F8F6F2", padding: "14px 18px", marginBottom: 20, borderRadius: "0 4px 4px 0" }}>
+                <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: "#1A2332", fontStyle: "italic", lineHeight: 1.5 }}>"{form.pullQuote}"</p>
+              </div>
+            )}
+            {form.articleUrl && <a href={form.articleUrl} style={{ display: "inline-block", border: "2px solid #1A2332", color: "#1A2332", fontSize: 12, fontWeight: 700, textDecoration: "none", padding: "8px 20px", borderRadius: 4 }}>Read Full Article →</a>}
           </div>
         )}
+
+        {/* Tips */}
         {activeTips.length > 0 && (
-          <div style={{ padding: "24px 32px 0" }}>
-            <div style={{ height: 1, backgroundColor: "#F0F0F0", marginBottom: 24 }} />
-            <p style={{ margin: "0 0 6px", fontSize: 10, color: "#D4AF7A", textTransform: "uppercase", letterSpacing: 3, fontWeight: 700 }}>Quick Tips</p>
-            <h2 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 800, color: "#1A2332" }}>Actionable Insights For This Week</h2>
+          <div style={{ padding: "28px 32px 0" }}>
+            <div style={{ height: 1, backgroundColor: "#EEE", marginBottom: 24 }} />
+            <div style={{ borderLeft: "3px solid #D4AF7A", paddingLeft: 12, marginBottom: 20 }}>
+              <p style={{ margin: "0 0 2px", fontSize: 10, fontWeight: 700, color: "#D4AF7A", textTransform: "uppercase", letterSpacing: 4 }}>Quick Tips</p>
+              <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: "#1A2332" }}>Actionable Insights For This Week</h2>
+            </div>
             {activeTips.map((tip, i) => (
-              <div key={i} style={{ display: "flex", gap: 12, marginBottom: 12 }}>
-                <div style={{ width: 26, height: 26, backgroundColor: "#1A2332", borderRadius: 7, textAlign: "center", lineHeight: "26px", fontSize: 11, fontWeight: 800, color: "#D4AF7A", flexShrink: 0 }}>{String(i + 1).padStart(2, "0")}</div>
+              <div key={i} style={{ display: "flex", gap: 14, paddingBottom: 14, borderBottom: i < activeTips.length - 1 ? "1px solid #F0F0F0" : "none", marginBottom: i < activeTips.length - 1 ? 14 : 0 }}>
+                <div style={{ width: 30, height: 30, backgroundColor: "#1A2332", borderRadius: 4, textAlign: "center", lineHeight: "30px", fontSize: 10, fontWeight: 900, color: "#D4AF7A", flexShrink: 0 }}>{String(i + 1).padStart(2, "0")}</div>
                 <div>
-                  <p style={{ margin: "0 0 3px", fontSize: 13, fontWeight: 700, color: "#1A2332" }}>{tip.title}</p>
-                  <p style={{ margin: 0, fontSize: 12, color: "#777", lineHeight: 1.5 }}>{tip.desc}</p>
+                  <p style={{ margin: "0 0 4px", fontSize: 13, fontWeight: 700, color: "#1A2332" }}>{tip.title}</p>
+                  <p style={{ margin: 0, fontSize: 12, color: "#666", lineHeight: 1.65 }}>{tip.desc}</p>
                 </div>
               </div>
             ))}
           </div>
         )}
+
+        {/* Stat Strip */}
+        <div style={{ padding: "28px 32px" }}>
+          <div style={{ height: 1, backgroundColor: "#EEE", marginBottom: 24 }} />
+          <div style={{ display: "flex", gap: 8 }}>
+            {[{ val: "50+", label: "Happy Clients", dark: false }, { val: "3M+", label: "People Reached", dark: true }, { val: "500+", label: "Posts Created", dark: false }].map((s, i) => (
+              <div key={i} style={{ flex: 1, textAlign: "center", padding: "14px 8px", backgroundColor: s.dark ? "#1A2332" : "#F8F6F2", borderRadius: 4 }}>
+                <p style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 900, color: s.dark ? "#D4AF7A" : "#1A2332", lineHeight: 1 }}>{s.val}</p>
+                <p style={{ margin: 0, fontSize: 10, color: s.dark ? "rgba(255,255,255,0.5)" : "#999", textTransform: "uppercase", letterSpacing: 1 }}>{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Offer */}
         {form.offerTitle && (
-          <div style={{ padding: "24px 32px" }}>
-            <div style={{ height: 1, backgroundColor: "#F0F0F0", marginBottom: 24 }} />
-            <div style={{ backgroundColor: "#1A2332", borderRadius: 12, padding: 24 }}>
-              <p style={{ margin: "0 0 6px", fontSize: 10, color: "#D4AF7A", textTransform: "uppercase", letterSpacing: 3, fontWeight: 700 }}>Exclusive Offer</p>
-              <h2 style={{ margin: "0 0 10px", fontSize: 18, fontWeight: 800, color: "#fff" }}>{form.offerTitle}</h2>
-              <p style={{ margin: "0 0 18px", fontSize: 13, color: "rgba(255,255,255,0.6)", lineHeight: 1.7 }}>{form.offerBody}</p>
-              <a href={form.offerUrl} style={{ display: "inline-block", backgroundColor: "#D4AF7A", color: "#1A2332", fontSize: 13, fontWeight: 800, textDecoration: "none", padding: "12px 28px", borderRadius: 50 }}>{form.offerLabel} →</a>
+          <div style={{ padding: "0 32px 32px" }}>
+            <div style={{ backgroundColor: "#1A2332", borderRadius: 6, overflow: "hidden" }}>
+              <div style={{ background: "linear-gradient(90deg,#D4AF7A,#C49A5E)", height: 3 }} />
+              <div style={{ padding: "28px 28px" }}>
+                <p style={{ margin: "0 0 8px", fontSize: 10, fontWeight: 700, color: "#D4AF7A", textTransform: "uppercase", letterSpacing: 4 }}>🎯 Exclusive Subscriber Offer</p>
+                <h2 style={{ margin: "0 0 10px", fontSize: 18, fontWeight: 900, color: "#fff", lineHeight: 1.25 }}>{form.offerTitle}</h2>
+                <p style={{ margin: "0 0 20px", fontSize: 13, color: "rgba(255,255,255,0.65)", lineHeight: 1.75 }}>{form.offerBody}</p>
+                <a href={form.offerUrl} style={{ display: "inline-block", backgroundColor: "#D4AF7A", color: "#1A2332", fontSize: 13, fontWeight: 800, textDecoration: "none", padding: "12px 28px", borderRadius: 4 }}>{form.offerLabel} →</a>
+              </div>
             </div>
           </div>
         )}
-        <div style={{ backgroundColor: "#1A2332", padding: "20px 32px", textAlign: "center" }}>
-          <p style={{ margin: "0 0 4px", fontSize: 11, color: "#D4AF7A", fontWeight: 600 }}>NEEDMO CONSULT</p>
-          <p style={{ margin: 0, fontSize: 10, color: "rgba(255,255,255,0.3)" }}>© {new Date().getFullYear()} · needmoconsult.com · <a href="#" style={{ color: "rgba(255,255,255,0.3)" }}>Unsubscribe</a></p>
+
+        {/* Sign-off */}
+        <div style={{ padding: "0 32px 32px" }}>
+          <div style={{ height: 1, backgroundColor: "#EEE", marginBottom: 24 }} />
+          <p style={{ margin: "0 0 4px", fontSize: 14, color: "#444" }}>Until next week,</p>
+          <p style={{ margin: "0 0 12px", fontSize: 20, fontWeight: 900, color: "#1A2332", letterSpacing: -0.5 }}>Kriz</p>
+          <p style={{ margin: "0 0 2px", fontSize: 12, fontWeight: 700, color: "#1A2332" }}>Founder, NEEDMO CONSULT</p>
+          <p style={{ margin: "0 0 20px", fontSize: 11, color: "#999", lineHeight: 1.7 }}>Social Media Strategist · Video Editor · Content Consultant</p>
+          <div style={{ backgroundColor: "#F8F6F2", borderLeft: "3px solid #D4AF7A", padding: "14px 18px", borderRadius: "0 4px 4px 0" }}>
+            <p style={{ margin: 0, fontSize: 12, color: "#555", lineHeight: 1.7 }}>
+              <strong style={{ color: "#1A2332" }}>P.S.</strong> If this newsletter helped you, forward it to another business owner who's struggling with social media. They'll thank you for it. 🙏
+            </p>
+          </div>
         </div>
+
+        {/* Footer */}
+        <div style={{ backgroundColor: "#1A2332", padding: "28px 32px", textAlign: "center" }}>
+          <img src="https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Light.svg" alt="NEEDMO" height={26} style={{ display: "block", margin: "0 auto 6px", height: 26 }} />
+          <p style={{ margin: "0 0 12px", fontSize: 10, color: "rgba(255,255,255,0.35)", letterSpacing: 2, textTransform: "uppercase" }}>Your Brand Deserves More</p>
+          <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 16 }}>
+            {["instagram-new", "linkedin", "twitterx", "facebook-new"].map(icon => (
+              <div key={icon} style={{ width: 32, height: 32, backgroundColor: "rgba(212,175,122,0.1)", border: "1px solid rgba(212,175,122,0.2)", borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <img src={`https://img.icons8.com/color/24/${icon}.png`} width={16} height={16} alt={icon} />
+              </div>
+            ))}
+          </div>
+          <div style={{ height: 1, backgroundColor: "rgba(255,255,255,0.07)", marginBottom: 16 }} />
+          <p style={{ margin: "0 0 6px", fontSize: 10, color: "rgba(255,255,255,0.25)", lineHeight: 1.6 }}>© {year} NEEDMO CONSULT. All rights reserved.<br />Lagos, Nigeria · hello@needmoconsult.com</p>
+          <p style={{ margin: 0, fontSize: 10 }}>
+            <a href="#" style={{ color: "rgba(212,175,122,0.5)", textDecoration: "none" }}>needmoconsult.com</a>
+            &nbsp;·&nbsp;
+            <a href="#" style={{ color: "rgba(212,175,122,0.5)", textDecoration: "none" }}>Privacy Policy</a>
+            &nbsp;·&nbsp;
+            <a href="#" style={{ color: "rgba(212,175,122,0.5)", textDecoration: "none" }}>Unsubscribe</a>
+          </p>
+        </div>
+
       </div>
     </div>
   );

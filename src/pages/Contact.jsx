@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-// Cal.com booking widget removed
+import BookingWidget from "@/components/ui/BookingWidget";
 import {
   Select,
   SelectContent,
@@ -35,7 +35,6 @@ const services = [
   "Strategy & Consulting",
   "Full-Service Package",
   "Social Media Audit",
-  "Web Development",
   "Custom Solution",
 ];
 
@@ -80,13 +79,10 @@ export default function Contact() {
     return () => clearInterval(interval);
   }, []);
 
-  // Cal.com widget removed; no runtime setup required
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // persist submission in database
     const { error: insertError } = await supabase.from("contacts").insert({
       name: formData.name,
       email: formData.email,
@@ -105,15 +101,12 @@ export default function Contact() {
       return;
     }
 
-    // send notification email via edge function
     try {
       await supabase.functions.invoke("contact-form", {
         body: { ...formData, timezone, localTime },
       });
     } catch (err) {
       console.error("contact function error", err);
-      toast.error("Failed to send notification. Please try again later.");
-      // continue, don't block user from seeing success
     }
 
     setIsSubmitting(false);
@@ -380,7 +373,25 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* Cal.com booking section removed */}
+      {/* Booking Section */}
+      <section className="py-20 bg-[#F7F7F7] dark:bg-[#1A2332]">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold text-[#1A2332] dark:text-white mb-4">
+              Prefer a Quick Chat?
+            </h2>
+            <p className="text-lg text-[#333333] dark:text-gray-400">
+              Book a free 30-minute strategy call directly below.
+            </p>
+          </motion.div>
+          <BookingWidget />
+        </div>
+      </section>
     </main>
   );
 }

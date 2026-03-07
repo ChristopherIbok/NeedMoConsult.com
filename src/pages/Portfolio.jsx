@@ -37,14 +37,14 @@ const portfolioItems = [
     id: 1,
     type: "video",
     category: "content",
-    client: "BrightStart Wellness",
-    project: "Instagram Reels Series",
+    client: "Professional Vocal Mixing",
+    project: "Youtube Video Series",
     description:
-      "Created 30-day wellness challenge content series with branded templates and engaging captions that drove massive engagement.",
+      "Created Professional Vocal Mixing Youtube series with branded templates and engaging captions that drove massive engagement.",
     results: { views: "250K", engagement: "15%", followers: "+5K" },
     thumbnail:
       "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop",
-    videoId: "D1ozwMnZj3A",
+    videoId: "fFVyiiU4jZA&t=16s",
   },
   {
     id: 2,
@@ -57,7 +57,7 @@ const portfolioItems = [
     results: { impressions: "500K", ctr: "12%", revenue: "$30K" },
     thumbnail:
       "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop",
-    videoId: "dQw4w9WgXcQ",
+    videoId: "sVxXduRhFsQ&list=PLbSYDMSwdk8zZEEL0oRK0IG8xT-_8ypTK",
   },
   {
     id: 3,

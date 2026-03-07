@@ -44,7 +44,7 @@ const portfolioItems = [
     results: { views: "250K", engagement: "15%", followers: "+5K" },
     thumbnail:
       "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop",
-    videoId: "fFVyiiU4jZA&t",
+    videoId: "fFVyiiU4jZA",
   },
   {
     id: 2,
@@ -57,7 +57,7 @@ const portfolioItems = [
     results: { impressions: "500K", ctr: "12%", revenue: "$30K" },
     thumbnail:
       "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop",
-    videoId: "sVxXduRhFsQ&list",
+    videoId: "fFVyiiU4jZA",
   },
   {
     id: 3,

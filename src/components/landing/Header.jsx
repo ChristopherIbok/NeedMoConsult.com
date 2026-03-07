@@ -40,7 +40,7 @@ export default function Header() {
 
   return (
     <header
-      className={`${isMobile ? "absolute" : "fixed"} inset-x-0 top-0 z-50 w-full transition-all duration-300 ${
+      className={`fixed inset-x-0 top-0 z-50 w-full transition-all duration-300 ${
         isScrolled
           ? "bg-white/90 dark:bg-[#0F1419]/90 backdrop-blur-md shadow-lg"
           : "bg-transparent"

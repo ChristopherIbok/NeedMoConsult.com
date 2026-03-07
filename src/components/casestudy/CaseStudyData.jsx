@@ -219,7 +219,7 @@ export const caseStudies = [
         saves: "1,600",
       },
     ],
-    timeline: [
+    timeline2: [
       {
         phase: "Month 1",
         title: "Discovery & Strategy",
@@ -411,7 +411,7 @@ export const caseStudies = [
         saves: "2,100",
       },
     ],
-    timeline: [
+    timeline2: [
       {
         phase: "Month 1",
         title: "Launch Strategy & Setup",
@@ -584,7 +584,7 @@ export const caseStudies = [
         saves: "2,100",
       },
     ],
-    timeline: [
+    timeline2: [
       {
         phase: "Month 1",
         title: "Brand Audit & Identity",

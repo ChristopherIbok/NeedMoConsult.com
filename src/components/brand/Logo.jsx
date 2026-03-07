@@ -14,9 +14,8 @@ import { useTheme } from "@/components/ui/ThemeProvider";
  */
 
 // ─── Hosted logo URLs ──────────────────────────────────────────────────────────
-const LOGO_DARK = "https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-dark.svg";
-const LOGO_LIGHT = "https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-light.svg";
-
+const LOGO_DARK = "https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.svg";
+const LOGO_LIGHT = "https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Light.svg";
 // ─── NM Monogram Icon ──────────────────────────────────────────────────────────
 export function NMIcon({ size = 40, className = "" }) {
   return (

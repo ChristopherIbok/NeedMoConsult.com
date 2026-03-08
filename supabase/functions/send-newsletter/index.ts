@@ -132,7 +132,7 @@ serve(async (req) => {
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#1A2332;">
         <tr><td style="padding:20px 40px;">
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
-            <td style="vertical-align:middle;"><img src="https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-dark.webp?V=3V=3V=2" alt="NEEDMO CONSULT" height="56" style="display:block;height:56px;width:auto;border:0;"/></td>
+            <td style="vertical-align:middle;"><img src="https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-dark.webp?V=4" alt="NEEDMO CONSULT" height="56" style="display:block;height:56px;width:auto;border:0;"/></td>
             <td align="right" style="vertical-align:middle;"><p style="margin:0;font-size:9px;color:rgba(255,255,255,0.35);font-family:Georgia,serif;letter-spacing:3px;text-transform:uppercase;">Weekly Insights</p></td>
           </tr></table>
         </td></tr>
@@ -214,7 +214,7 @@ serve(async (req) => {
       <div style="height:1px;background-color:#EEEBE5;font-size:0;line-height:0;">&nbsp;</div>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#F9F7F4;">
         <tr><td style="padding:32px 40px;" align="center">
-          <img src="https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.webp?V=2" alt="NEEDMO CONSULT" height="56" style="display:block;margin:0 auto 8px;height:56px;width:auto;border:0;"/>
+          <img src="https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.webp?V=4" alt="NEEDMO CONSULT" height="56" style="display:block;margin:0 auto 8px;height:56px;width:auto;border:0;"/>
           <p style="margin:0 0 24px;font-size:9px;color:#B8A882;font-family:Georgia,serif;letter-spacing:3px;text-transform:uppercase;">Your Brand Deserves More</p>
           <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto 24px;">
             <tr>

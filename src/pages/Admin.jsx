@@ -70,6 +70,7 @@ export default function Admin() {
   const [sending, setSending] = useState(false);
   const [sendResult, setSendResult] = useState(null); // { ok, count } | { error }
   const [preview, setPreview] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   // Form state
   const [form, setForm] = useState({
@@ -99,12 +100,19 @@ export default function Admin() {
     if (authed) fetchSubscribers();
   }, [authed]);
 
+  const [subError, setSubError] = useState(null);
+
   const fetchSubscribers = async () => {
     setLoadingSubs(true);
+    setSubError(null);
     const { data, error } = await supabase
       .from("newsletter_subscribers")
       .select("*")
       .order("created_at", { ascending: false });
+    if (error) {
+      setSubError(error.message);
+      console.error("Subscribers fetch error:", error);
+    }
     setSubscribers(data || []);
     setLoadingSubs(false);
   };
@@ -126,7 +134,7 @@ export default function Admin() {
     setSending(true);
     setSendResult(null);
 
-    const emails = subscribers.filter(s => s.status === "active").map(s => s.email);
+    const emails = subscribers.filter(s => !s.status || s.status === "active").map(s => s.email);
     if (emails.length === 0) {
       setSendResult({ error: "No active subscribers to send to." });
       setSending(false);
@@ -152,7 +160,7 @@ export default function Admin() {
 
   if (!authed) return <AuthGate onAuth={() => setAuthed(true)} />;
 
-  const activeCount = subscribers.filter(s => s.status === "active").length;
+  const activeCount = subscribers.filter(s => !s.status || s.status === "active").length;
 
   return (
     <div className="min-h-screen bg-[#F2F2F0] dark:bg-[#0F1419]">
@@ -230,11 +238,11 @@ export default function Admin() {
                 </div>
                 <div className="flex gap-3">
                   <button
-                    onClick={() => setPreview(!preview)}
+                    onClick={() => setPreviewOpen(true)}
                     className="flex items-center gap-2 px-4 py-2 border border-[#1A2332]/20 dark:border-white/20 rounded-xl text-sm font-medium text-[#1A2332] dark:text-white hover:bg-white transition-colors"
                   >
                     <Eye className="w-4 h-4" />
-                    {preview ? "Hide Preview" : "Preview"}
+                    Preview
                   </button>
                   <button
                     onClick={sendNewsletter}
@@ -356,18 +364,6 @@ export default function Admin() {
                   </Card>
 
                 </div>
-
-                {/* Live Preview */}
-                {preview && (
-                  <div className="sticky top-8">
-                    <p className="text-xs text-gray-400 uppercase tracking-widest mb-3 font-semibold">Live Preview</p>
-                    <div className="bg-[#F2F2F0] rounded-2xl p-4 overflow-auto max-h-[80vh]">
-                      <div style={{ transform: "scale(0.75)", transformOrigin: "top left", width: "133%" }}>
-                        <NewsletterPreview form={form} tips={tips} />
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             </motion.div>
           )}
@@ -385,6 +381,16 @@ export default function Admin() {
                 </button>
               </div>
 
+              {subError && (
+                <div className="mb-4 px-5 py-4 rounded-xl bg-red-50 border border-red-200 flex items-start gap-3">
+                  <XCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-red-700 text-sm font-semibold">Failed to load subscribers</p>
+                    <p className="text-red-500 text-xs mt-1">{subError}</p>
+                    <p className="text-red-500 text-xs mt-1">Run the SELECT policy SQL in Supabase then refresh.</p>
+                  </div>
+                </div>
+              )}
               <div className="bg-white dark:bg-[#1A2332] rounded-2xl overflow-hidden border border-gray-100 dark:border-white/10">
                 {loadingSubs ? (
                   <div className="flex items-center justify-center py-16">
@@ -393,7 +399,7 @@ export default function Admin() {
                 ) : subscribers.length === 0 ? (
                   <div className="text-center py-16">
                     <Users className="w-8 h-8 text-gray-300 mx-auto mb-3" />
-                    <p className="text-gray-400 text-sm">No subscribers yet</p>
+                    <p className="text-gray-400 text-sm">{subError ? "Could not load subscribers — check RLS policies." : "No subscribers yet"}</p>
                   </div>
                 ) : (
                   <table className="w-full">
@@ -443,6 +449,21 @@ export default function Admin() {
         </div>
       </div>
     </div>
+
+        {/* ── PREVIEW MODAL ── */}
+        {previewOpen && (
+          <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/70 overflow-y-auto py-8 px-4" onClick={() => setPreviewOpen(false)}>
+            <div onClick={e => e.stopPropagation()} className="w-full max-w-2xl">
+              <div className="flex items-center justify-between mb-4">
+                <p className="text-white text-sm font-semibold uppercase tracking-widest">Email Preview</p>
+                <button onClick={() => setPreviewOpen(false)} className="text-white/60 hover:text-white text-sm flex items-center gap-1">
+                  <XCircle className="w-4 h-4" /> Close
+                </button>
+              </div>
+              <NewsletterPreview form={form} tips={tips} />
+            </div>
+          </div>
+        )}
   );
 }
 

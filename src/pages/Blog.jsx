@@ -3,6 +3,7 @@ import { supabase } from "@/api/supabaseClient";
 import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
 import { Search, ArrowRight, BookOpen, Calendar, Hash } from "lucide-react";
+import SEO from "@/components/ui/SEO";
 import { motion } from "framer-motion";
 
 export default function Blog() {
@@ -19,7 +20,7 @@ export default function Blog() {
     setLoading(true);
     const { data } = await supabase
       .from("newsletters")
-      .select("id, issue, subject, hero_title, hero_intro, sent_at, tags")
+      .select("id, issue, subject, hero_title, hero_intro, sent_at, tags, image_url")
       .eq("published", true)
       .order("sent_at", { ascending: false });
     setPosts(data || []);
@@ -41,6 +42,12 @@ export default function Blog() {
 
   return (
     <div className="min-h-screen bg-[#F9F7F4] dark:bg-[#0F1419]">
+
+      <SEO
+        title="Insights Blog"
+        description="Brand intelligence, social media strategy and content consulting insights from NEEDMO CONSULT."
+        type="website"
+      />
 
       {/* Hero */}
       <div className="bg-[#F9F7F4] dark:bg-[#1A2332] pt-32 pb-20 px-6 border-b border-gray-200 dark:border-transparent">
@@ -153,6 +160,17 @@ export default function Blog() {
                         #{tag}
                       </span>
                     ))}
+                  </div>
+                )}
+
+                {/* Featured image thumbnail */}
+                {post.image_url && (
+                  <div className="mb-5 overflow-hidden border border-gray-200 dark:border-white/10">
+                    <img
+                      src={post.image_url}
+                      alt={post.hero_title}
+                      className="w-full object-cover h-48 hover:scale-105 transition-transform duration-500"
+                    />
                   </div>
                 )}
 

@@ -1,81 +1,119 @@
 import { useEffect } from "react";
 
+/**
+ * SEO component — injects meta tags into <head> dynamically.
+ * Works without react-helmet by directly manipulating the DOM.
+ */
 export default function SEO({
   title,
   description,
-  canonical,
-  ogType = "website",
-  ogImage = "https://needmoconsult.com/images/og-image.jpg",
-  structuredData,
+  image,
+  url,
+  type = "article",
+  publishedAt,
+  tags = [],
 }) {
   useEffect(() => {
-    // Title
-    document.title = title;
+    const siteName = "NEEDMO CONSULT";
+    const fullTitle = title ? `${title} | ${siteName}` : siteName;
+    const defaultDesc = "Brand intelligence, social media strategy and content consulting insights from NEEDMO CONSULT.";
+    const desc = description || defaultDesc;
+    const canonical = url || window.location.href;
+    const ogImage = image || "https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.svg";
 
+    // ── Page title ──────────────────────────────────────────────
+    document.title = fullTitle;
+
+    // ── Helper: upsert a <meta> tag ─────────────────────────────
     const setMeta = (selector, attr, value) => {
       let el = document.querySelector(selector);
       if (!el) {
         el = document.createElement("meta");
-        const [attrName, attrVal] = selector
-          .replace("meta[", "")
-          .replace("]", "")
-          .split("=");
-        el.setAttribute(attrName, attrVal.replace(/"/g, ""));
+        const [attrName, attrVal] = selector.replace("meta[", "").replace("]", "").split('="');
+        el.setAttribute(attrName, attrVal.replace('"', ""));
         document.head.appendChild(el);
       }
       el.setAttribute(attr, value);
     };
 
-    // Primary
-    setMeta('meta[name="description"]', "content", description);
-    setMeta('meta[name="robots"]', "content", "index, follow");
-
-    // OG
-    setMeta('meta[property="og:title"]', "content", title);
-    setMeta('meta[property="og:description"]', "content", description);
-    setMeta('meta[property="og:type"]', "content", ogType);
-    setMeta(
-      'meta[property="og:url"]',
-      "content",
-      canonical || window.location.href
-    );
-    setMeta('meta[property="og:image"]', "content", ogImage);
-    setMeta('meta[property="og:image:width"]', "content", "1200");
-    setMeta('meta[property="og:image:height"]', "content", "630");
-
-    // Twitter
-    setMeta('meta[property="twitter:card"]', "content", "summary_large_image");
-    setMeta('meta[property="twitter:title"]', "content", title);
-    setMeta('meta[property="twitter:description"]', "content", description);
-    setMeta('meta[property="twitter:image"]', "content", ogImage);
-
-    // Canonical
-    let canonicalEl = document.querySelector('link[rel="canonical"]');
-    if (!canonicalEl) {
-      canonicalEl = document.createElement("link");
-      canonicalEl.setAttribute("rel", "canonical");
-      document.head.appendChild(canonicalEl);
-    }
-    if (canonical) canonicalEl.setAttribute("href", canonical);
-
-    // Structured data
-    if (structuredData) {
-      const existing = document.getElementById("structured-data");
-      if (existing) existing.remove();
-      const script = document.createElement("script");
-      script.id = "structured-data";
-      script.type = "application/ld+json";
-      script.textContent = JSON.stringify(structuredData);
-      document.head.appendChild(script);
-    }
-
-    return () => {
-      if (structuredData) {
-        const el = document.getElementById("structured-data");
-        if (el) el.remove();
+    // ── Helper: upsert a <link> tag ─────────────────────────────
+    const setLink = (rel, href) => {
+      let el = document.querySelector(`link[rel="${rel}"]`);
+      if (!el) {
+        el = document.createElement("link");
+        el.setAttribute("rel", rel);
+        document.head.appendChild(el);
       }
+      el.setAttribute("href", href);
     };
-  }, [title, description, canonical, ogImage, ogType, structuredData]);
+
+    // ── Standard meta ───────────────────────────────────────────
+    setMeta('meta[name="description"]',         "content", desc);
+    setMeta('meta[name="robots"]',              "content", "index, follow");
+    if (tags.length) {
+      setMeta('meta[name="keywords"]',          "content", tags.join(", "));
+    }
+
+    // ── Canonical ───────────────────────────────────────────────
+    setLink("canonical", canonical);
+
+    // ── Open Graph ──────────────────────────────────────────────
+    setMeta('meta[property="og:type"]',         "content", type);
+    setMeta('meta[property="og:title"]',        "content", fullTitle);
+    setMeta('meta[property="og:description"]',  "content", desc);
+    setMeta('meta[property="og:url"]',          "content", canonical);
+    setMeta('meta[property="og:image"]',        "content", ogImage);
+    setMeta('meta[property="og:image:width"]',  "content", "1200");
+    setMeta('meta[property="og:image:height"]', "content", "630");
+    setMeta('meta[property="og:site_name"]',    "content", siteName);
+    if (publishedAt) {
+      setMeta('meta[property="article:published_time"]', "content", publishedAt);
+    }
+
+    // ── Twitter Card ────────────────────────────────────────────
+    setMeta('meta[name="twitter:card"]',        "content", image ? "summary_large_image" : "summary");
+    setMeta('meta[name="twitter:site"]',        "content", "@needmoconsult");
+    setMeta('meta[name="twitter:title"]',       "content", fullTitle);
+    setMeta('meta[name="twitter:description"]', "content", desc);
+    setMeta('meta[name="twitter:image"]',       "content", ogImage);
+
+    // ── Structured data (JSON-LD) ───────────────────────────────
+    const existingScript = document.querySelector('script[data-seo="needmo"]');
+    if (existingScript) existingScript.remove();
+
+    const schema = {
+      "@context": "https://schema.org",
+      "@type": type === "article" ? "BlogPosting" : "WebSite",
+      "headline": title,
+      "description": desc,
+      "image": ogImage,
+      "url": canonical,
+      "publisher": {
+        "@type": "Organization",
+        "name": siteName,
+        "url": "https://needmoconsult.com",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.svg"
+        }
+      },
+      ...(publishedAt && { "datePublished": publishedAt }),
+      ...(tags.length && { "keywords": tags.join(", ") }),
+    };
+
+    const script = document.createElement("script");
+    script.type = "application/ld+json";
+    script.setAttribute("data-seo", "needmo");
+    script.textContent = JSON.stringify(schema);
+    document.head.appendChild(script);
+
+    // ── Cleanup on unmount ──────────────────────────────────────
+    return () => {
+      document.title = siteName;
+      const s = document.querySelector('script[data-seo="needmo"]');
+      if (s) s.remove();
+    };
+  }, [title, description, image, url, type, publishedAt, tags]);
 
   return null;
 }

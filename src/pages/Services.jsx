@@ -18,6 +18,10 @@ import {
   Camera,
   Video,
   PenTool,
+  Globe,
+  Layout,
+  Smartphone,
+  ShoppingCart,
 } from "lucide-react";
 import ContactCTA from "@/components/landing/ContactCTA";
 
@@ -86,6 +90,27 @@ const mainServices = [
     ],
   },
   {
+    icon: Globe,
+    title: "Web Design",
+    subtitle: "Beautiful websites that convert visitors into clients",
+    description:
+      "We design and build modern, fast, and mobile-friendly websites that reflect your brand and drive real business results. From landing pages to full business websites, we've got you covered.",
+    features: [
+      "Custom website design",
+      "Mobile-responsive layouts",
+      "Landing page development",
+      "E-commerce solutions",
+      "SEO-optimized structure",
+      "Speed and performance optimization",
+    ],
+    subServices: [
+      { icon: Layout, name: "UI/UX Design" },
+      { icon: Smartphone, name: "Mobile-First" },
+      { icon: ShoppingCart, name: "E-Commerce" },
+      { icon: TrendingUp, name: "SEO" },
+    ],
+  },
+  {
     icon: Lightbulb,
     title: "Strategy & Consulting",
     subtitle: "Expert guidance for growth",
@@ -149,6 +174,15 @@ const servicesStructuredData = {
         "@type": "Offer",
         itemOffered: {
           "@type": "Service",
+          name: "Web Design",
+          description:
+            "Custom website design and development for businesses and brands",
+        },
+      },
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
           name: "Strategy & Consulting",
           description:
             "Expert social media strategy and consulting services for brand growth",
@@ -163,13 +197,13 @@ export default function Services() {
     <main className="pt-20">
       <SEO
         title="Social Media Management Services | NEEDMO CONSULT"
-        description="Content creation, account management, paid advertising, and strategic consulting. Full-service social media solutions for growing brands."
+        description="Content creation, account management, paid advertising, web design, and strategic consulting. Full-service social media solutions for growing brands."
         canonical="https://needmoconsult.com/services"
         structuredData={servicesStructuredData}
       />
       {/* Hero */}
-      <section className="py-20 md:py-28 bg-gradient-to-b from-white to-[#F7F7F7] dark:from-[#0F1419] dark:to-[#1A2332]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 md:py-28 bg-gradient-to-b from-white to-[#F4F4F6] dark:from-[#0D1117] dark:to-[#121C2D]">
+        <div className="site-container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -178,10 +212,10 @@ export default function Services() {
             <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
               Our Services
             </p>
-            <h1 className="text-4xl md:text-5xl font-bold text-[#1A2332] dark:text-white mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold text-[#121C2D] dark:text-white mb-6">
               Everything You Need to Win on Social
             </h1>
-            <p className="text-lg text-[#333333] dark:text-gray-400">
+            <p className="text-lg text-[#2D2D3A] dark:text-gray-400">
               From content creation to paid advertising, we offer comprehensive
               social media solutions tailored to your goals and budget.
             </p>
@@ -190,8 +224,8 @@ export default function Services() {
       </section>
 
       {/* Services Detail */}
-      <section className="py-20 bg-white dark:bg-[#0F1419]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 bg-white dark:bg-[#0D1117]">
+        <div className="site-container">
           <div className="space-y-24">
             {mainServices.map((service, index) => (
               <motion.div
@@ -209,21 +243,21 @@ export default function Services() {
                     <service.icon className="w-7 h-7 text-[#D4AF7A]" />
                   </div>
 
-                  <h2 className="text-3xl md:text-4xl font-bold text-[#1A2332] dark:text-white mb-3">
+                  <h2 className="text-3xl md:text-4xl font-bold text-[#121C2D] dark:text-white mb-3">
                     {service.title}
                   </h2>
                   <p className="text-lg text-[#D4AF7A] font-medium mb-4">
                     {service.subtitle}
                   </p>
-                  <p className="text-[#333333] dark:text-gray-400 leading-relaxed mb-8">
+                  <p className="text-[#2D2D3A] dark:text-gray-400 leading-relaxed mb-8">
                     {service.description}
                   </p>
 
                   <ul className="grid sm:grid-cols-2 gap-3 mb-8">
                     {service.features.map((feature) => (
                       <li key={feature} className="flex items-start gap-3">
-                        <Check className="w-5 h-5 text-[#D4AF7A] flex-shrink-0 mt-0.5" />
-                        <span className="text-sm text-[#333333] dark:text-gray-300">
+                        <Check className="w-3.5 h-3.5 text-[#D4AF7A] flex-shrink-0 mt-0.5" />
+                        <span className="text-sm text-[#2D2D3A] dark:text-gray-300">
                           {feature}
                         </span>
                       </li>
@@ -233,7 +267,7 @@ export default function Services() {
                   <Link to={createPageUrl("Contact")}>
                     <Button className="bg-[#D4AF7A] hover:bg-[#C49A5E] text-white font-semibold">
                       Get Started
-                      <ArrowRight className="w-4 h-4 ml-2" />
+                      <ArrowRight className="w-3.5 h-3.5 ml-2" />
                     </Button>
                   </Link>
                 </div>
@@ -244,7 +278,7 @@ export default function Services() {
                     index % 2 === 1 ? "lg:col-start-1" : ""
                   }`}
                 >
-                  <div className="bg-[#F7F7F7] dark:bg-[#1E2830] rounded-3xl p-8 md:p-12">
+                  <div className="bg-[#F4F4F6] dark:bg-[#1E2830] rounded-3xl p-8 md:p-12">
                     <div className="grid grid-cols-2 gap-4">
                       {service.subServices.map((sub, i) => (
                         <motion.div
@@ -253,10 +287,10 @@ export default function Services() {
                           whileInView={{ opacity: 1, scale: 1 }}
                           viewport={{ once: true }}
                           transition={{ delay: i * 0.1 }}
-                          className="bg-white dark:bg-[#0F1419] rounded-2xl p-6 text-center shadow-lg"
+                          className="bg-white dark:bg-[#0D1117] rounded-2xl p-6 text-center shadow-lg"
                         >
                           <sub.icon className="w-8 h-8 text-[#D4AF7A] mx-auto mb-3" />
-                          <p className="text-sm font-medium text-[#1A2332] dark:text-white">
+                          <p className="text-sm font-medium text-[#121C2D] dark:text-white">
                             {sub.name}
                           </p>
                         </motion.div>
@@ -274,8 +308,8 @@ export default function Services() {
       </section>
 
       {/* Process Section */}
-      <section className="py-20 bg-[#F7F7F7] dark:bg-[#1A2332]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 bg-[#F4F4F6] dark:bg-[#121C2D]">
+        <div className="site-container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -285,7 +319,7 @@ export default function Services() {
             <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
               Our Process
             </p>
-            <h2 className="text-3xl md:text-4xl font-bold text-[#1A2332] dark:text-white mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#121C2D] dark:text-white mb-4">
               How We Work With You
             </h2>
           </motion.div>
@@ -324,10 +358,10 @@ export default function Services() {
                 <p className="text-6xl font-bold text-[#D4AF7A]/20 mb-4">
                   {item.step}
                 </p>
-                <h3 className="text-xl font-bold text-[#1A2332] dark:text-white mb-2">
+                <h3 className="text-xl font-bold text-[#121C2D] dark:text-white mb-2">
                   {item.title}
                 </h3>
-                <p className="text-[#333333] dark:text-gray-400 text-sm">
+                <p className="text-[#2D2D3A] dark:text-gray-400 text-sm">
                   {item.desc}
                 </p>
                 {index < 3 && (

@@ -44,7 +44,7 @@ export default function BlogPost() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F9F7F4] dark:bg-[#0F1419] flex items-center justify-center">
+      <div className="min-h-screen bg-[#F4F4F6] dark:bg-[#0D1117] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-8 h-0.5 bg-[#D4AF7A] animate-pulse" />
           <p className="text-gray-400 text-sm" style={{ fontFamily: "Georgia, serif" }}>Loading article...</p>
@@ -55,7 +55,7 @@ export default function BlogPost() {
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-[#F9F7F4] dark:bg-[#0F1419] flex items-center justify-center">
+      <div className="min-h-screen bg-[#F4F4F6] dark:bg-[#0D1117] flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-400 mb-4" style={{ fontFamily: "Georgia, serif" }}>Article not found.</p>
           <Link to={createPageUrl("Blog")} className="text-[#D4AF7A] text-sm underline" style={{ fontFamily: "Georgia, serif" }}>← Back to Blog</Link>
@@ -69,7 +69,7 @@ export default function BlogPost() {
   const G = "Georgia, serif";
 
   return (
-    <div className="min-h-screen bg-[#F9F7F4] dark:bg-[#0F1419]">
+    <div className="min-h-screen bg-[#F4F4F6] dark:bg-[#0D1117]">
 
       {/* SEO */}
       <SEO
@@ -86,7 +86,7 @@ export default function BlogPost() {
       <div className="h-0.5 bg-[#D4AF7A] fixed top-0 left-0 right-0 z-50" />
 
       {/* Back nav */}
-      <div className="pt-24 pb-0 px-6 max-w-3xl mx-auto">
+      <div className="pt-24 pb-0 site-container max-w-3xl mx-auto">
         <Link
           to={createPageUrl("Blog")}
           className="inline-flex items-center gap-2 text-xs text-gray-400 hover:text-[#D4AF7A] transition-colors mb-10"
@@ -100,7 +100,7 @@ export default function BlogPost() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="px-6 pb-10 max-w-3xl mx-auto"
+        className="site-container pb-10 max-w-3xl mx-auto"
       >
         <div className="flex items-center gap-4 mb-6">
           <span className="text-[#D4AF7A] text-xs tracking-[4px] uppercase" style={{ fontFamily: G }}>
@@ -113,7 +113,7 @@ export default function BlogPost() {
           </span>
         </div>
 
-        <h1 className="text-4xl md:text-5xl font-normal text-[#1A2332] dark:text-white leading-tight mb-6" style={{ fontFamily: G }}>
+        <h1 className="text-4xl md:text-5xl font-normal text-[#121C2D] dark:text-white leading-tight mb-6" style={{ fontFamily: G }}>
           {post.hero_title}
         </h1>
 
@@ -164,13 +164,13 @@ export default function BlogPost() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.15 }}
-        className="px-6 py-12 max-w-3xl mx-auto"
+        className="site-container py-12 max-w-3xl mx-auto"
       >
         {/* Featured Article section */}
         {post.article_title && (
           <section className="mb-14">
             <p className="text-xs text-[#D4AF7A] tracking-[4px] uppercase mb-4" style={{ fontFamily: G }}>Featured Article</p>
-            <h2 className="text-2xl font-normal text-[#1A2332] dark:text-white mb-5 leading-snug" style={{ fontFamily: G }}>
+            <h2 className="text-2xl font-normal text-[#121C2D] dark:text-white mb-5 leading-snug" style={{ fontFamily: G }}>
               {post.article_title}
             </h2>
             <p className="text-base text-gray-600 dark:text-white/70 leading-relaxed mb-6" style={{ fontFamily: G }}>
@@ -178,8 +178,8 @@ export default function BlogPost() {
             </p>
 
             {post.pull_quote && (
-              <blockquote className="border-l-2 border-[#D4AF7A] pl-6 py-4 bg-[#F9F7F4] dark:bg-[#1A2332]/40 mb-6">
-                <p className="text-xl font-normal italic text-[#1A2332] dark:text-white leading-relaxed mb-2" style={{ fontFamily: G }}>
+              <blockquote className="border-l-2 border-[#D4AF7A] pl-6 py-4 bg-[#F4F4F6] dark:bg-[#121C2D]/40 mb-6">
+                <p className="text-xl font-normal italic text-[#121C2D] dark:text-white leading-relaxed mb-2" style={{ fontFamily: G }}>
                   "{post.pull_quote}"
                 </p>
                 <p className="text-xs text-[#B8A882] tracking-[3px] uppercase" style={{ fontFamily: G }}>— NEEDMO CONSULT</p>
@@ -191,7 +191,7 @@ export default function BlogPost() {
                 href={post.article_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-xs border border-[#1A2332] dark:border-white/30 text-[#1A2332] dark:text-white px-5 py-2.5 hover:bg-[#1A2332] hover:text-[#D4AF7A] dark:hover:bg-[#D4AF7A] dark:hover:text-[#1A2332] transition-colors"
+                className="inline-flex items-center gap-2 text-xs border border-[#121C2D] dark:border-white/30 text-[#121C2D] dark:text-white px-5 py-2.5 hover:bg-[#121C2D] hover:text-[#D4AF7A] dark:hover:bg-[#D4AF7A] dark:hover:text-[#121C2D] transition-colors"
                 style={{ fontFamily: G, letterSpacing: "0.15em", textTransform: "uppercase" }}
               >
                 Read Full Article <ArrowLeft className="w-3 h-3 rotate-180" />
@@ -212,7 +212,7 @@ export default function BlogPost() {
         {tips.length > 0 && (
           <section className="mb-14">
             <p className="text-xs text-[#D4AF7A] tracking-[4px] uppercase mb-2" style={{ fontFamily: G }}>Quick Tips</p>
-            <h2 className="text-2xl font-normal text-[#1A2332] dark:text-white mb-8" style={{ fontFamily: G }}>
+            <h2 className="text-2xl font-normal text-[#121C2D] dark:text-white mb-8" style={{ fontFamily: G }}>
               Actionable Insights For This Week
             </h2>
             <div className="divide-y divide-gray-200 dark:divide-white/10">
@@ -222,7 +222,7 @@ export default function BlogPost() {
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <div>
-                    <p className="text-sm font-bold text-[#1A2332] dark:text-white mb-1.5" style={{ fontFamily: G }}>{tip.title}</p>
+                    <p className="text-sm font-bold text-[#121C2D] dark:text-white mb-1.5" style={{ fontFamily: G }}>{tip.title}</p>
                     <p className="text-sm text-gray-500 dark:text-white/50 leading-relaxed" style={{ fontFamily: G }}>{tip.desc}</p>
                   </div>
                 </div>
@@ -235,14 +235,14 @@ export default function BlogPost() {
         {post.offer_title && (
           <>
             <div className="h-px bg-gray-200 dark:bg-white/10 mb-14" />
-            <section className="bg-[#1A2332] p-8 mb-14">
+            <section className="bg-[#121C2D] p-8 mb-14">
               <div className="h-0.5 bg-[#D4AF7A] -mt-8 mb-8" />
               <p className="text-xs text-[#D4AF7A] tracking-[4px] uppercase mb-4" style={{ fontFamily: G }}>Exclusive Offer</p>
               <h2 className="text-2xl font-normal text-white mb-4 leading-snug" style={{ fontFamily: G }}>{post.offer_title}</h2>
               <p className="text-sm text-white/60 leading-relaxed mb-6" style={{ fontFamily: G }}>{post.offer_body}</p>
               <a
                 href={post.offer_url || "https://needmoconsult.com/Contact"}
-                className="inline-block bg-[#D4AF7A] text-[#1A2332] text-xs px-7 py-3 hover:bg-[#C49A5E] transition-colors"
+                className="inline-block bg-[#D4AF7A] text-[#121C2D] text-xs px-7 py-3 hover:bg-[#C49A5E] transition-colors"
                 style={{ fontFamily: G, letterSpacing: "0.2em", textTransform: "uppercase" }}
               >
                 {post.offer_label || "Book Free Strategy Call"} →
@@ -255,8 +255,8 @@ export default function BlogPost() {
         <div className="h-px bg-gray-200 dark:bg-white/10 mb-10" />
         <div className="mb-10">
           <p className="text-sm text-gray-400 italic mb-2" style={{ fontFamily: G }}>Until next week,</p>
-          <p className="text-3xl font-normal italic text-[#1A2332] dark:text-white mb-3" style={{ fontFamily: G }}>Chris</p>
-          <p className="text-sm font-bold text-[#1A2332] dark:text-white mb-1" style={{ fontFamily: G }}>Founder, NEEDMO CONSULT</p>
+          <p className="text-3xl font-normal italic text-[#121C2D] dark:text-white mb-3" style={{ fontFamily: G }}>Chris</p>
+          <p className="text-sm font-bold text-[#121C2D] dark:text-white mb-1" style={{ fontFamily: G }}>Founder, NEEDMO CONSULT</p>
           <p className="text-xs text-[#B8A882] tracking-wide" style={{ fontFamily: G }}>
             Social Media Strategist · Video Editor · Content Consultant
           </p>

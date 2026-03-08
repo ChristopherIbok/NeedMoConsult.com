@@ -30,16 +30,16 @@ const services = [
 ];
 
 const socials = [
-  { icon: Instagram, href: "https://instagram.com/needmoconsult", label: "Instagram" },
-  { icon: Facebook, href: "https://facebook.com/needmoconsult", label: "Facebook" },
-  { icon: Linkedin, href: "https://linkedin.com/company/needmoconsult", label: "LinkedIn" },
-  { icon: Twitter, href: "https://twitter.com/needmoconsult", label: "Twitter" },
+  { icon: Instagram, href: "#", label: "Instagram" },
+  { icon: Facebook, href: "#", label: "Facebook" },
+  { icon: Linkedin, href: "#", label: "LinkedIn" },
+  { icon: Twitter, href: "#", label: "Twitter" },
 ];
 
 export default function Footer() {
   return (
-    <footer className="bg-[#1A2332] dark:bg-[#0A0F14]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+    <footer className="bg-[#121C2D] dark:bg-[#0D1117]">
+      <div className="site-container section-y-sm">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
 
           {/* Brand Column */}
@@ -60,7 +60,7 @@ export default function Footer() {
                   className="min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-500 hover:text-[#D4AF7A] transition-colors"
                   aria-label={social.label}
                 >
-                  <social.icon className="w-5 h-5" />
+                  <social.icon className="w-3.5 h-3.5" />
                 </a>
               ))}
             </div>
@@ -109,7 +109,7 @@ export default function Footer() {
                   href="mailto:hello@needmoconsult.com"
                   className="min-h-[44px] flex items-center justify-center md:justify-start gap-3 text-gray-400 text-sm hover:text-[#D4AF7A] transition-colors"
                 >
-                  <Mail className="w-4 h-4 text-[#D4AF7A] flex-shrink-0" />
+                  <Mail className="w-3.5 h-3.5 text-[#D4AF7A] flex-shrink-0" />
                   hello@needmoconsult.com
                 </a>
               </li>
@@ -118,12 +118,12 @@ export default function Footer() {
                   href="tel:+15551234567"
                   className="min-h-[44px] flex items-center justify-center md:justify-start gap-3 text-gray-400 text-sm hover:text-[#D4AF7A] transition-colors"
                 >
-                  <Phone className="w-4 h-4 text-[#D4AF7A] flex-shrink-0" />
+                  <Phone className="w-3.5 h-3.5 text-[#D4AF7A] flex-shrink-0" />
                   +1 (555) 123-4567
                 </a>
               </li>
               <li className="min-h-[44px] flex items-center justify-center md:justify-start gap-3">
-                <MapPin className="w-4 h-4 text-[#D4AF7A] flex-shrink-0" />
+                <MapPin className="w-3.5 h-3.5 text-[#D4AF7A] flex-shrink-0" />
                 <span className="text-gray-400 text-sm">Los Angeles, CA</span>
               </li>
             </ul>

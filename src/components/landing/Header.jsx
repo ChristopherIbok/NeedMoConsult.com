@@ -28,8 +28,8 @@ export default function Header() {
   const isDark = theme === "dark";
 
   // Menu colors based on theme
-  const menuBg       = isDark ? "rgba(26, 35, 50, 0.97)" : "#F7F7F7";
-  const menuText     = isDark ? "#FFFFFF" : "#1A2332";
+  const menuBg       = isDark ? "rgba(26, 35, 50, 0.97)" : "#F4F4F6";
+  const menuText     = isDark ? "#FFFFFF" : "#121C2D";
   const menuMuted    = isDark ? "rgba(255,255,255,0.5)" : "rgba(26,35,50,0.5)";
   const menuBorder   = isDark ? "rgba(255,255,255,0.1)" : "rgba(26,35,50,0.1)";
 
@@ -49,11 +49,11 @@ export default function Header() {
       <header
         className={`fixed inset-x-0 top-0 z-50 w-full transition-all duration-300 ${
           isScrolled
-            ? "bg-white/90 dark:bg-[#0F1419]/90 backdrop-blur-md shadow-lg"
+            ? "bg-white/90 dark:bg-[#0D1117]/90 backdrop-blur-md shadow-lg"
             : "bg-transparent"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="site-container">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
             <Link to={createPageUrl("Home")} className="flex items-center">
@@ -66,7 +66,7 @@ export default function Header() {
                 <Link
                   key={item.name}
                   to={createPageUrl(item.page)}
-                  className="text-sm font-medium text-[#333333] dark:text-gray-300 hover:text-[#D4AF7A] dark:hover:text-[#D4AF7A] transition-colors relative group"
+                  className="text-sm font-medium text-[#2D2D3A] dark:text-gray-300 hover:text-[#D4AF7A] dark:hover:text-[#D4AF7A] transition-colors relative group"
                 >
                   {item.name}
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#D4AF7A] transition-all group-hover:w-full" />
@@ -92,7 +92,7 @@ export default function Header() {
                       exit={{ rotate: 90, opacity: 0 }}
                       transition={{ duration: 0.2 }}
                     >
-                      <Moon className="w-5 h-5 text-[#1A2332]" />
+                      <Moon className="w-5 h-5 text-[#121C2D]" />
                     </motion.span>
                   ) : (
                     <motion.span
@@ -109,7 +109,7 @@ export default function Header() {
               </motion.button>
 
               <Link to={createPageUrl("Contact")} className="hidden md:block">
-                <Button className="bg-[#D4AF7A] hover:bg-[#C49A5E] text-[#1A2332] font-semibold px-6 transition-all hover:scale-105 btn-ripple">
+                <Button className="bg-[#D4AF7A] hover:bg-[#C49A5E] text-[#121C2D] font-semibold px-6 transition-all hover:scale-105 btn-ripple">
                   Book Free Strategy Call
                 </Button>
               </Link>
@@ -120,7 +120,7 @@ export default function Header() {
                 className="lg:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg transition-colors"
                 aria-label="Open menu"
               >
-                <Menu className="w-6 h-6 text-[#1A2332] dark:text-white" />
+                <Menu className="w-6 h-6 text-[#121C2D] dark:text-white" />
               </button>
             </div>
           </div>
@@ -167,7 +167,7 @@ export default function Header() {
             </div>
 
             {/* Nav Links */}
-            <nav className="flex flex-col px-8 pt-8 gap-2">
+            <nav className="flex flex-col px-6 pt-8 gap-2">
               {navItems.map((item, i) => (
                 <motion.div
                   key={item.name}
@@ -191,12 +191,12 @@ export default function Header() {
             </nav>
 
             {/* CTA at bottom */}
-            <div className="absolute bottom-0 left-0 right-0 p-6">
+            <div className="absolute bottom-0 left-0 right-0 p-6 pb-10">
               <Link
                 to={createPageUrl("Contact")}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <Button className="w-full bg-[#D4AF7A] hover:bg-[#C49A5E] text-[#1A2332] font-bold py-4 text-lg min-h-[56px] active:scale-[0.98] transition-transform">
+                <Button className="w-full bg-[#D4AF7A] hover:bg-[#C49A5E] text-[#121C2D] font-bold py-4 text-lg min-h-[56px] active:scale-[0.98] transition-transform">
                   Book Free Strategy Call
                 </Button>
               </Link>

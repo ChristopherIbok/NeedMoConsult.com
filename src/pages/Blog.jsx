@@ -41,7 +41,7 @@ export default function Blog() {
   });
 
   return (
-    <div className="min-h-screen bg-[#F9F7F4] dark:bg-[#0F1419]">
+    <div className="min-h-screen bg-[#F4F4F6] dark:bg-[#0D1117]">
 
       <SEO
         title="Insights Blog"
@@ -50,18 +50,18 @@ export default function Blog() {
       />
 
       {/* Hero */}
-      <div className="bg-[#F9F7F4] dark:bg-[#1A2332] pt-32 pb-20 px-6 border-b border-gray-200 dark:border-transparent">
-        <div className="max-w-3xl mx-auto">
+      <div className="bg-[#F4F4F6] dark:bg-[#121C2D] pt-32 pb-20 border-b border-gray-200 dark:border-transparent">
+        <div className="site-container max-w-4xl mx-auto">
           <div className="flex items-center gap-3 mb-6">
             <div className="h-px w-8 bg-[#D4AF7A]" />
             <p className="text-[#D4AF7A] text-xs tracking-[4px] uppercase font-light" style={{ fontFamily: "Georgia, serif" }}>
               Brand &amp; Social Intelligence
             </p>
           </div>
-          <h1 className="text-4xl md:text-5xl font-normal text-[#1A2332] dark:text-white mb-5 leading-tight" style={{ fontFamily: "Georgia, serif" }}>
+          <h1 className="text-4xl md:text-5xl font-normal text-[#121C2D] dark:text-white mb-5 leading-tight" style={{ fontFamily: "Georgia, serif" }}>
             The NEEDMO<br/><em className="text-[#D4AF7A]">Insights</em> Blog
           </h1>
-          <p className="text-[#1A2332]/60 dark:text-white/60 text-lg leading-relaxed max-w-xl" style={{ fontFamily: "Georgia, serif" }}>
+          <p className="text-[#121C2D]/60 dark:text-white/60 text-lg leading-relaxed max-w-xl" style={{ fontFamily: "Georgia, serif" }}>
             Every newsletter we send becomes a permanent resource here. Strategy, tips and brand intelligence — all in one place.
           </p>
         </div>
@@ -69,16 +69,16 @@ export default function Blog() {
       <div className="h-0.5 bg-[#D4AF7A] dark:bg-[#D4AF7A] bg-opacity-60" />
 
       {/* Search + Filter */}
-      <div className="max-w-3xl mx-auto px-6 py-10 bg-[#F9F7F4] dark:bg-[#0F1419]">
+      <div className="site-container max-w-4xl mx-auto py-10">
         {/* Search bar */}
         <div className="relative mb-6">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
           <input
             type="text"
             placeholder="Search articles..."
             value={query}
             onChange={e => setQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-[#1A2332]/60 text-[#1A2332] dark:text-white text-sm outline-none focus:border-[#D4AF7A] transition-colors placeholder:text-gray-400 dark:placeholder:text-white/30"
+            className="w-full pl-11 pr-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-[#121C2D]/60 text-[#121C2D] dark:text-white text-sm outline-none focus:border-[#D4AF7A] transition-colors placeholder:text-gray-400 dark:placeholder:text-white/30"
             style={{ fontFamily: "Georgia, serif" }}
           />
         </div>
@@ -92,7 +92,7 @@ export default function Blog() {
                 onClick={() => setActiveTag(tag)}
                 className={`flex items-center gap-1.5 px-4 py-1.5 text-xs border transition-colors ${
                   activeTag === tag
-                    ? "border-[#D4AF7A] bg-[#D4AF7A] text-[#1A2332]"
+                    ? "border-[#D4AF7A] bg-[#D4AF7A] text-[#121C2D]"
                     : "border-gray-200 dark:border-white/10 text-gray-500 dark:text-white/40 hover:border-[#D4AF7A] hover:text-[#D4AF7A] dark:hover:border-[#D4AF7A] dark:hover:text-[#D4AF7A]"
                 }`}
                 style={{ fontFamily: "Georgia, serif", letterSpacing: "0.1em" }}
@@ -144,7 +144,7 @@ export default function Blog() {
                   </span>
                 </div>
 
-                <h2 className="text-2xl font-normal text-[#1A2332] dark:text-white mb-3 leading-tight group-hover:text-[#D4AF7A] transition-colors" style={{ fontFamily: "Georgia, serif" }}>
+                <h2 className="text-2xl font-normal text-[#121C2D] dark:text-white mb-3 leading-tight group-hover:text-[#D4AF7A] transition-colors" style={{ fontFamily: "Georgia, serif" }}>
                   {post.hero_title || post.subject}
                 </h2>
 
@@ -176,7 +176,7 @@ export default function Blog() {
 
                 <Link
                   to={createPageUrl("BlogPost") + `?id=${post.id}`}
-                  className="inline-flex items-center gap-2 text-xs text-[#1A2332] dark:text-white border border-[#1A2332] dark:border-white/30 px-5 py-2.5 hover:bg-[#1A2332] hover:text-[#D4AF7A] dark:hover:bg-[#D4AF7A] dark:hover:text-[#1A2332] dark:hover:border-[#D4AF7A] transition-colors"
+                  className="inline-flex items-center gap-2 text-xs text-[#121C2D] dark:text-white border border-[#121C2D] dark:border-white/30 px-5 py-2.5 hover:bg-[#121C2D] hover:text-[#D4AF7A] dark:hover:bg-[#D4AF7A] dark:hover:text-[#121C2D] dark:hover:border-[#D4AF7A] transition-colors"
                   style={{ fontFamily: "Georgia, serif", letterSpacing: "0.15em", textTransform: "uppercase" }}
                 >
                   Read Article <ArrowRight className="w-3 h-3" />

@@ -44,8 +44,8 @@ export default function Contact() {
       />
 
       {/* Hero */}
-      <section className="py-20 md:py-28 bg-gradient-to-b from-white to-[#F7F7F7] dark:from-[#0F1419] dark:to-[#1A2332]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 md:py-28 bg-gradient-to-b from-white to-[#F4F4F6] dark:from-[#0D1117] dark:to-[#121C2D]">
+        <div className="site-container">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -54,10 +54,10 @@ export default function Contact() {
             <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
               Get In Touch
             </p>
-            <h1 className="text-4xl md:text-5xl font-bold text-[#1A2332] dark:text-white mb-6">
+            <h1 className="text-4xl md:text-5xl font-bold text-[#121C2D] dark:text-white mb-6">
               Let's Talk About Your Brand
             </h1>
-            <p className="text-lg text-[#333333] dark:text-gray-400">
+            <p className="text-lg text-[#2D2D3A] dark:text-gray-400">
               Book a free 30-minute strategy call or reach out directly — we'd
               love to hear from you.
             </p>
@@ -66,8 +66,8 @@ export default function Contact() {
       </section>
 
       {/* Contact Info + Booking */}
-      <section className="py-20 bg-white dark:bg-[#0F1419]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 bg-white dark:bg-[#0D1117]">
+        <div className="site-container">
           <div className="grid lg:grid-cols-3 gap-12">
 
             {/* Contact Info */}
@@ -76,7 +76,7 @@ export default function Contact() {
               animate={{ opacity: 1, x: 0 }}
               className="lg:col-span-1"
             >
-              <div className="bg-[#1A2332] dark:bg-[#0A0F14] rounded-3xl p-8 text-white h-full">
+              <div className="bg-[#121C2D] dark:bg-[#0D1117] rounded-3xl p-8 text-white h-full">
                 <h2 className="text-2xl font-bold mb-8">Contact Information</h2>
 
                 <div className="space-y-6">
@@ -84,7 +84,7 @@ export default function Contact() {
                     href="mailto:hello@needmoconsult.com"
                     className="flex items-start gap-4 hover:text-[#D4AF7A] transition-colors"
                   >
-                    <Mail className="w-5 h-5 mt-1 text-[#D4AF7A]" />
+                    <Mail className="w-3.5 h-3.5 mt-1 text-[#D4AF7A]" />
                     <div>
                       <p className="font-medium">Email</p>
                       <p className="text-gray-400">hello@needmoconsult.com</p>
@@ -92,7 +92,7 @@ export default function Contact() {
                   </a>
 
                   <div className="flex items-start gap-4">
-                    <Phone className="w-5 h-5 mt-1 text-[#D4AF7A]" />
+                    <Phone className="w-3.5 h-3.5 mt-1 text-[#D4AF7A]" />
                     <div>
                       <p className="font-medium">Phone</p>
                       <p className="text-gray-400">+1 (555) 123-4567</p>
@@ -100,7 +100,7 @@ export default function Contact() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <MapPin className="w-5 h-5 mt-1 text-[#D4AF7A]" />
+                    <MapPin className="w-3.5 h-3.5 mt-1 text-[#D4AF7A]" />
                     <div>
                       <p className="font-medium">Location</p>
                       <p className="text-gray-400">Los Angeles, CA</p>
@@ -108,7 +108,7 @@ export default function Contact() {
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <Clock className="w-5 h-5 mt-1 text-[#D4AF7A]" />
+                    <Clock className="w-3.5 h-3.5 mt-1 text-[#D4AF7A]" />
                     <div>
                       <p className="font-medium">Your Local Time</p>
                       <p className="text-gray-400">{localTime}</p>
@@ -126,7 +126,7 @@ export default function Contact() {
                         href="#"
                         className="w-10 h-10 rounded-full flex items-center justify-center hover:bg-[#D4AF7A] transition-colors"
                       >
-                        <Icon className="w-5 h-5" />
+                        <Icon className="w-3.5 h-3.5" />
                       </a>
                     ))}
                   </div>

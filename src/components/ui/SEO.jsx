@@ -19,7 +19,7 @@ export default function SEO({
     const defaultDesc = "Brand intelligence, social media strategy and content consulting insights from NEEDMO CONSULT.";
     const desc = description || defaultDesc;
     const canonical = url || window.location.href;
-    const ogImage = image || "https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.svg";
+    const ogImage = image || "https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.webp";
 
     // ── Page title ──────────────────────────────────────────────
     document.title = fullTitle;
@@ -94,7 +94,7 @@ export default function SEO({
         "url": "https://needmoconsult.com",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.svg"
+          "url": "https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.webp"
         }
       },
       ...(publishedAt && { "datePublished": publishedAt }),

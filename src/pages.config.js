@@ -49,6 +49,8 @@
  */
 import About from "./pages/About";
 import Admin from "./pages/Admin";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import BrandKit from "./pages/BrandKit";
 import CaseStudy from "./pages/CaseStudy";
 import Contact from "./pages/Contact";
@@ -63,6 +65,8 @@ import __Layout from "./Layout.jsx";
 export const PAGES = {
   About: About,
   Admin: Admin,
+  Blog: Blog,
+  BlogPost: BlogPost,
   BrandKit: BrandKit,
   CaseStudy: CaseStudy,
   Contact: Contact,

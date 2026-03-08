@@ -86,6 +86,7 @@ export default function Admin() {
     offerBody: "",
     offerUrl: "https://needmoconsult.com/Contact",
     offerLabel: "Book Free Strategy Call",
+    tags: "",
   });
   const [tips, setTips] = useState([
     { title: "", desc: "" },
@@ -142,15 +143,35 @@ export default function Admin() {
     }
 
     try {
-      const { data, error } = await supabase.functions.invoke("send-newsletter", {
-        body: {
-          to: emails,
-          ...form,
-          tips: tips.filter(t => t.title),
-        },
+      const activeTips = tips.filter(t => t.title);
+
+      // 1. Send the email
+      const { error } = await supabase.functions.invoke("send-newsletter", {
+        body: { to: emails, ...form, tips: activeTips },
+      });
+      if (error) throw new Error(error.message);
+
+      // 2. Save as blog post
+      await supabase.from("newsletters").insert({
+        issue: form.issue || null,
+        subject: form.subject,
+        hero_title: form.heroTitle,
+        hero_intro: form.heroIntro,
+        article_title: form.articleTitle || null,
+        article_body: form.articleBody || null,
+        article_url: form.articleUrl || null,
+        pull_quote: form.pullQuote || null,
+        tips: activeTips,
+        offer_title: form.offerTitle || null,
+        offer_body: form.offerBody || null,
+        offer_url: form.offerUrl || null,
+        offer_label: form.offerLabel || null,
+        tags: form.tags ? form.tags.split(",").map(t => t.trim()).filter(Boolean) : [],
+        published: true,
+        sent_to: emails.length,
+        sent_at: new Date().toISOString(),
       });
 
-      if (error) throw new Error(error.message);
       setSendResult({ ok: true, count: emails.length });
     } catch (err) {
       setSendResult({ error: err.message });
@@ -361,6 +382,17 @@ export default function Admin() {
                         <input value={form.offerUrl} onChange={e => set("offerUrl", e.target.value)} placeholder="https://needmoconsult.com/Contact" />
                       </Field>
                     </div>
+                  </Card>
+
+                  {/* Tags */}
+                  <Card title="Blog Tags" hint="Comma-separated e.g. Social Media, Branding, Tips">
+                    <Field label="Tags (optional)">
+                      <input
+                        value={form.tags || ""}
+                        onChange={e => set("tags", e.target.value)}
+                        placeholder="Social Media, Branding, Growth"
+                      />
+                    </Field>
                   </Card>
 
                 </div>

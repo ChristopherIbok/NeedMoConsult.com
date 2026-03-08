@@ -275,7 +275,7 @@ export default function Admin() {
                 )}
               </AnimatePresence>
 
-              <div className={`grid gap-6 ${preview ? "grid-cols-2" : "grid-cols-1 max-w-2xl"}`}>
+              <div className="grid gap-6 grid-cols-1 max-w-2xl">
                 {/* Form */}
                 <div className="space-y-6">
 
@@ -448,22 +448,22 @@ export default function Admin() {
 
         </div>
       </div>
-    </div>
 
-        {/* ── PREVIEW MODAL ── */}
-        {previewOpen && (
-          <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/70 overflow-y-auto py-8 px-4" onClick={() => setPreviewOpen(false)}>
-            <div onClick={e => e.stopPropagation()} className="w-full max-w-2xl">
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-white text-sm font-semibold uppercase tracking-widest">Email Preview</p>
-                <button onClick={() => setPreviewOpen(false)} className="text-white/60 hover:text-white text-sm flex items-center gap-1">
-                  <XCircle className="w-4 h-4" /> Close
-                </button>
-              </div>
-              <NewsletterPreview form={form} tips={tips} />
+      {/* ── PREVIEW MODAL ── */}
+      {previewOpen && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/70 overflow-y-auto py-8 px-4" onClick={() => setPreviewOpen(false)}>
+          <div onClick={e => e.stopPropagation()} className="w-full max-w-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-white text-sm font-semibold uppercase tracking-widest">Email Preview</p>
+              <button onClick={() => setPreviewOpen(false)} className="text-white/60 hover:text-white text-sm flex items-center gap-1">
+                <XCircle className="w-4 h-4" /> Close
+              </button>
             </div>
+            <NewsletterPreview form={form} tips={tips} />
           </div>
-        )}
+        </div>
+      )}
+    </div>
   );
 }
 

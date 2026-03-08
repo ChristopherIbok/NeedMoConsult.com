@@ -196,8 +196,8 @@ serve(async (req) => {
     <tr><td style="padding:52px 40px 44px;">
       <p style="margin:0 0 4px;font-size:14px;color:#999;font-family:Georgia,serif;font-style:italic;">Until next week,</p>
       <p style="margin:0 0 16px;font-size:30px;color:#1A2332;font-family:Georgia,serif;font-weight:normal;font-style:italic;">Chris</p>
-      <p style="margin:0 0 2px;font-size:12px;color:#1A2332;font-family:Georgia,serif;font-weight:bold;">Founder, NEEDMO CONSULT</p>
-      <p style="margin:0 0 36px;font-size:11px;color:#B8A882;font-family:Georgia,serif;letter-spacing:1px;">Social Media Strategist &nbsp;&middot;&nbsp; Video Editor &nbsp;&middot;&nbsp; Content Consultant</p>
+      <p style="margin:0 0 2px;font-size:12px;color:#1A2332;font-family:Georgia,serif;font-weight:bold;">Founder, NeedMo Consult</p>
+      <p style="margin:0 0 36px;font-size:11px;color:#B8A882;font-family:Georgia,serif;letter-spacing:1px;">Social Media Strategist &nbsp;&middot;&nbsp; Content Consultant</p>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
         <tr>
           <td style="padding:20px 24px;background-color:#F9F7F4;border-left:2px solid #D4AF7A;">
@@ -225,7 +225,7 @@ serve(async (req) => {
             </tr>
           </table>
           <div style="height:1px;background-color:#E8E4DC;margin-bottom:20px;font-size:0;line-height:0;">&nbsp;</div>
-          <p style="margin:0 0 8px;font-size:11px;color:#B8A882;font-family:Georgia,serif;line-height:1.6;">&copy; ${year} NEEDMO CONSULT &nbsp;&middot;&nbsp; Lagos, Nigeria &nbsp;&middot;&nbsp; hello@needmoconsult.com</p>
+          <p style="margin:0 0 8px;font-size:11px;color:#B8A882;font-family:Georgia,serif;line-height:1.6;">&copy; ${year} NEEDMO CONSULT &nbsp;&middot;&nbsp; LA, United States &nbsp;&middot;&nbsp; hello@needmoconsult.com</p>
           <p style="margin:0;font-size:11px;font-family:Georgia,serif;">
             <a href="https://needmoconsult.com" style="color:#B8A882;text-decoration:none;">needmoconsult.com</a>
             &nbsp;&middot;&nbsp;

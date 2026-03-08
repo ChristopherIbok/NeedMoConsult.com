@@ -1,4 +1,5 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
 import { ThemeProvider } from "@/components/ui/ThemeProvider";
 import Header from "@/components/landing/Header";
 import Footer from "@/components/landing/Footer";
@@ -6,7 +7,8 @@ import ScrollToTop from "@/components/ui/ScrollToTop";
 import NewsletterPopup from "@/components/ui/NewsletterPopup";
 
 export default function Layout({ children }) {
-  const isAdmin = window.location.pathname.toLowerCase().includes("/admin");
+  const location = useLocation();
+  const isAdmin = location.pathname.toLowerCase().includes("/admin");
 
   return (
     <ThemeProvider>

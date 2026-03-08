@@ -152,8 +152,8 @@ export function LogoFooter({ className = "" }) {
     <img
       src={LOGO_LIGHT}
       alt="NEEDMO CONSULT"
-      height={36}
-      style={{ height: 36, width: "auto", display: "block" }}
+      height={56}
+      style={{ height: 56, width: "auto", display: "block" }}
       className={className}
     />
   );

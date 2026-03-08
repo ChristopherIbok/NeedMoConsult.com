@@ -43,7 +43,7 @@ export default function BlogPost() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-[#0F1419] flex items-center justify-center">
+      <div className="min-h-screen bg-[#F9F7F4] dark:bg-[#0F1419] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="w-8 h-0.5 bg-[#D4AF7A] animate-pulse" />
           <p className="text-gray-400 text-sm" style={{ fontFamily: "Georgia, serif" }}>Loading article...</p>
@@ -54,7 +54,7 @@ export default function BlogPost() {
 
   if (!post) {
     return (
-      <div className="min-h-screen bg-white dark:bg-[#0F1419] flex items-center justify-center">
+      <div className="min-h-screen bg-[#F9F7F4] dark:bg-[#0F1419] flex items-center justify-center">
         <div className="text-center">
           <p className="text-gray-400 mb-4" style={{ fontFamily: "Georgia, serif" }}>Article not found.</p>
           <Link to={createPageUrl("Blog")} className="text-[#D4AF7A] text-sm underline" style={{ fontFamily: "Georgia, serif" }}>← Back to Blog</Link>
@@ -67,7 +67,7 @@ export default function BlogPost() {
   const date = new Date(post.sent_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#0F1419]">
+    <div className="min-h-screen bg-[#F9F7F4] dark:bg-[#0F1419]">
 
       {/* Top gold rule */}
       <div className="h-0.5 bg-[#D4AF7A] fixed top-0 left-0 right-0 z-50" />
@@ -107,7 +107,7 @@ export default function BlogPost() {
         {/* Rule */}
         <div className="flex items-center gap-2 mb-6">
           <div className="w-10 h-px bg-[#D4AF7A]" />
-          <div className="flex-1 h-px bg-gray-100 dark:bg-white/10" />
+          <div className="flex-1 h-px bg-gray-200 dark:bg-white/10" />
         </div>
 
         <p className="text-lg text-gray-500 dark:text-white/60 leading-relaxed mb-8" style={{ fontFamily: "Georgia, serif" }}>
@@ -125,7 +125,7 @@ export default function BlogPost() {
       </motion.div>
 
       {/* Divider */}
-      <div className="h-px bg-gray-100 dark:bg-white/10 max-w-3xl mx-auto" />
+      <div className="h-px bg-gray-200 dark:bg-white/10 max-w-3xl mx-auto" />
 
       {/* Article body */}
       <motion.div
@@ -142,13 +142,13 @@ export default function BlogPost() {
             <h2 className="text-2xl font-normal text-[#1A2332] dark:text-white mb-5 leading-snug" style={{ fontFamily: "Georgia, serif" }}>
               {post.article_title}
             </h2>
-            <p className="text-base text-gray-600 dark:text-white/60 leading-relaxed mb-6" style={{ fontFamily: "Georgia, serif" }}>
+            <p className="text-base text-gray-600 dark:text-white/70 leading-relaxed mb-6" style={{ fontFamily: "Georgia, serif" }}>
               {post.article_body}
             </p>
 
             {/* Pull quote */}
             {post.pull_quote && (
-              <blockquote className="border-l-2 border-[#D4AF7A] pl-6 py-4 bg-[#F9F7F4] dark:bg-white/5 mb-6">
+              <blockquote className="border-l-2 border-[#D4AF7A] pl-6 py-4 bg-[#F9F7F4] dark:bg-[#1A2332]/40 mb-6">
                 <p className="text-xl font-normal italic text-[#1A2332] dark:text-white leading-relaxed mb-2" style={{ fontFamily: "Georgia, serif" }}>
                   "{post.pull_quote}"
                 </p>
@@ -174,7 +174,7 @@ export default function BlogPost() {
         {tips.length > 0 && post.article_title && (
           <div className="flex items-center gap-2 mb-14">
             <div className="w-10 h-px bg-[#D4AF7A]" />
-            <div className="flex-1 h-px bg-gray-100 dark:bg-white/10" />
+            <div className="flex-1 h-px bg-gray-200 dark:bg-white/10" />
           </div>
         )}
 
@@ -204,7 +204,7 @@ export default function BlogPost() {
         {/* Offer */}
         {post.offer_title && (
           <>
-            <div className="h-px bg-gray-100 dark:bg-white/10 mb-14" />
+            <div className="h-px bg-gray-200 dark:bg-white/10 mb-14" />
             <section className="bg-[#1A2332] p-8 mb-14">
               <div className="h-0.5 bg-[#D4AF7A] -mt-8 mb-8" />
               <p className="text-xs text-[#D4AF7A] tracking-[4px] uppercase mb-4" style={{ fontFamily: "Georgia, serif" }}>Exclusive Offer</p>
@@ -226,7 +226,7 @@ export default function BlogPost() {
         )}
 
         {/* Sign-off */}
-        <div className="h-px bg-gray-100 dark:bg-white/10 mb-10" />
+        <div className="h-px bg-gray-200 dark:bg-white/10 mb-10" />
         <div className="mb-10">
           <p className="text-sm text-gray-400 italic mb-2" style={{ fontFamily: "Georgia, serif" }}>Until next week,</p>
           <p className="text-3xl font-normal italic text-[#1A2332] dark:text-white mb-3" style={{ fontFamily: "Georgia, serif" }}>Chris</p>
@@ -237,33 +237,33 @@ export default function BlogPost() {
         </div>
 
         {/* Share */}
-        <div className="border-t border-gray-100 dark:border-white/10 pt-10">
+        <div className="border-t border-gray-200 dark:border-white/10 pt-10">
           <p className="text-xs text-gray-400 tracking-[3px] uppercase mb-5" style={{ fontFamily: "Georgia, serif" }}>Share this article</p>
           <div className="flex items-center gap-3">
             <button
               onClick={share.twitter}
-              className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 dark:border-white/10 text-xs text-gray-600 dark:text-white/60 hover:border-[#D4AF7A] hover:text-[#D4AF7A] transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 dark:border-white/10 text-xs text-gray-600 dark:text-white/60 hover:border-[#D4AF7A] hover:text-[#D4AF7A] dark:hover:border-[#D4AF7A] dark:hover:text-[#D4AF7A] transition-colors"
               style={{ fontFamily: "Georgia, serif", letterSpacing: "0.1em" }}
             >
               <Twitter className="w-3.5 h-3.5" /> Twitter
             </button>
             <button
               onClick={share.linkedin}
-              className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 dark:border-white/10 text-xs text-gray-600 dark:text-white/60 hover:border-[#D4AF7A] hover:text-[#D4AF7A] transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 dark:border-white/10 text-xs text-gray-600 dark:text-white/60 hover:border-[#D4AF7A] hover:text-[#D4AF7A] dark:hover:border-[#D4AF7A] dark:hover:text-[#D4AF7A] transition-colors"
               style={{ fontFamily: "Georgia, serif", letterSpacing: "0.1em" }}
             >
               <Linkedin className="w-3.5 h-3.5" /> LinkedIn
             </button>
             <button
               onClick={share.facebook}
-              className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 dark:border-white/10 text-xs text-gray-600 dark:text-white/60 hover:border-[#D4AF7A] hover:text-[#D4AF7A] transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 dark:border-white/10 text-xs text-gray-600 dark:text-white/60 hover:border-[#D4AF7A] hover:text-[#D4AF7A] dark:hover:border-[#D4AF7A] dark:hover:text-[#D4AF7A] transition-colors"
               style={{ fontFamily: "Georgia, serif", letterSpacing: "0.1em" }}
             >
               <Facebook className="w-3.5 h-3.5" /> Facebook
             </button>
             <button
               onClick={share.copy}
-              className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 dark:border-white/10 text-xs text-gray-600 dark:text-white/60 hover:border-[#D4AF7A] hover:text-[#D4AF7A] transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 border border-gray-200 dark:border-white/10 text-xs text-gray-600 dark:text-white/60 hover:border-[#D4AF7A] hover:text-[#D4AF7A] dark:hover:border-[#D4AF7A] dark:hover:text-[#D4AF7A] transition-colors"
               style={{ fontFamily: "Georgia, serif", letterSpacing: "0.1em" }}
             >
               {copied ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Link2 className="w-3.5 h-3.5" />}
@@ -273,7 +273,7 @@ export default function BlogPost() {
         </div>
 
         {/* Back to blog */}
-        <div className="mt-14 pt-10 border-t border-gray-100 dark:border-white/10">
+        <div className="mt-14 pt-10 border-t border-gray-200 dark:border-white/10">
           <Link
             to={createPageUrl("Blog")}
             className="inline-flex items-center gap-2 text-xs text-gray-400 hover:text-[#D4AF7A] transition-colors"

@@ -40,7 +40,7 @@ export default function Blog() {
   });
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#0F1419]">
+    <div className="min-h-screen bg-[#F9F7F4] dark:bg-[#0F1419]">
 
       {/* Hero */}
       <div className="bg-[#1A2332] pt-32 pb-20 px-6">
@@ -62,7 +62,7 @@ export default function Blog() {
       <div className="h-0.5 bg-[#D4AF7A]" />
 
       {/* Search + Filter */}
-      <div className="max-w-3xl mx-auto px-6 py-10">
+      <div className="max-w-3xl mx-auto px-6 py-10 bg-[#F9F7F4] dark:bg-[#0F1419]">
         {/* Search bar */}
         <div className="relative mb-6">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -71,7 +71,7 @@ export default function Blog() {
             placeholder="Search articles..."
             value={query}
             onChange={e => setQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 text-[#1A2332] dark:text-white text-sm outline-none focus:border-[#D4AF7A] transition-colors"
+            className="w-full pl-11 pr-4 py-3 border border-gray-200 dark:border-white/10 bg-white dark:bg-[#1A2332]/60 text-[#1A2332] dark:text-white text-sm outline-none focus:border-[#D4AF7A] transition-colors placeholder:text-gray-400 dark:placeholder:text-white/30"
             style={{ fontFamily: "Georgia, serif" }}
           />
         </div>
@@ -86,7 +86,7 @@ export default function Blog() {
                 className={`flex items-center gap-1.5 px-4 py-1.5 text-xs border transition-colors ${
                   activeTag === tag
                     ? "border-[#D4AF7A] bg-[#D4AF7A] text-[#1A2332]"
-                    : "border-gray-200 dark:border-white/10 text-gray-500 dark:text-white/50 hover:border-[#D4AF7A] hover:text-[#D4AF7A]"
+                    : "border-gray-200 dark:border-white/10 text-gray-500 dark:text-white/40 hover:border-[#D4AF7A] hover:text-[#D4AF7A] dark:hover:border-[#D4AF7A] dark:hover:text-[#D4AF7A]"
                 }`}
                 style={{ fontFamily: "Georgia, serif", letterSpacing: "0.1em" }}
               >
@@ -117,7 +117,7 @@ export default function Blog() {
             </p>
           </div>
         ) : (
-          <div className="flex flex-col divide-y divide-gray-100 dark:divide-white/10">
+          <div className="flex flex-col divide-y divide-gray-200 dark:divide-white/10">
             {filtered.map((post, i) => (
               <motion.article
                 key={post.id}
@@ -158,7 +158,7 @@ export default function Blog() {
 
                 <Link
                   to={createPageUrl("BlogPost") + `?id=${post.id}`}
-                  className="inline-flex items-center gap-2 text-xs text-[#1A2332] dark:text-white border border-[#1A2332] dark:border-white/30 px-5 py-2.5 hover:bg-[#1A2332] hover:text-[#D4AF7A] dark:hover:bg-white dark:hover:text-[#1A2332] transition-colors"
+                  className="inline-flex items-center gap-2 text-xs text-[#1A2332] dark:text-white border border-[#1A2332] dark:border-white/30 px-5 py-2.5 hover:bg-[#1A2332] hover:text-[#D4AF7A] dark:hover:bg-[#D4AF7A] dark:hover:text-[#1A2332] dark:hover:border-[#D4AF7A] transition-colors"
                   style={{ fontFamily: "Georgia, serif", letterSpacing: "0.15em", textTransform: "uppercase" }}
                 >
                   Read Article <ArrowRight className="w-3 h-3" />

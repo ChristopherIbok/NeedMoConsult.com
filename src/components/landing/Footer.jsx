@@ -30,10 +30,10 @@ const services = [
 ];
 
 const socials = [
-  { icon: Instagram, href: "#", label: "Instagram" },
-  { icon: Facebook, href: "#", label: "Facebook" },
-  { icon: Linkedin, href: "#", label: "LinkedIn" },
-  { icon: Twitter, href: "#", label: "Twitter" },
+  { icon: Instagram, href: "https://instagram.com/needmoconsult", label: "Instagram" },
+  { icon: Facebook, href: "https://facebook.com/needmoconsult", label: "Facebook" },
+  { icon: Linkedin, href: "https://linkedin.com/company/needmoconsult", label: "LinkedIn" },
+  { icon: Twitter, href: "https://twitter.com/needmoconsult", label: "Twitter" },
 ];
 
 export default function Footer() {

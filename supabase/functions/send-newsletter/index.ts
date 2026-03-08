@@ -324,7 +324,7 @@ serve(async (req) => {
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: "Kriz at NEEDMO CONSULT <hello@needmoconsult.com>",
+        from: "Chris at NEEDMO CONSULT <hello@needmoconsult.com>",
         to: recipients,
         subject,
         html,

@@ -43,7 +43,7 @@ export default function Blog() {
     <div className="min-h-screen bg-[#F9F7F4] dark:bg-[#0F1419]">
 
       {/* Hero */}
-      <div className="bg-[#1A2332] pt-32 pb-20 px-6">
+      <div className="bg-[#F9F7F4] dark:bg-[#1A2332] pt-32 pb-20 px-6 border-b border-gray-200 dark:border-transparent">
         <div className="max-w-3xl mx-auto">
           <div className="flex items-center gap-3 mb-6">
             <div className="h-px w-8 bg-[#D4AF7A]" />
@@ -51,15 +51,15 @@ export default function Blog() {
               Brand &amp; Social Intelligence
             </p>
           </div>
-          <h1 className="text-4xl md:text-5xl font-normal text-white mb-5 leading-tight" style={{ fontFamily: "Georgia, serif" }}>
+          <h1 className="text-4xl md:text-5xl font-normal text-[#1A2332] dark:text-white mb-5 leading-tight" style={{ fontFamily: "Georgia, serif" }}>
             The NEEDMO<br/><em className="text-[#D4AF7A]">Insights</em> Blog
           </h1>
-          <p className="text-white/60 text-lg leading-relaxed max-w-xl" style={{ fontFamily: "Georgia, serif" }}>
+          <p className="text-[#1A2332]/60 dark:text-white/60 text-lg leading-relaxed max-w-xl" style={{ fontFamily: "Georgia, serif" }}>
             Every newsletter we send becomes a permanent resource here. Strategy, tips and brand intelligence — all in one place.
           </p>
         </div>
       </div>
-      <div className="h-0.5 bg-[#D4AF7A]" />
+      <div className="h-0.5 bg-[#D4AF7A] dark:bg-[#D4AF7A] bg-opacity-60" />
 
       {/* Search + Filter */}
       <div className="max-w-3xl mx-auto px-6 py-10 bg-[#F9F7F4] dark:bg-[#0F1419]">

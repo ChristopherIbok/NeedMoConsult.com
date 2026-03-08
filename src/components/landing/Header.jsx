@@ -109,7 +109,7 @@ export default function Header() {
               </motion.button>
 
               <Link to={createPageUrl("Contact")} className="hidden md:block">
-                <Button className="bg-[#D4AF7A] hover:bg-[#E55A2B] text-white font-semibold px-6 transition-all hover:scale-105 btn-ripple">
+                <Button className="bg-[#D4AF7A] hover:bg-[#C49A5E] text-[#1A2332] font-semibold px-6 transition-all hover:scale-105 btn-ripple">
                   Book Free Strategy Call
                 </Button>
               </Link>
@@ -196,7 +196,7 @@ export default function Header() {
                 to={createPageUrl("Contact")}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <Button className="w-full bg-[#D4AF7A] hover:bg-[#E55A2B] text-white font-bold py-4 text-lg min-h-[56px] active:scale-[0.98] transition-transform">
+                <Button className="w-full bg-[#D4AF7A] hover:bg-[#C49A5E] text-[#1A2332] font-bold py-4 text-lg min-h-[56px] active:scale-[0.98] transition-transform">
                   Book Free Strategy Call
                 </Button>
               </Link>

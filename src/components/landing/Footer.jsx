@@ -30,10 +30,10 @@ const services = [
 ];
 
 const socials = [
-  { icon: Instagram, href: "#", label: "Instagram" },
-  { icon: Facebook, href: "#", label: "Facebook" },
-  { icon: Linkedin, href: "#", label: "LinkedIn" },
-  { icon: Twitter, href: "#", label: "Twitter" },
+  { icon: Instagram, href: "https://instagram.com/needmoconsult", label: "Instagram" },
+  { icon: Facebook, href: "https://facebook.com/needmoconsult", label: "Facebook" },
+  { icon: Linkedin, href: "https://linkedin.com/company/needmoconsult", label: "LinkedIn" },
+  { icon: Twitter, href: "https://twitter.com/needmoconsult", label: "Twitter" },
 ];
 
 export default function Footer() {
@@ -115,7 +115,7 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="tel:+15551234567"
+                  href="tel:+15306264474"
                   className="min-h-[44px] flex items-center justify-center md:justify-start gap-3 text-gray-400 text-sm hover:text-[#D4AF7A] transition-colors"
                 >
                   <Phone className="w-3.5 h-3.5 text-[#D4AF7A] flex-shrink-0" />
@@ -124,7 +124,7 @@ export default function Footer() {
               </li>
               <li className="min-h-[44px] flex items-center justify-center md:justify-start gap-3">
                 <MapPin className="w-3.5 h-3.5 text-[#D4AF7A] flex-shrink-0" />
-                <span className="text-gray-400 text-sm">Los Angeles, CA</span>
+                <span className="text-gray-400 text-sm">Remote-First Agency</span>
               </li>
             </ul>
           </div>

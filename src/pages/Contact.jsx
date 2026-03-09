@@ -103,7 +103,7 @@ export default function Contact() {
                     <MapPin className="w-3.5 h-3.5 mt-1 text-[#D4AF7A]" />
                     <div>
                       <p className="font-medium">Location</p>
-                      <p className="text-gray-400">Los Angeles, CA</p>
+                      <p className="text-gray-400">Remote-First Agency</p>
                     </div>
                   </div>
 

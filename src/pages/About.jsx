@@ -53,7 +53,7 @@ const stats = [
 const team = [
   {
     name: "Christopher Ibok",
-    role: "Founder & Media Consultant",
+    role: "Founder & Social Media Strategist, Video Consultant",
     image:
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face",
     bio: "10+ years in Media and Production. Produced for Fortune 500 brands.",

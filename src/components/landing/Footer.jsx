@@ -119,7 +119,7 @@ export default function Footer() {
                   className="min-h-[44px] flex items-center justify-center md:justify-start gap-3 text-gray-400 text-sm hover:text-[#D4AF7A] transition-colors"
                 >
                   <Phone className="w-3.5 h-3.5 text-[#D4AF7A] flex-shrink-0" />
-                  +1 (555) 123-4567
+                  +1 (530) 626-4474
                 </a>
               </li>
               <li className="min-h-[44px] flex items-center justify-center md:justify-start gap-3">

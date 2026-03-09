@@ -64,7 +64,7 @@ export default function ContactCTA() {
             </a>
             <a href="tel:+1530" className="flex items-center gap-2 hover:text-white transition-colors min-h-[44px]">
               <Phone className="w-4 h-4 flex-shrink-0 text-[#D4AF7A]" />
-              placerville
+              +1 (989) 785-2030
             </a>
             <span className="flex items-center gap-2 min-h-[44px]">
               <MapPin className="w-4 h-4 flex-shrink-0 text-[#D4AF7A]" />

@@ -9,9 +9,9 @@ export default function AnimatedCounter({ value, suffix = "" }) {
   useEffect(() => {
     if (!isInView) return;
     // Parse numeric part
-    const numeric = parseFloat(value.replace(/[^0-9.]/g, ""));
-    const prefix = value.match(/^[^0-9]*/)?.[0] || "";
-    const valueSuffix = value.match(/[^0-9.]+$/)?.[0] || "";
+    const numeric = parseFloat(String(value).replace(/[^0-9.]/g, ""));
+    const prefix = String(value).match(/^[^0-9]*/)?.[0] || "";
+    const valueSuffix = String(value).match(/[^0-9.]+$/)?.[0] || "";
     const duration = 1800;
     const steps = 60;
     const interval = duration / steps;
@@ -28,7 +28,7 @@ export default function AnimatedCounter({ value, suffix = "" }) {
         : current.toFixed(1);
       setDisplay(`${prefix}${formatted}${valueSuffix}`);
       if (step >= steps) {
-        setDisplay(value);
+        setDisplay(String(value));
         clearInterval(timer);
       }
     }, interval);

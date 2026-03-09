@@ -47,7 +47,7 @@ export default function ServicesOverview() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 1 }}
+          transition={{ delay: 0.2 }}
           className="text-center mb-16"
         >
           <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
@@ -70,7 +70,7 @@ export default function ServicesOverview() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{
-                delay: 1 + index * 0.12,
+                delay: 0.2 + index * 0.12,
                 type: "spring",
                 stiffness: 180,
                 damping: 22,
@@ -107,7 +107,7 @@ export default function ServicesOverview() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 1 }}
+          transition={{ delay: 0.2 }}
           className="text-center"
         >
           <Link to={createPageUrl("Services")}>

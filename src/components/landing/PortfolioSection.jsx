@@ -22,17 +22,15 @@ const categories = [
 
 const portfolioItems = [
   {
-    id: 1,
+   id: 1,
     type: "video",
     category: "content",
     client: "BrightStart Wellness",
     project: "Instagram Reels Series",
-    description:
-      "Created 30-day wellness challenge content series with branded templates and engaging captions",
+    description: "Created 30-day wellness challenge content series with branded templates and engaging captions",
     results: { views: "250K", engagement: "15%", followers: "+5K" },
-    thumbnail:
-      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop",
-    videoId: "fFVyiiU4jZA&t=11s",
+    thumbnail: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop",
+    videoId: "fFVyiiU4jZA", // Real wellness video example
   },
   {
     id: 2,
@@ -40,12 +38,10 @@ const portfolioItems = [
     category: "paid",
     client: "Urban Threads",
     project: "TikTok Ad Campaign",
-    description:
-      "Launch campaign for new clothing line targeting Gen Z audience",
+    description: "Launch campaign for new clothing line targeting Gen Z audience",
     results: { impressions: "500K", ctr: "12%", revenue: "$30K" },
-    thumbnail:
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop",
-    videoId: "dQw4w9WgXcQ",
+    thumbnail: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop",
+    videoId: "L7fXvE8zYgI", // Replace with a real TikTok style ad link
   },
   {
     id: 3,
@@ -99,11 +95,12 @@ const portfolioItems = [
   },
 ];
 
+// 2. FIX THE STATS TO USE THE SAME NUMERIC LOGIC WE USED IN THE ABOUT SECTION
 const stats = [
-  { icon: Heart, value: "500+", label: "Posts Created" },
-  { icon: Users, value: "50+", label: "Happy Clients" },
-  { icon: TrendingUp, value: "3M+", label: "People Reached" },
-  { icon: Eye, value: "8.5%", label: "Avg. Engagement" },
+  { icon: Heart, numericValue: 500, suffix: "+", label: "Posts Created" },
+  { icon: Users, numericValue: 50, suffix: "+", label: "Happy Clients" },
+  { icon: TrendingUp, numericValue: 3, suffix: "M+", label: "People Reached" },
+  { icon: Eye, numericValue: 8.5, suffix: "%", label: "Avg. Engagement" },
 ];
 
 export default function PortfolioSection() {
@@ -115,15 +112,16 @@ export default function PortfolioSection() {
       ? portfolioItems
       : portfolioItems.filter((item) => item.category === activeCategory);
 
-  return (
+ return (
     <section className="py-20 md:py-28 bg-[#F7F7F7] dark:bg-[#1A2332]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 1 }}
+          transition={{ delay: 0.2 }}
           className="text-center mb-12"
         >
           <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
@@ -163,7 +161,7 @@ export default function PortfolioSection() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                transition={{ delay: 1 + index * 0.1 }}
+                transition={{ delay: 0.2 + index * 0.1 }}
                 whileHover={{ y: -8 }}
                 className={`group relative bg-white dark:bg-[#1E2830] rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl ${
                   item.featured ? "md:col-span-2 lg:col-span-1" : ""
@@ -239,7 +237,7 @@ export default function PortfolioSection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 1 }}
+          transition={{ delay: 0.2 }}
           className="bg-white dark:bg-[#1E2830] rounded-2xl p-8 md:p-12"
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">

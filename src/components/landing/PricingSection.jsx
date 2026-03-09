@@ -115,7 +115,7 @@ export default function PricingSection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 1 }}
+          transition={{ delay: 0.2 }}
           className="text-center mb-4"
         >
           <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
@@ -148,7 +148,7 @@ export default function PricingSection() {
               whileInView={{ opacity: 1, scale: pkg.popular ? 1.02 : 1 }}
               viewport={{ once: true }}
               transition={{
-                delay: 1 + index * 0.1,
+                delay: 0.2 + index * 0.1,
                 type: "spring",
                 stiffness: 200,
                 damping: 20,

@@ -38,7 +38,7 @@ export default function TestimonialsSection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 1 }}
+          transition={{ delay: 0.2 }}
           className="text-center mb-16"
         >
           <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
@@ -60,7 +60,7 @@ export default function TestimonialsSection() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 1 + index * 0.15 }}
+              transition={{ delay: 0.2 + index * 0.15 }}
               whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.2 } }}
               className="bg-white dark:bg-[#1E2830] rounded-2xl p-6 md:p-8 shadow-lg shadow-black/5 dark:shadow-black/20 flex-shrink-0 w-[calc(100vw-56px)] sm:w-[340px] md:w-auto snap-start cursor-default hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30 transition-shadow duration-300"
             >

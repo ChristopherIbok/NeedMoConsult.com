@@ -34,7 +34,7 @@ export default function ValueProps() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 1 + index * 0.15, duration: 0.5 }}
+              transition={{ delay: 0.2 + index * 0.15, duration: 0.5 }}
               className="text-center"
             >
               <motion.div

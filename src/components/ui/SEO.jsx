@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 
 /**
- * SEO component — injects meta tags into <head> dynamically.
- * Works without react-helmet by directly manipulating the DOM.
+ * SEO — injects meta tags into <head> dynamically.
+ * Safe against null/undefined/non-string values.
  */
 export default function SEO({
   title,
@@ -14,30 +14,34 @@ export default function SEO({
   tags = [],
 }) {
   useEffect(() => {
-    const siteName = "NEEDMO CONSULT";
+    const siteName  = "NEEDMO CONSULT";
     const fullTitle = title ? `${title} | ${siteName}` : siteName;
     const defaultDesc = "Brand intelligence, social media strategy and content consulting insights from NEEDMO CONSULT.";
-    const desc = description || defaultDesc;
-    const canonical = url || window.location.href;
-    const ogImage = image || "https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.webp?V=4";
+    const desc      = (typeof description === "string" && description) ? description : defaultDesc;
+    const canonical = (typeof url === "string" && url) ? url : window.location.href;
+    const ogImage   = (typeof image === "string" && image)
+      ? image
+      : "https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.webp";
+    const safeTags  = Array.isArray(tags) ? tags.filter(t => typeof t === "string") : [];
 
-    // ── Page title ──────────────────────────────────────────────
+    // ── Page title ───────────────────────────────────────────────
     document.title = fullTitle;
 
-    // ── Helper: upsert a <meta> tag ─────────────────────────────
-    const setMeta = (selector, attr, value) => {
-      let el = document.querySelector(selector);
+    // ── Upsert <meta> ────────────────────────────────────────────
+    const setMeta = (name, nameAttr, value) => {
+      if (typeof value !== "string" || !value) return;
+      let el = document.querySelector(`meta[${nameAttr}="${name}"]`);
       if (!el) {
         el = document.createElement("meta");
-        const [attrName, attrVal] = selector.replace("meta[", "").replace("]", "").split('="');
-        el.setAttribute(attrName, attrVal.replace('"', ""));
+        el.setAttribute(nameAttr, name);
         document.head.appendChild(el);
       }
-      el.setAttribute(attr, value);
+      el.setAttribute("content", value);
     };
 
-    // ── Helper: upsert a <link> tag ─────────────────────────────
+    // ── Upsert <link> ────────────────────────────────────────────
     const setLink = (rel, href) => {
+      if (typeof href !== "string" || !href) return;
       let el = document.querySelector(`link[rel="${rel}"]`);
       if (!el) {
         el = document.createElement("link");
@@ -47,44 +51,40 @@ export default function SEO({
       el.setAttribute("href", href);
     };
 
-    // ── Standard meta ───────────────────────────────────────────
-    setMeta('meta[name="description"]',         "content", desc);
-    setMeta('meta[name="robots"]',              "content", "index, follow");
-    if (tags.length) {
-      setMeta('meta[name="keywords"]',          "content", tags.join(", "));
-    }
-
-    // ── Canonical ───────────────────────────────────────────────
+    // ── Standard ─────────────────────────────────────────────────
+    setMeta("description",  "name",     desc);
+    setMeta("robots",       "name",     "index, follow");
+    if (safeTags.length) setMeta("keywords", "name", safeTags.join(", "));
     setLink("canonical", canonical);
 
-    // ── Open Graph ──────────────────────────────────────────────
-    setMeta('meta[property="og:type"]',         "content", type);
-    setMeta('meta[property="og:title"]',        "content", fullTitle);
-    setMeta('meta[property="og:description"]',  "content", desc);
-    setMeta('meta[property="og:url"]',          "content", canonical);
-    setMeta('meta[property="og:image"]',        "content", ogImage);
-    setMeta('meta[property="og:image:width"]',  "content", "1200");
-    setMeta('meta[property="og:image:height"]', "content", "630");
-    setMeta('meta[property="og:site_name"]',    "content", siteName);
-    if (publishedAt) {
-      setMeta('meta[property="article:published_time"]', "content", publishedAt);
+    // ── Open Graph ───────────────────────────────────────────────
+    setMeta("og:type",                "property", type);
+    setMeta("og:title",               "property", fullTitle);
+    setMeta("og:description",         "property", desc);
+    setMeta("og:url",                 "property", canonical);
+    setMeta("og:image",               "property", ogImage);
+    setMeta("og:image:width",         "property", "1200");
+    setMeta("og:image:height",        "property", "630");
+    setMeta("og:site_name",           "property", siteName);
+    if (publishedAt && typeof publishedAt === "string") {
+      setMeta("article:published_time", "property", publishedAt);
     }
 
-    // ── Twitter Card ────────────────────────────────────────────
-    setMeta('meta[name="twitter:card"]',        "content", image ? "summary_large_image" : "summary");
-    setMeta('meta[name="twitter:site"]',        "content", "@needmoconsult");
-    setMeta('meta[name="twitter:title"]',       "content", fullTitle);
-    setMeta('meta[name="twitter:description"]', "content", desc);
-    setMeta('meta[name="twitter:image"]',       "content", ogImage);
+    // ── Twitter Card ─────────────────────────────────────────────
+    setMeta("twitter:card",        "name", image ? "summary_large_image" : "summary");
+    setMeta("twitter:site",        "name", "@needmoconsult");
+    setMeta("twitter:title",       "name", fullTitle);
+    setMeta("twitter:description", "name", desc);
+    setMeta("twitter:image",       "name", ogImage);
 
-    // ── Structured data (JSON-LD) ───────────────────────────────
-    const existingScript = document.querySelector('script[data-seo="needmo"]');
-    if (existingScript) existingScript.remove();
+    // ── JSON-LD ──────────────────────────────────────────────────
+    const existing = document.querySelector('script[data-seo="needmo"]');
+    if (existing) existing.remove();
 
     const schema = {
       "@context": "https://schema.org",
       "@type": type === "article" ? "BlogPosting" : "WebSite",
-      "headline": title,
+      "headline": title || siteName,
       "description": desc,
       "image": ogImage,
       "url": canonical,
@@ -94,20 +94,23 @@ export default function SEO({
         "url": "https://needmoconsult.com",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.webp?V=4",
+          "url": "https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.webp"
         }
       },
       ...(publishedAt && { "datePublished": publishedAt }),
-      ...(tags.length && { "keywords": tags.join(", ") }),
+      ...(safeTags.length && { "keywords": safeTags.join(", ") }),
     };
 
-    const script = document.createElement("script");
-    script.type = "application/ld+json";
-    script.setAttribute("data-seo", "needmo");
-    script.textContent = JSON.stringify(schema);
-    document.head.appendChild(script);
+    try {
+      const script = document.createElement("script");
+      script.type = "application/ld+json";
+      script.setAttribute("data-seo", "needmo");
+      script.textContent = JSON.stringify(schema);
+      document.head.appendChild(script);
+    } catch (e) {
+      console.warn("SEO: JSON-LD injection failed", e);
+    }
 
-    // ── Cleanup on unmount ──────────────────────────────────────
     return () => {
       document.title = siteName;
       const s = document.querySelector('script[data-seo="needmo"]');

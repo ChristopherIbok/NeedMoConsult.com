@@ -113,7 +113,12 @@ export default function AboutSection() {
               </div>
             </div>
 
-            {/* Decorative Elements */}
+          {/* Decorative Elements */}
             <div className="absolute -top-4 -right-4 w-24 h-24 bg-[#D4AF7A]/10 rounded-full blur-xl" />
             <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-[#1A2332]/5 dark:bg-white/5 rounded-full blur-xl" />
           </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}

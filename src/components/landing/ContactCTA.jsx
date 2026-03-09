@@ -62,13 +62,13 @@ export default function ContactCTA() {
               <Mail className="w-4 h-4 flex-shrink-0 text-[#D4AF7A]" />
               hello@needmoconsult.com
             </a>
-            <a href="tel:+2348000000000" className="flex items-center gap-2 hover:text-white transition-colors min-h-[44px]">
+            <a href="tel:+1530" className="flex items-center gap-2 hover:text-white transition-colors min-h-[44px]">
               <Phone className="w-4 h-4 flex-shrink-0 text-[#D4AF7A]" />
-              +234 800 000 0000
+              placerville
             </a>
             <span className="flex items-center gap-2 min-h-[44px]">
               <MapPin className="w-4 h-4 flex-shrink-0 text-[#D4AF7A]" />
-              Nigeria · Remote-First
+              Remote-First Agency
             </span>
           </div>
 

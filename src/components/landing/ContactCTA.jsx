@@ -30,7 +30,7 @@ export default function ContactCTA() {
   return (
     <section className="relative py-20 md:py-28 overflow-hidden">
       {/* Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#1A2332] via-[#2A3342] to-[#D4AF7A] dark:from-[#0F1419] dark:via-[#1A2332] dark:to-[#C49A5E]" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#1A2332] via-[#1E2A3A] to-[#2A3E5C] dark:from-[#0F1419] dark:via-[#1A2332] dark:to-[#243348]" />
 
       {/* Pattern Overlay */}
       <div className="absolute inset-0 opacity-5">
@@ -62,8 +62,7 @@ export default function ContactCTA() {
           <Link to={createPageUrl("Contact")} className="block sm:inline-block">
             <Button
               size="lg"
-              className="w-full sm:w-auto bg-[#bg-[#bg-[#bg-[#F9F7F4]]]] text-[#1A2332] hover:bg-gray-100 active:scale-[0.98] font-bold px-8 sm:px-10 py-5 text-base sm:text-lg transition-all min-h-[56px]"
-            >
+              className="w-full sm:w-auto bg-[#D4AF7A] hover:bg-[#C49A5E] text-[#1A2332] active:scale-[0.98] font-bold px-8 sm:px-10 py-5 text-base sm:text-lg transition-all min-h-[56px]"
               Book a Free 30-Minute Strategy Call
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>

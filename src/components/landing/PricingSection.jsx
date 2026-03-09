@@ -81,9 +81,9 @@ export default function PricingSection() {
   useEffect(() => {
     const detectCurrency = async () => {
       try {
-        const response = await fetch("https://ipapi.co/json/");
+        const response = await fetch("https://ipwho.is/");
         const data = await response.json();
-        const countryCurrency = data.currency || "USD";
+        const countryCurrency = data?.currency?.code || "USD";
         if (currencySymbols[countryCurrency]) {
           setCurrency(countryCurrency);
           // Fetch exchange rate
@@ -109,7 +109,7 @@ export default function PricingSection() {
 
   return (
     <section className="py-20 md:py-28 bg-[#F7F7F7] dark:bg-[#1A2332]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="site-container">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

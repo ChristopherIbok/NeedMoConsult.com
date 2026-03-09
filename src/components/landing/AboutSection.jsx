@@ -29,7 +29,7 @@ export default function AboutSection() {
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay:0.2}}
           >
             <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
               Who We Are

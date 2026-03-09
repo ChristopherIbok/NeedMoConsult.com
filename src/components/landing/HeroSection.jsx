@@ -17,18 +17,28 @@ export default function HeroSection() {
   }, []);
 
   useEffect(() => {
-    // Detect user region
     const detectRegion = async () => {
+      // 1. Check cache first
+      const cachedRegion = sessionStorage.getItem("user-region");
+      if (cachedRegion) {
+        setRegion(cachedRegion);
+        return;
+      }
+
+      // 2. Fallback to API if not cached
       try {
         const response = await fetch("https://ipapi.co/json/");
         const data = await response.json();
         if (data.country_name) {
           setRegion(data.country_name);
+          sessionStorage.setItem("user-region", data.country_name);
         }
       } catch (error) {
+        console.error("Region detection failed:", error);
         setRegion("worldwide");
       }
     };
+
     detectRegion();
   }, []);
 
@@ -127,38 +137,38 @@ export default function HeroSection() {
             </motion.div>
 
             {/* Quick Stats */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="flex items-center gap-6 sm:gap-8 pt-2"
-            >
-              {[
-                { value: "50+", label: "Happy Clients" },
-                { value: "3M+", label: "People Reached" },
-                { value: "500+", label: "Posts Created" },
-              ].map((stat, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{
-                    delay: 0.6 + i * 0.1,
-                    type: "spring",
-                    stiffness: 200,
-                  }}
-                  className="text-center sm:text-left"
-                >
-                  <p className="text-xl sm:text-2xl md:text-3xl font-bold text-[#1A2332] dark:text-white">
-                    <AnimatedCounter value={stat.value} />
-                  </p>
-                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                    {stat.label}
-                  </p>
-                </motion.div>
-              ))}
-            </motion.div>
-          </motion.div>
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ delay: 0.5 }}
+  className="flex items-center gap-6 sm:gap-12 pt-4"
+>
+  {[
+    { value: 50, suffix: "+", label: "Happy Clients" },
+    { value: 3, suffix: "M+", label: "People Reached" },
+    { value: 500, suffix: "+", label: "Posts Created" },
+  ].map((stat, i) => (
+    <motion.div
+      key={i}
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{
+        delay: 0.6 + i * 0.1,
+        type: "spring",
+        stiffness: 200,
+      }}
+      className="text-center sm:text-left"
+    >
+      <div className="text-xl sm:text-2xl md:text-3xl font-bold text-[#1A2332] dark:text-white flex items-baseline justify-center sm:justify-start">
+        <AnimatedCounter value={stat.value} />
+        <span className="ml-0.5">{stat.suffix}</span>
+      </div>
+      <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-medium">
+        {stat.label}
+      </p>
+    </motion.div>
+  ))}
+</motion.div>
 
           {/* Right Visual - hidden on small mobile, visible on lg+ */}
           <motion.div
@@ -181,17 +191,17 @@ export default function HeroSection() {
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-gradient-to-br from-[#D4AF7A] to-[#E0C48A] shadow-2xl shadow-orange-500/30"
               />
 
-              {/* Navy Circle */}
-              <motion.div
-                animate={{ y: [0, 15, 0] }}
-                transition={{
-                  duration: 3.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 0.2.5,
-                }}
-                className="absolute top-20 right-10 w-32 h-32 rounded-full bg-[#1A2332] dark:bg-white/10"
-              />
+             {/* Navy Circle */}
+<motion.div
+  animate={{ y: [0, 15, 0] }}
+  transition={{
+    duration: 3.5, // Changed from 0.6 to 3.5 for a smoother float
+    repeat: Infinity,
+    ease: "easeInOut",
+    delay: 0.2,
+  }}
+  className="absolute top-20 right-10 w-32 h-32 rounded-full bg-[#1A2332] dark:bg-white/10"
+/>
 
               {/* Small Orange Circle */}
               <motion.div
@@ -200,7 +210,7 @@ export default function HeroSection() {
                   duration: 3,
                   repeat: Infinity,
                   ease: "easeInOut",
-                  delay: 5,
+                  delay: 0.2,
                 }}
                 className="absolute bottom-32 left-10 w-20 h-20 rounded-full bg-[#D4AF7A]/30"
               />
@@ -212,7 +222,7 @@ export default function HeroSection() {
                   duration: 4,
                   repeat: Infinity,
                   ease: "easeInOut",
-                  delay: 0.2.3,
+                  delay: 0.2,
                 }}
                 className="absolute bottom-20 right-0 bg-white dark:bg-[#1E2830] rounded-2xl shadow-2xl p-6 w-64"
               >
@@ -243,7 +253,7 @@ export default function HeroSection() {
                   duration: 3.5,
                   repeat: Infinity,
                   ease: "easeInOut",
-                  delay: 0.2.7,
+                  delay: 0.2,
                 }}
                 className="absolute top-10 left-0 bg-white dark:bg-[#1E2830] rounded-2xl shadow-2xl p-5 w-48"
               >

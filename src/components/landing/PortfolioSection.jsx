@@ -232,13 +232,13 @@ export default function PortfolioSection() {
           </AnimatePresence>
         </div>
 
-        {/* Stats Section */}
+        {/* Stats Section - FIXED WITH ANIMATED COUNTER */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
-          className="bg-white dark:bg-[#1E2830] rounded-2xl p-8 md:p-12"
+          className="bg-white dark:bg-[#1E2830] rounded-2xl p-8 md:p-12 shadow-sm"
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
@@ -247,12 +247,14 @@ export default function PortfolioSection() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                transition={{ delay: 0.2 + index * 0.1 }}
                 className="text-center"
               >
                 <stat.icon className="w-8 h-8 text-[#D4AF7A] mx-auto mb-3" />
-                <p className="text-3xl md:text-4xl font-bold text-[#1A2332] dark:text-white">
-                  {stat.value}
+                {/* Use the same baseline flex logic we used in the About section */}
+                <p className="text-3xl md:text-4xl font-bold text-[#1A2332] dark:text-white flex items-baseline justify-center">
+                  <AnimatedCounter value={stat.numericValue} />
+                  <span>{stat.suffix}</span>
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                   {stat.label}
@@ -261,7 +263,7 @@ export default function PortfolioSection() {
             ))}
           </div>
         </motion.div>
-      </div>
+        </div>
 
       <VideoModal item={selectedItem} onClose={() => setSelectedItem(null)} />
     </section>

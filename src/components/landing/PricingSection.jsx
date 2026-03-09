@@ -172,23 +172,22 @@ export default function PricingSection() {
               )}
 
               <div className="text-center mb-6">
-                <h3 className="text-xl font-bold text-[#1A2332] dark:text-white mb-2">
-                  {pkg.name}
-                </h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400 italic mb-4">
-                  {pkg.target}
-                </p>
-                <div className="mb-2">
-                  <span className="text-4xl font-bold text-[#1A2332] dark:text-white">
-                    {formatPrice(pkg.basePrice)}
-                  </span>
-                  <span className="text-gray-500 dark:text-gray-400">/mo</span>
-                </div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  or {pkg.priceRange}/mo
-                </p>
-              </div>
-
+  <h3 className="text-xl font-bold text-[#1A2332] dark:text-white mb-2">
+    {pkg.name}
+  </h3>
+  <p className="text-sm text-gray-500 dark:text-gray-400 italic mb-4">
+    {pkg.target}
+  </p>
+  <div className="mb-2">
+    {/* Clean 'Starting at' label makes the price feel like a solid offer */}
+    <span className="text-xs text-gray-500 dark:text-gray-400 block mb-1 uppercase tracking-wider">Starting at</span>
+    <span className="text-4xl font-bold text-[#1A2332] dark:text-white">
+      {formatPrice(pkg.basePrice)}
+    </span>
+    <span className="text-gray-500 dark:text-gray-400">/mo</span>
+  </div>
+  {/* REMOVED: The 'or priceRange/mo' line to avoid confusion and static USD bugs */}
+</div>
               <ul className="space-y-3 mb-8">
                 {pkg.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-3">

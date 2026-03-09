@@ -81,17 +81,17 @@ export default function ContactCTA() {
             
             {/* REPLACE WITH YOUR ACTUAL NUMBER */}
             <a
-              href="tel:+10000000000" 
+              href="tel:+15306264474" 
               className="flex items-center gap-2 hover:text-white transition-colors min-h-[44px]"
             >
               <Phone className="w-4 h-4 flex-shrink-0" />
-              +1 (Your Number)
+              +1 (530) 626-4474
             </a>
 
             {/* REPLACE WITH YOUR ACTUAL CITY/STATE */}
             <span className="flex items-center gap-2 min-h-[44px]">
               <MapPin className="w-4 h-4 flex-shrink-0" />
-              Your Location
+              Remote-First Agency
             </span>
           </div>
 

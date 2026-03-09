@@ -76,7 +76,7 @@ export default function AboutSection() {
             </Link>
           </motion.div>
 
-          {/* Right Stats */}
+         {/* Right Stats */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -92,15 +92,17 @@ export default function AboutSection() {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 1 + index * 0.1 }}
+                    transition={{ delay: 0.2 + index * 0.1 }} // Fast transition
                     className="flex items-center gap-5"
                   >
                     <div className="w-14 h-14 rounded-2xl bg-[#D4AF7A]/10 flex items-center justify-center flex-shrink-0">
                       <stat.icon className="w-7 h-7 text-[#D4AF7A]" />
                     </div>
                     <div>
-                      <p className="text-3xl md:text-4xl font-bold text-[#1A2332] dark:text-white">
-                        <AnimatedCounter value={stat.value} />
+                      {/* FIXED LOGIC BELOW */}
+                      <p className="text-3xl md:text-4xl font-bold text-[#1A2332] dark:text-white flex items-baseline">
+                        <AnimatedCounter value={stat.numericValue} />
+                        <span>{stat.suffix}</span>
                       </p>
                       <p className="text-gray-500 dark:text-gray-400">
                         {stat.label}
@@ -115,8 +117,3 @@ export default function AboutSection() {
             <div className="absolute -top-4 -right-4 w-24 h-24 bg-[#D4AF7A]/10 rounded-full blur-xl" />
             <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-[#1A2332]/5 dark:bg-white/5 rounded-full blur-xl" />
           </motion.div>
-        </div>
-      </div>
-    </section>
-  );
-}

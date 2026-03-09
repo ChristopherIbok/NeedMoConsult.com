@@ -18,7 +18,6 @@ const packages = [
   {
     name: "Starter",
     target: "Local businesses, Emerging creators",
-    priceRange: "$400-$600",
     basePrice: 500,
     features: [
       "8-12 posts per month",
@@ -33,7 +32,6 @@ const packages = [
   {
     name: "Growth",
     target: "E-commerce, Growing startups, Mid-tier creators",
-    priceRange: "$900-$1,400",
     basePrice: 1150,
     features: [
       "16-20 posts per month",
@@ -49,7 +47,6 @@ const packages = [
   {
     name: "Premium",
     target: "Established brands, Influencers",
-    priceRange: "$2,000-$3,000",
     basePrice: 2500,
     popular: true,
     features: [
@@ -67,7 +64,6 @@ const packages = [
   {
     name: "Premium Plus",
     target: "Enterprise, Top-tier influencers",
-    priceRange: "$3,500-$4,500",
     basePrice: 4000,
     features: [
       "40 posts per month",

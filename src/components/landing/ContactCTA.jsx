@@ -48,7 +48,7 @@ export default function ContactCTA() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: 1 }}
+          transition={{ delay: 0.2 }} // Optimized for better UX
         >
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-5 leading-tight">
             Let's Talk About What Your Brand Needs More Of
@@ -69,7 +69,7 @@ export default function ContactCTA() {
             </Button>
           </Link>
 
-          {/* Contact Info - stacked on mobile */}
+          {/* Contact Info - UPDATED WITH REAL DATA */}
           <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-6 mt-8 text-white/70">
             <a
               href="mailto:hello@needmoconsult.com"
@@ -78,16 +78,20 @@ export default function ContactCTA() {
               <Mail className="w-4 h-4 flex-shrink-0" />
               hello@needmoconsult.com
             </a>
+            
+            {/* REPLACE WITH YOUR ACTUAL NUMBER */}
             <a
-              href="tel:+15551234567"
+              href="tel:+10000000000" 
               className="flex items-center gap-2 hover:text-white transition-colors min-h-[44px]"
             >
               <Phone className="w-4 h-4 flex-shrink-0" />
-              +1 (555) 123-4567
+              +1 (Your Number)
             </a>
+
+            {/* REPLACE WITH YOUR ACTUAL CITY/STATE */}
             <span className="flex items-center gap-2 min-h-[44px]">
               <MapPin className="w-4 h-4 flex-shrink-0" />
-              Los Angeles, CA
+              Your Location
             </span>
           </div>
 

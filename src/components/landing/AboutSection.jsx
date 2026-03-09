@@ -12,10 +12,11 @@ const values = [
   "Client Partnership",
 ];
 
+// 1. UPDATE THIS DATA ARRAY
 const stats = [
-  { icon: Pencil, value: "500+", label: "Posts Created" },
-  { icon: Users, value: "50+", label: "Happy Clients" },
-  { icon: TrendingUp, value: "3M+", label: "People Reached" },
+  { icon: Pencil, numericValue: 500, suffix: "+", label: "Posts Created" },
+  { icon: Users, numericValue: 50, suffix: "+", label: "Happy Clients" },
+  { icon: TrendingUp, numericValue: 3, suffix: "M+", label: "People Reached" },
 ];
 
 export default function AboutSection() {
@@ -28,7 +29,7 @@ export default function AboutSection() {
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 1 }}
+            transition={{ delay: 0.2 }}
           >
             <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
               Who We Are
@@ -80,7 +81,7 @@ export default function AboutSection() {
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 1 }}
+            transition={{ delay: 0.2 }}
             className="relative"
           >
             <div className="bg-white dark:bg-[#1E2830] rounded-3xl p-8 md:p-12 shadow-xl">

@@ -9,23 +9,23 @@ import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import AboutSection from "@/components/landing/AboutSection";
 import ContactCTA from "@/components/landing/ContactCTA";
 
+// Update these lines in your Home.js file:
 const homepageStructuredData = [
   {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
     name: "NeedMo Consult",
-    image: "https://needmoconsult.com/images/logo.png",
-    description:
-      "Strategic social media management agency for businesses, creators, and brands",
-    url: "https://needmoconsult.com",
-    telephone: "+1-555-123-4567",
+    // ... other fields
+    telephone: "+1-(850) 267-2327", // <--- CHANGE THIS
     email: "hello@needmoconsult.com",
     address: {
-      "@type": "PostalAddress",
-      addressLocality: "Los Angeles",
-      addressRegion: "CA",
+      "@type": "35080",
+      streetAddress: "1005 Woodlands Cv", // <--- CHANGE THIS
+      addressLocality: "Helena", // <--- CHANGE THIS
+      addressRegion: "Alabama",      // <--- CHANGE THIS
       addressCountry: "US",
     },
+    // ...
     priceRange: "$400-$4500",
     areaServed: "Worldwide",
     serviceType: [

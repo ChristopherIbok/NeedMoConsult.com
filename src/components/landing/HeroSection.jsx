@@ -4,7 +4,29 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import AnimatedCounter from "@/components/ui/AnimatedCounter";
+
+// ── Inline animated counter (no external dependency) ─────────────────────────
+function useAnimatedCounter(target, duration = 1500) {
+  const [count, setCount] = React.useState(0);
+  React.useEffect(() => {
+    let start = 0;
+    const step = Math.ceil(target / (duration / 16));
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= target) { setCount(target); clearInterval(timer); }
+      else setCount(start);
+    }, 16);
+    return () => clearInterval(timer);
+  }, [target, duration]);
+  return count;
+}
+
+function AnimatedCounter({ value }) {
+  const count = useAnimatedCounter(value);
+  return <span>{count}</span>;
+}
+
+
 
 export default function HeroSection() {
   const [region, setRegion] = useState("your region");

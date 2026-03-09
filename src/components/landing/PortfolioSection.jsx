@@ -115,7 +115,7 @@ export default function PortfolioSection() {
 
  return (
     <section className="py-20 md:py-28 bg-[#F7F7F7] dark:bg-[#1A2332]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="site-container">
         
         {/* Header */}
         <motion.div
@@ -145,7 +145,7 @@ export default function PortfolioSection() {
               className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
                 activeCategory === cat.id
                   ? "bg-[#D4AF7A] text-white"
-                  : "bg-white dark:bg-[#1E2830] text-[#333333] dark:text-gray-300 border border-gray-200 dark:border-[#2A3540] hover:border-[#D4AF7A]"
+                  : "F9F7F4 dark:bg-[#1E2830] text-[#333333] dark:text-gray-300 border border-gray-200 dark:border-[#2A3540] hover:border-[#D4AF7A]"
               }`}
             >
               {cat.label}
@@ -164,7 +164,7 @@ export default function PortfolioSection() {
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ delay: 0.2 + index * 0.1 }}
                 whileHover={{ y: -8 }}
-                className={`group relative bg-white dark:bg-[#1E2830] rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl ${
+                className={`group relative F9F7F4 dark:bg-[#1E2830] rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl ${
                   item.featured ? "md:col-span-2 lg:col-span-1" : ""
                 }`}
               >
@@ -185,7 +185,7 @@ export default function PortfolioSection() {
                       {Object.entries(item.results).map(([key, value]) => (
                         <span
                           key={key}
-                          className="text-xs bg-white/20 text-white px-2 py-1 rounded"
+                          className="text-xs F9F7F4/20 text-white px-2 py-1 rounded"
                         >
                           {value} {key}
                         </span>
@@ -211,7 +211,7 @@ export default function PortfolioSection() {
                   )}
 
                   {/* Category Badge */}
-                  <Badge className="absolute top-4 right-4 bg-white/90 dark:bg-[#1E2830]/90 text-[#333333] dark:text-gray-300">
+                  <Badge className="absolute top-4 right-4 F9F7F4/90 dark:bg-[#1E2830]/90 text-[#333333] dark:text-gray-300">
                     {categories.find((c) => c.id === item.category)?.label}
                   </Badge>
                 </div>
@@ -239,7 +239,7 @@ export default function PortfolioSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
-          className="bg-white dark:bg-[#1E2830] rounded-2xl p-8 md:p-12 shadow-sm"
+          className="F9F7F4 dark:bg-[#1E2830] rounded-2xl p-8 md:p-12 shadow-sm"
         >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (

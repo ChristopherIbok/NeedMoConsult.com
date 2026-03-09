@@ -40,8 +40,8 @@ const services = [
 
 export default function ServicesOverview() {
   return (
-    <section className="py-20 md:py-28 bg-white dark:bg-[#0F1419]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 md:py-28 F9F7F4 dark:bg-[#0F1419]">
+      <div className="site-container">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -76,7 +76,7 @@ export default function ServicesOverview() {
                 damping: 22,
               }}
               whileHover={{ y: -8, scale: 1.01, transition: { duration: 0.2 } }}
-              className="group relative bg-white dark:bg-[#1E2830] border border-gray-200 dark:border-[#2A3540] rounded-2xl p-8 transition-shadow duration-300 hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-black/20"
+              className="group relative F9F7F4 dark:bg-[#1E2830] border border-gray-200 dark:border-[#2A3540] rounded-2xl p-8 transition-shadow duration-300 hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-black/20"
             >
               <div className="flex items-start gap-5">
                 <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-[#D4AF7A]/10 flex items-center justify-center group-hover:bg-[#D4AF7A] transition-colors">

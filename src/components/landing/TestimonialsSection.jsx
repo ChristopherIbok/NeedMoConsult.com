@@ -31,8 +31,8 @@ const testimonials = [
 
 export default function TestimonialsSection() {
   return (
-    <section className="py-20 md:py-28 bg-white dark:bg-[#0F1419]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 md:py-28 F9F7F4 dark:bg-[#0F1419]">
+      <div className="site-container">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -62,7 +62,7 @@ export default function TestimonialsSection() {
               viewport={{ once: true }}
               transition={{ delay: 0.2 + index * 0.15 }}
               whileHover={{ y: -6, scale: 1.02, transition: { duration: 0.2 } }}
-              className="bg-white dark:bg-[#1E2830] rounded-2xl p-6 md:p-8 shadow-lg shadow-black/5 dark:shadow-black/20 flex-shrink-0 w-[calc(100vw-56px)] sm:w-[340px] md:w-auto snap-start cursor-default hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30 transition-shadow duration-300"
+              className="F9F7F4 dark:bg-[#1E2830] rounded-2xl p-6 md:p-8 shadow-lg shadow-black/5 dark:shadow-black/20 flex-shrink-0 w-[calc(100vw-56px)] sm:w-[340px] md:w-auto snap-start cursor-default hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-black/30 transition-shadow duration-300"
             >
               <Quote className="w-8 h-8 md:w-10 md:h-10 text-[#D4AF7A] mb-4 md:mb-6" />
 

@@ -26,7 +26,7 @@ const values = [
 export default function ValueProps() {
   return (
     <section className="py-20 md:py-28 bg-[#F7F7F7] dark:bg-[#1A2332]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="site-container">
         <div className="grid md:grid-cols-3 gap-10 lg:gap-16">
           {values.map((value, index) => (
             <motion.div

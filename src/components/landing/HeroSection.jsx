@@ -73,7 +73,7 @@ export default function HeroSection() {
       {/* Floating background shapes */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="floating-shape absolute w-64 h-64 rounded-full bg-[#D4AF7A] opacity-[0.07] -top-16 -left-16" />
-        <div className="floating-shape-reverse absolute w-48 h-48 rounded-full bg-[#1A2332] dark:bg-white opacity-[0.04] top-1/2 right-0 translate-x-1/2" />
+        <div className="floating-shape-reverse absolute w-48 h-48 rounded-full bg-[#1A2332] dark:F9F7F4 opacity-[0.04] top-1/2 right-0 translate-x-1/2" />
         <div
           className="floating-shape absolute w-32 h-32 rounded-full bg-[#D4AF7A] opacity-[0.08] bottom-20 left-1/3"
           style={{ animationDelay: "2s" }}
@@ -150,7 +150,7 @@ export default function HeroSection() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="w-full sm:w-auto border-2 border-[#1A2332] dark:border-white text-[#1A2332] dark:text-white hover:bg-[#1A2332] hover:text-white dark:hover:bg-white dark:hover:text-[#1A2332] active:scale-[0.98] font-semibold px-8 py-4 text-base sm:text-lg transition-all min-h-[52px]"
+                  className="w-full sm:w-auto border-2 border-[#1A2332] dark:border-white text-[#1A2332] dark:text-white hover:bg-[#1A2332] hover:text-white dark:hover:F9F7F4 dark:hover:text-[#1A2332] active:scale-[0.98] font-semibold px-8 py-4 text-base sm:text-lg transition-all min-h-[52px]"
                 >
                   See Our Services
                 </Button>
@@ -208,7 +208,7 @@ export default function HeroSection() {
               <motion.div
                 animate={{ y: [0, 15, 0] }}
                 transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                className="absolute top-20 right-10 w-32 h-32 rounded-full bg-[#1A2332] dark:bg-white/10"
+                className="absolute top-20 right-10 w-32 h-32 rounded-full bg-[#1A2332] dark:F9F7F4/10"
               />
 
               {/* Small gold circle */}
@@ -222,7 +222,7 @@ export default function HeroSection() {
               <motion.div
                 animate={{ y: [0, 10, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.75 }}
-                className="absolute bottom-20 right-0 bg-white dark:bg-[#1E2830] rounded-2xl shadow-2xl p-6 w-64"
+                className="absolute bottom-20 right-0 F9F7F4 dark:bg-[#1E2830] rounded-2xl shadow-2xl p-6 w-64"
               >
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#D4AF7A] to-[#E0C48A]" />
@@ -246,7 +246,7 @@ export default function HeroSection() {
               <motion.div
                 animate={{ y: [0, -15, 0] }}
                 transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 1.25 }}
-                className="absolute top-10 left-0 bg-white dark:bg-[#1E2830] rounded-2xl shadow-2xl p-5 w-48"
+                className="absolute top-10 left-0 F9F7F4 dark:bg-[#1E2830] rounded-2xl shadow-2xl p-5 w-48"
               >
                 <p className="text-xs text-gray-500 mb-1">Engagement Rate</p>
                 <p className="text-2xl font-bold text-[#D4AF7A]">+250%</p>

@@ -21,8 +21,8 @@ const stats = [
 
 export default function AboutSection() {
   return (
-    <section className="py-20 md:py-28 bg-[#F7F7F7] dark:bg-[#1A2332]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 md:py-28 bg-[#F9F7F4] dark:bg-[#1A2332]">
+      <div className="site-container">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Left Content */}
           <motion.div

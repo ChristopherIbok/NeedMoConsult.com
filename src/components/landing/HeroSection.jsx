@@ -43,11 +43,11 @@ export default function HeroSection() {
       const cachedRegion = sessionStorage.getItem("user-region");
       if (cachedRegion) { setRegion(cachedRegion); return; }
       try {
-        const response = await fetch("https://ipapi.co/json/");
+        const response = await fetch("https://ipwho.is/", { signal: AbortSignal.timeout(3000) });
         const data = await response.json();
-        if (data.country_name) {
-          setRegion(data.country_name);
-          sessionStorage.setItem("user-region", data.country_name);
+        if (data?.country) {
+          setRegion(data.country);
+          sessionStorage.setItem("user-region", data.country);
         }
       } catch {
         setRegion("worldwide");

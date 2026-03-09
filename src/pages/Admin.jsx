@@ -581,7 +581,7 @@ function NewsletterPreview({ form, tips }) {
           {[{ val: "50+", label: "Happy Clients" }, { val: "3M+", label: "People Reached" }, { val: "500+", label: "Posts Created" }].map((s, i) => (
             <div key={i} style={{ flex: 1, textAlign: "center", padding: "0 20px", borderRight: i < 2 ? "1px solid #EEEBE5" : "none" }}>
               <p style={{ margin: "0 0 6px", fontSize: 34, color: "#1A2332", fontFamily: G, fontWeight: "normal", lineHeight: 1 }}>
-                {s.val.replace("+", "")}<span style={{ color: "#D4AF7A" }}>+</span>
+                {String(s.val).replace("+", "")}<span style={{ color: "#D4AF7A" }}>+</span>
               </p>
               <p style={{ margin: 0, fontSize: 9, color: "#B8A882", fontFamily: G, letterSpacing: 3, textTransform: "uppercase" }}>{s.label}</p>
             </div>

@@ -43,7 +43,7 @@ export default function HeroSection() {
       const cachedRegion = sessionStorage.getItem("user-region");
       if (cachedRegion) { setRegion(cachedRegion); return; }
       try {
-        const response = await fetch("https://ipwho.is/", { signal: AbortSignal.timeout(3000) });
+        const response = await fetch("https://api.country.is/", { signal: AbortSignal.timeout(3000) });
         const data = await response.json();
         if (data?.country) {
           setRegion(data.country);

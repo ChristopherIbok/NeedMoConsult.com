@@ -81,9 +81,9 @@ export default function PricingSection() {
   useEffect(() => {
     const detectCurrency = async () => {
       try {
-        const response = await fetch("https://ipwho.is/");
+        const response = await fetch("https://api.country.is/");
         const data = await response.json();
-        const countryCurrency = data?.currency?.code || "USD";
+        const countryCurrency = data?.country ? ({"NG":"NGN","GB":"GBP","DE":"EUR","FR":"EUR","CA":"CAD","AU":"AUD"}[data.country] || "USD") : "USD";
         if (currencySymbols[countryCurrency]) {
           setCurrency(countryCurrency);
           // Fetch exchange rate

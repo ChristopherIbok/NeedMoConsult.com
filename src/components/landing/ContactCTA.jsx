@@ -43,7 +43,7 @@ export default function ContactCTA() {
         />
       </div>
 
-      <div className="relative max-w-4xl mx-auto px-5 sm:px-6 lg:px-8 text-center">
+      <div className="relative site-container max-w-4xl mx-auto text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -62,7 +62,7 @@ export default function ContactCTA() {
           <Link to={createPageUrl("Contact")} className="block sm:inline-block">
             <Button
               size="lg"
-              className="w-full sm:w-auto F9F7F4 text-[#1A2332] hover:bg-gray-100 active:scale-[0.98] font-bold px-8 sm:px-10 py-5 text-base sm:text-lg transition-all min-h-[56px]"
+              className="w-full sm:w-auto bg-[#bg-[#bg-[#bg-[#F9F7F4]]]] text-[#1A2332] hover:bg-gray-100 active:scale-[0.98] font-bold px-8 sm:px-10 py-5 text-base sm:text-lg transition-all min-h-[56px]"
             >
               Book a Free 30-Minute Strategy Call
               <ArrowRight className="ml-2 w-5 h-5" />

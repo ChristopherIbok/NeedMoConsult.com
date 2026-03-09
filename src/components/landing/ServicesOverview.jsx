@@ -113,7 +113,7 @@ export default function ServicesOverview() {
           <Link to={createPageUrl("Services")}>
             <Button
               size="lg"
-              className="bg-[#D4AF7A] hover:bg-[#C49A5E] text-white font-semibold px-8 transition-all hover:scale-105 btn-ripple"
+              className="bg-[#D4AF7A] hover:bg-[#C49A5E] text-[#1A2332] font-semibold px-8 transition-all hover:scale-105 btn-ripple"
             >
               View All Services
               <ArrowRight className="ml-2 w-5 h-5" />

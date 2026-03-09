@@ -1,3 +1,4 @@
+import AnimatedCounter from "@/components/ui/AnimatedCounter";
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {

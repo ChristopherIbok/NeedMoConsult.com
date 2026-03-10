@@ -172,7 +172,7 @@ export default function Admin() {
           {/* Logo */}
           <div className="px-6 py-6 border-b border-white/10">
             <img
-              src="https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Light.webp?V=5?V=3V=3V=3"
+              src="https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Light.webp?V=6?V=5?V=3V=3V=3"
               alt="NEEDMO CONSULT"
               style={{ height: 32, width: "auto" }}
             />
@@ -507,7 +507,7 @@ function NewsletterPreview({ form, tips }) {
         {/* Header */}
         <div style={{ height: 3, backgroundColor: "#D4AF7A" }} />
         <div style={{ backgroundColor: "#1A2332", padding: "18px 32px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <img src="https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Light.webp?V=5?V=4" alt="NEEDMO" height={28} style={{ height: 28 }} />
+          <img src="https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Light.webp?V=6?V=5?V=4" alt="NEEDMO" height={28} style={{ height: 28 }} />
           <p style={{ margin: 0, fontSize: 9, color: "rgba(255,255,255,0.35)", fontFamily: G, letterSpacing: 3, textTransform: "uppercase" }}>Weekly Insights</p>
         </div>
 
@@ -616,7 +616,7 @@ function NewsletterPreview({ form, tips }) {
 
         {/* Footer */}
         <div style={{ borderTop: "1px solid #EEEBE5", backgroundColor: "#F9F7F4", padding: "28px 32px", textAlign: "center" }}>
-          <img src="https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.webp?V=5?V=4" alt="NEEDMO" height={22} style={{ display: "block", margin: "0 auto 6px", height: 22 }} />
+          <img src="https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.webp?V=6?V=5?V=4" alt="NEEDMO" height={22} style={{ display: "block", margin: "0 auto 6px", height: 22 }} />
           <p style={{ margin: "0 0 20px", fontSize: 9, color: "#B8A882", fontFamily: G, letterSpacing: 3, textTransform: "uppercase" }}>Your Brand Deserves More</p>
           <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 20 }}>
             {["instagram-new","linkedin","twitterx","facebook-new"].map(icon => (

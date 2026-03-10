@@ -96,7 +96,7 @@ serve(async (req) => {
                 <tr>
                   <td style="vertical-align:middle;">
                     <img
-                      src="https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.webp?V=6?V=5?V=4"
+                      src="https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.webp?V=7?V=6?V=5?V=4"
                       alt="NEEDMO CONSULT"
                       width="150"
                       height="40"

@@ -21,7 +21,7 @@ export default function SEO({
     const canonical = (typeof url === "string" && url) ? url : window.location.href;
     const ogImage   = (typeof image === "string" && image)
       ? image
-      : "https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.webp?V=6?V=5";
+      : "https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.webp?V=7?V=6?V=5";
     const safeTags  = Array.isArray(tags) ? tags.filter(t => typeof t === "string") : [];
 
     // ── Page title ───────────────────────────────────────────────
@@ -94,7 +94,7 @@ export default function SEO({
         "url": "https://needmoconsult.com",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.webp?V=6?V=5"
+          "url": "https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.webp?V=7?V=6?V=5"
         }
       },
       ...(publishedAt && { "datePublished": publishedAt }),

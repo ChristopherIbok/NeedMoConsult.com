@@ -44,7 +44,7 @@ def create_admin(name: str, email: str, password: str):
 
 if __name__ == "__main__":
     # ── Edit these before running ─────────────────────────────────────────────
-    ADMIN_NAME     = "Kriz"
+    ADMIN_NAME     = "Chris"
     ADMIN_EMAIL    = "hello@needmoconsult.com"   # your login email
     ADMIN_PASSWORD = "replace_with_strong_password"
     # ─────────────────────────────────────────────────────────────────────────
@@ -52,3 +52,9 @@ if __name__ == "__main__":
     create_tables()
     create_admin(ADMIN_NAME, ADMIN_EMAIL, ADMIN_PASSWORD)
     print("\n🚀 Setup complete. You can now log in at POST /auth/login")
+
+
+
+ADMIN_NAME     = "Chris"
+ADMIN_EMAIL    = "hello@needmoconsult.com"
+ADMIN_PASSWORD = "your_strong_password_here"

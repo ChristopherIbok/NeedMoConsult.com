@@ -1,17 +1,32 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useInView } from "framer-motion";
 
 export default function AnimatedCounter({ value, suffix = "" }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
   const [display, setDisplay] = useState("0");
+  const [started, setStarted] = useState(false);
 
   useEffect(() => {
-    if (!isInView) return;
-    // Parse numeric part
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !started) {
+          setStarted(true);
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!started) return;
+
     const numeric = parseFloat(String(value).replace(/[^0-9.]/g, ""));
-    const prefix = String(value).match(/^[^0-9]*/)?.[0] || "";
-    const valueSuffix = String(value).match(/[^0-9.]+$/)?.[0] || "";
+    const isDecimal = !Number.isInteger(numeric);
     const duration = 1800;
     const steps = 60;
     const interval = duration / steps;
@@ -20,21 +35,22 @@ export default function AnimatedCounter({ value, suffix = "" }) {
     const timer = setInterval(() => {
       step++;
       const progress = step / steps;
-      // ease out
       const eased = 1 - Math.pow(1 - progress, 3);
       const current = numeric * eased;
-      const formatted = Number.isInteger(numeric)
-        ? Math.floor(current).toLocaleString()
-        : current.toFixed(1);
-      setDisplay(`${prefix}${formatted}${valueSuffix}`);
+      const formatted = isDecimal
+        ? current.toFixed(1)
+        : Math.floor(current).toLocaleString();
+
+      setDisplay(formatted);
+
       if (step >= steps) {
-        setDisplay(String(value));
+        setDisplay(isDecimal ? numeric.toFixed(1) : numeric.toLocaleString());
         clearInterval(timer);
       }
     }, interval);
 
     return () => clearInterval(timer);
-  }, [isInView, value]);
+  }, [started, value]);
 
   return (
     <span ref={ref}>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/api/supabaseClient";
+import { getBlogPosts } from "@/lib/api";
 import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
 import { Search, ArrowRight, BookOpen, Calendar, Hash } from "lucide-react";
@@ -18,17 +18,17 @@ export default function Blog() {
 
   const fetchPosts = async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from("newsletters")
-      .select("id, issue, subject, hero_title, hero_intro, sent_at, tags, image_url")
-      .eq("published", true)
-      .order("sent_at", { ascending: false });
-    setPosts(data || []);
+    try {
+      const data = await getBlogPosts();
+      setPosts(data.posts || []);
+    } catch (err) {
+      console.error("Failed to fetch posts:", err);
+    }
     setLoading(false);
   };
 
   // Collect all unique tags
-  const allTags = ["All", ...Array.from(new Set(posts.flatMap(p => p.tags || [])))];
+  const allTags = ["All", ...Array.from(new Set(posts.flatMap(p => p.tags ? p.tags.split(",").map(t => t.trim()) : [])))];
 
   const filtered = posts.filter(p => {
     const matchesQuery =
@@ -36,7 +36,7 @@ export default function Blog() {
       p.hero_title?.toLowerCase().includes(query.toLowerCase()) ||
       p.hero_intro?.toLowerCase().includes(query.toLowerCase()) ||
       p.subject?.toLowerCase().includes(query.toLowerCase());
-    const matchesTag = activeTag === "All" || (p.tags || []).includes(activeTag);
+    const matchesTag = activeTag === "All" || (p.tags ? p.tags.split(",").map(t => t.trim()) : []).includes(activeTag);
     return matchesQuery && matchesTag;
   });
 

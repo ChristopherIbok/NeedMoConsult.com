@@ -46,7 +46,12 @@ class Newsletter(Base):
 
     id               = Column(Integer, primary_key=True, index=True)
     subject          = Column(String, nullable=False)
+    issue            = Column(String, nullable=True)
     headline         = Column(String, nullable=False)
+    hero_intro       = Column(Text, nullable=True)
     body_html        = Column(Text, nullable=False)
+    tags             = Column(String, nullable=True)   # comma-separated e.g. "branding,social"
+    image_url        = Column(String, nullable=True)
+    published        = Column(Boolean, default=True)
     recipient_count  = Column(Integer, default=0)
     sent_at          = Column(DateTime(timezone=True), server_default=func.now())

@@ -1,6 +1,6 @@
 // src/lib/AuthContext.jsx
 import React, { createContext, useState, useContext, useEffect } from "react";
-import { supabase } from "@/api/supabaseClient";
+import { adminLogin, adminLogout, getToken } from "@/lib/api";
 
 const AuthContext = createContext();
 
@@ -10,39 +10,26 @@ export const AuthProvider = ({ children }) => {
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setIsAuthenticated(!!session);
-      setIsLoadingAuth(false);
-    });
-
-    // Listen for auth changes (login, logout, token refresh)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setIsAuthenticated(!!session);
-      setIsLoadingAuth(false);
-    });
-
-    return () => subscription.unsubscribe();
+    // Check if a token already exists in localStorage on page load
+    const token = getToken();
+    if (token) {
+      setIsAuthenticated(true);
+      setUser({ token });
+    }
+    setIsLoadingAuth(false);
   }, []);
 
-  const logout = async () => {
-    await supabase.auth.signOut();
+  const login = async (email, password) => {
+    const data = await adminLogin(email, password);
+    setUser({ name: data.admin.name, email: data.admin.email });
+    setIsAuthenticated(true);
+    return data;
+  };
+
+  const logout = () => {
+    adminLogout();
     setUser(null);
     setIsAuthenticated(false);
-  };
-
-  const login = async (email, password) => {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
-    return data;
-  };
-
-  const signUp = async (email, password) => {
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) throw error;
-    return data;
   };
 
   return (
@@ -52,7 +39,6 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated,
         isLoadingAuth,
         login,
-        signUp,
         logout,
       }}
     >

@@ -98,3 +98,7 @@ export const sendNewsletter = (payload) =>
     cta_url: "https://needmoconsult.com/blog",
   });
 */
+
+export const getBlogPosts = () => request("/public/blog");
+
+export const getBlogPost = (id) => request(`/public/blog/${id}`);

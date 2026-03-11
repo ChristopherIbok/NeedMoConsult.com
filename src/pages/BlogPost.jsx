@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/api/supabaseClient";
+import { getBlogPost } from "@/lib/api";
 import { createPageUrl } from "@/utils";
 import { Link, useLocation } from "react-router-dom";
 import { ArrowLeft, Twitter, Linkedin, Link2, Facebook, Check, Calendar } from "lucide-react";
@@ -19,12 +19,13 @@ export default function BlogPost() {
 
   const fetchPost = async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from("newsletters")
-      .select("*")
-      .eq("id", id)
-      .single();
-    setPost(data);
+    try {
+      const data = await getBlogPost(id);
+      setPost(data);
+    } catch (err) {
+      console.error("Failed to fetch post:", err);
+      setPost(null);
+    }
     setLoading(false);
   };
 
@@ -128,8 +129,8 @@ export default function BlogPost() {
 
         {/* Tags */}
         {post.tags && post.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-8">
-            {post.tags.map(tag => (
+  <div className="flex flex-wrap gap-2 mb-8">
+    {post.tags.split(",").map(tag => tag.trim()).map(tag => (
               <span key={tag} className="text-xs text-[#D4AF7A] border border-[#D4AF7A]/30 px-2.5 py-0.5" style={{ fontFamily: G }}>#{tag}</span>
             ))}
           </div>

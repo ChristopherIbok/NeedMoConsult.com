@@ -101,3 +101,29 @@ def unsubscribe(email: str, db: Session = Depends(get_db)):
         entry.is_active = False
         db.commit()
     return {"message": "You've been unsubscribed successfully."}
+
+
+
+@router.get("/blog")
+def get_blog_posts(skip: int = 0, limit: int = 20, db: Session = Depends(get_db)):
+    """Public endpoint — returns published newsletters as blog posts."""
+    posts = (
+        db.query(models.Newsletter)
+        .filter(models.Newsletter.published == True)
+        .order_by(models.Newsletter.sent_at.desc())
+        .offset(skip).limit(limit).all()
+    )
+    return {"posts": posts, "total": len(posts)}
+
+
+@router.get("/blog/{post_id}")
+def get_blog_post(post_id: int, db: Session = Depends(get_db)):
+    """Fetch a single published newsletter as a blog post."""
+    post = (
+        db.query(models.Newsletter)
+        .filter(models.Newsletter.id == post_id, models.Newsletter.published == True)
+        .first()
+    )
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+    return post

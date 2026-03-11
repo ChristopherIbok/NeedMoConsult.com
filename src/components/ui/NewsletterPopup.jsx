@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Mail, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/api/supabaseClient";
+import { joinWaitlist } from "@/lib/api";
 
 const STORAGE_KEY = "nm_newsletter_dismissed";
 
@@ -33,42 +33,14 @@ export default function NewsletterPopup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-
     try {
-      // Save to Supabase database
-      const { error: dbError } = await supabase
-        .from("newsletter_subscribers")
-        .insert({ email, name, status: "active" });
-
-      if (dbError) throw dbError;
-
-      // Send welcome email via Supabase Edge Function
-      const { data, error: emailError } = await supabase.functions.invoke(
-        "send-welcome-email",
-        {
-          body: { email, name },
-        }
-      );
-
-      if (emailError) {
-        console.error("Email function error:", emailError);
-        throw new Error(emailError.message || "Failed to send welcome email");
-      }
-
-      if (data?.ok === false) {
-        throw new Error(data.error || "Failed to send welcome email");
-      }
-
+      await joinWaitlist(email, name);
       setDone(true);
       localStorage.setItem(STORAGE_KEY, "subscribed");
       setTimeout(() => setVisible(false), 2500);
     } catch (err) {
       console.error("Subscription error:", err);
-      alert(
-        err instanceof Error
-          ? err.message
-          : "An error occurred. Please try again."
-      );
+      alert(err instanceof Error ? err.message : "An error occurred. Please try again.");
     } finally {
       setSubmitting(false);
     }

@@ -28,3 +28,8 @@ dist-ssr
 *.sw?
 
 .env.local
+
+needmo-backend/.env
+needmo-backend/__pycache__/
+needmo-backend/venv/
+needmo-backend/*.pyc

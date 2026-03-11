@@ -1,11 +1,12 @@
 """
 core/security.py — JWT token creation/verification + password hashing.
+Uses bcrypt directly instead of passlib to avoid compatibility issues.
 """
 
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
-from passlib.context import CryptContext
+import bcrypt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
@@ -19,16 +20,15 @@ SECRET_KEY      = os.getenv("JWT_SECRET_KEY", "change-this-in-production")
 ALGORITHM       = "HS256"
 TOKEN_EXPIRE_H  = int(os.getenv("JWT_EXPIRE_HOURS", "24"))
 
-pwd_context     = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme   = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 # ── Password ──────────────────────────────────────────────────────────────────
 def hash_password(plain: str) -> str:
-    return pwd_context.hash(plain)
+    return bcrypt.hashpw(plain.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(plain, hashed)
+    return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
 
 
 # ── JWT ───────────────────────────────────────────────────────────────────────
@@ -43,7 +43,6 @@ def get_current_admin(
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db),
 ) -> models.Admin:
-    """FastAPI dependency — protects admin routes."""
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid or expired token",

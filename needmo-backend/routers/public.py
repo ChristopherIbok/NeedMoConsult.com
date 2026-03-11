@@ -127,3 +127,31 @@ def get_blog_post(post_id: int, db: Session = Depends(get_db)):
     if not post:
         raise HTTPException(status_code=404, detail="Post not found")
     return post
+
+
+
+class BookingRequest(BaseModel):
+    name: str
+    email: EmailStr
+    company: Optional[str] = ""
+    service: Optional[str] = ""
+    date: str
+    time: str
+    message: Optional[str] = ""
+
+@router.post("/booking")
+async def create_booking(req: BookingRequest, db: Session = Depends(get_db)):
+    """Save a booking request."""
+    entry = models.Booking(
+        name=req.name,
+        email=req.email,
+        company=req.company,
+        service=req.service,
+        date=req.date,
+        time=req.time,
+        message=req.message,
+    )
+    db.add(entry)
+    db.commit()
+    db.refresh(entry)
+    return {"message": "Booking confirmed!", "id": entry.id}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { supabase } from "@/api/supabaseClient";
+import { createBooking } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -83,9 +83,8 @@ export default function BookingWidget() {
   const handleSubmit = async () => {
     setSubmitting(true);
     setError(null);
-
     try {
-      const { error } = await supabase.from("bookings").insert({
+      await createBooking({
         name: formData.name,
         email: formData.email,
         company: formData.company,
@@ -93,10 +92,7 @@ export default function BookingWidget() {
         date: formatDateValue(selectedDate),
         time: selectedTime,
         message: formData.message,
-        status: "pending",
       });
-
-      if (error) throw error;
       setStep(3);
     } catch (err) {
       setError("Something went wrong. Please try again.");

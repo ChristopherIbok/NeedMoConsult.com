@@ -55,3 +55,19 @@ class Newsletter(Base):
     published        = Column(Boolean, default=True)
     recipient_count  = Column(Integer, default=0)
     sent_at          = Column(DateTime(timezone=True), server_default=func.now())
+
+
+
+class Booking(Base):
+    __tablename__ = "bookings"
+
+    id         = Column(Integer, primary_key=True, index=True)
+    name       = Column(String, nullable=False)
+    email      = Column(String, nullable=False)
+    company    = Column(String, nullable=True)
+    service    = Column(String, nullable=True)
+    date       = Column(String, nullable=False)
+    time       = Column(String, nullable=False)
+    message    = Column(Text, nullable=True)
+    status     = Column(String, default="pending")
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

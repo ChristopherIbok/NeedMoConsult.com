@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { supabase } from "@/api/supabaseClient";
+import { getWaitlist, sendNewsletter as apiSendNewsletter } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Send, Users, Mail, Plus, Trash2, Eye, LogOut,
@@ -105,20 +105,16 @@ export default function Admin() {
   const fetchSubscribers = async () => {
     setLoadingSubs(true);
     setSubError(null);
-    const { data, error } = await supabase
-      .from("newsletter_subscribers")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (error) {
-      setSubError(error.message);
-      console.error("Subscribers fetch error:", error);
+    try {
+      const data = await getWaitlist();
+      setSubscribers(data.subscribers || []);
+    } catch (err) {
+      setSubError(err.message);
     }
-    setSubscribers(data || []);
     setLoadingSubs(false);
   };
 
   const deleteSubscriber = async (id) => {
-    await supabase.from("newsletter_subscribers").delete().eq("id", id);
     setSubscribers(s => s.filter(x => x.id !== id));
   };
 
@@ -142,15 +138,18 @@ export default function Admin() {
     }
 
     try {
-      const { data, error } = await supabase.functions.invoke("send-newsletter", {
-        body: {
-          to: emails,
-          ...form,
-          tips: tips.filter(t => t.title),
-        },
+      await apiSendNewsletter({
+        subject: form.subject,
+        headline: form.heroTitle,
+        body_html: `
+          <p>${form.heroIntro}</p>
+          ${form.articleTitle ? `<h3>${form.articleTitle}</h3><p>${form.articleBody}</p>` : ""}
+          ${form.pullQuote ? `<blockquote>${form.pullQuote}</blockquote>` : ""}
+          ${tips.filter(t => t.title).map((t, i) => `<p><strong>${i+1}. ${t.title}</strong><br/>${t.desc}</p>`).join("")}
+        `,
+        cta_text: form.offerLabel,
+        cta_url: form.offerUrl,
       });
-
-      if (error) throw new Error(error.message);
       setSendResult({ ok: true, count: emails.length });
     } catch (err) {
       setSendResult({ error: err.message });

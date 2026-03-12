@@ -19,7 +19,7 @@ export default function VideoPlayer({
     ? (poster.startsWith("http") ? poster : `${R2_BASE}/${poster}`)
     : type === "youtube"
     ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
-    : null;
+    : self;
 
   const videoSrc = src && !src.startsWith("http") ? `${R2_BASE}/${src}` : src;
 

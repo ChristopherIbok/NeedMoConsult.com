@@ -10,6 +10,8 @@ from mailer import send_email_async
 from templates.email_templates import contact_notification_email, welcome_email
 import models
 import os
+import logging
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", os.getenv("SMTP_USER"))
@@ -48,8 +50,8 @@ async def submit_contact(req: ContactRequest, background_tasks: BackgroundTasks,
     db.refresh(entry)
 
     # Email admin in background
-    background_tasks.add_task(
-        send_email_async,
+    try:
+    await send_email_async(
         to=ADMIN_EMAIL,
         subject=f"📬 New Enquiry from {req.name}",
         html_body=contact_notification_email(
@@ -61,8 +63,9 @@ async def submit_contact(req: ContactRequest, background_tasks: BackgroundTasks,
         ),
         reply_to=req.email,
     )
-
-    return {"message": "Thank you! We'll be in touch soon.", "id": entry.id}
+except Exception as e:
+    logger.error(f"Contact email failed: {e}")
+return {"message": "Thank you! We'll be in touch soon.", "id": entry.id}
 
 
 # ── Waitlist Signup ───────────────────────────────────────────────────────────
@@ -82,10 +85,15 @@ async def join_waitlist(req: WaitlistRequest, background_tasks: BackgroundTasks,
 
     # Send welcome email in background
     first_name = req.name.split()[0] if req.name else "there"
-    background_tasks.add_task(
-        send_email_async,
+    try:
+    await send_email_async(
         to=req.email,
-        subject=f"You're on the NEEDMO Consult waitlist 🎉",
+        subject="You're on the NEEDMO Consult waitlist",
+        html_body=welcome_email(first_name),
+    )
+except Exception as e:
+    logger.error(f"Welcome email failed: {e}")
+return {"message": "You're on the list! Check your inbox.", "id": entry.id}
         html_body=welcome_email(first_name),
     )
 

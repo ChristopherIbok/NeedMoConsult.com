@@ -102,15 +102,14 @@ export default function VideoPlayer({
               <circle cx="36" cy="36" r="36" fill="#D4AF7A" />
               <polygon points="28,20 28,52 54,36" fill="white" />
             </svg>
-            {/* Pulse ring */}
-            <span className="absolute inset-0 rounded-full animate-ping bg-[#D4AF7A]/30 pointer-events-none" />
+            
           </motion.button>
         </>
       ) : (
         <>
           {/* Loading shimmer behind iframe */}
           {!loaded && (
-            <div className="absolute inset-0 bg-gray-800 animate-pulse" />
+            <div className="absolute inset-0 bg-gray-900 transition-opacity duration-300" />
           )}
 
           {type === "self" ? (

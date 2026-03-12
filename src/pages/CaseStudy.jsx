@@ -101,7 +101,7 @@ export default function CaseStudy() {
       <CaseStudyResults study={study} />
 
       {/* Timeline */}
-      <CaseStudyTimeline timeline={study.timeline} />
+      <CaseStudyTimeline timeline={study.timeline2} />
 
       {/* Testimonial */}
       <CaseStudyTestimonial testimonial={study.testimonial} />

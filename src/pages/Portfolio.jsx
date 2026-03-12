@@ -30,7 +30,7 @@ const categories = [
 // For YouTube use videoId. For self-hosted use videoSrc.
 const portfolioItems = [
   {
-    id: 1, type: "video", category: "content", orientation: "horizontal",
+    id: 1, type: "self", category: "content", orientation: "horizontal",
     client: "Professional Vocal Mixing", project: "Youtube Video Series",
     description: "Created Professional Vocal Mixing Youtube series with branded templates and engaging captions.",
     results: { views: "250K", engagement: "15%", followers: "+5K" },

@@ -31,17 +31,17 @@ const categories = [
 const portfolioItems = [
   {
     id: 1, type: "self", category: "content", orientation: "vertical",
-    client: "Professional Vocal Mixing", project: "Youtube Video Series",
+    client: "Upwork Real Estate Test", project: "Conent Editing",
     description: "A Real Estate Dynamic Style video editing for tiktok and instagram.",
-    results: { views: "", engagement: "15%", followers: "" },
-    thumbnail: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop",
+    results: { views: "", engagement: "", followers: "" },
+    thumbnail: "",
     src: "https://assets.needmoconsult.com/Kafeel%20Amed%20-%20Reall%20Estate%20Test%20Clip.mp4",         // for self-hosted MP4
   },
   {
     id: 2, type: "video", category: "paid", orientation: "vertical",
     client: "Urban Threads", project: "TikTok Ad Campaign",
     description: "Launch campaign for new clothing line targeting Gen Z audience.",
-    results: { impressions: "500K", ctr: "12%", revenue: "$30K" },
+    results: { impressions: "", ctr: "", revenue: "" },
     thumbnail: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=800&fit=crop",
     videoId: "fFVyiiU4jZA",
   },

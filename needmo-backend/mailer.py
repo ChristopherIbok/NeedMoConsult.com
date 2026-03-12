@@ -95,4 +95,3 @@ async def send_bulk_emails(
         "failed": len(failed),
         "failed_list": failed,
     }
-```

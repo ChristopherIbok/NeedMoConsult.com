@@ -58,7 +58,7 @@ export default function VideoModal({ item, onClose }) {
               <VideoPlayer
                 type={item.videoType || "youtube"}
                 videoId={item.videoId}
-                src={item.videoSrc}
+                src={item.src}
                 poster={item.thumbnail}
                 orientation={item.orientation || "horizontal"}
                 title={`${item.project} – ${item.client}`}

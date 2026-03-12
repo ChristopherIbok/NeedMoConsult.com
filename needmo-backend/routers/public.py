@@ -50,22 +50,23 @@ async def submit_contact(req: ContactRequest, background_tasks: BackgroundTasks,
     db.refresh(entry)
 
     # Email admin in background
+    
     try:
-    await send_email_async(
-        to=ADMIN_EMAIL,
-        subject=f"📬 New Enquiry from {req.name}",
-        html_body=contact_notification_email(
-            name=req.name,
-            email=req.email,
-            phone=req.phone,
-            message=req.message,
-            service=req.service_interest,
-        ),
-        reply_to=req.email,
-    )
-except Exception as e:
-    logger.error(f"Contact email failed: {e}")
-return {"message": "Thank you! We'll be in touch soon.", "id": entry.id}
+        await send_email_async(
+            to=ADMIN_EMAIL,
+            subject=f"📬 New Enquiry from {req.name}",
+            html_body=contact_notification_email(
+                name=req.name,
+                email=req.email,
+                phone=req.phone,
+                message=req.message,
+                service=req.service_interest,
+            ),
+            reply_to=req.email,
+        )
+    except Exception as e:
+        logger.error(f"Contact email failed: {e}")
+    return {"message": "Thank you! We'll be in touch soon.", "id": entry.id}
 
 
 # ── Waitlist Signup ───────────────────────────────────────────────────────────
@@ -86,19 +87,14 @@ async def join_waitlist(req: WaitlistRequest, background_tasks: BackgroundTasks,
     # Send welcome email in background
     first_name = req.name.split()[0] if req.name else "there"
     try:
-    await send_email_async(
-        to=req.email,
-        subject="You're on the NEEDMO Consult waitlist",
-        html_body=welcome_email(first_name),
-    )
-except Exception as e:
-    logger.error(f"Welcome email failed: {e}")
-return {"message": "You're on the list! Check your inbox.", "id": entry.id}
-        html_body=welcome_email(first_name),
-    )
-
+        await send_email_async(
+            to=req.email,
+            subject="You're on the NEEDMO Consult waitlist 🎉",
+            html_body=welcome_email(first_name),
+        )
+    except Exception as e:
+        logger.error(f"Welcome email failed: {e}")
     return {"message": "You're on the list! Check your inbox.", "id": entry.id}
-
 
 # ── Unsubscribe ───────────────────────────────────────────────────────────────
 @router.get("/unsubscribe")

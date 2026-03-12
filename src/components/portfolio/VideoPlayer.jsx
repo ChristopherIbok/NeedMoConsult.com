@@ -87,9 +87,9 @@ export default function VideoPlayer({
           {/* Play Button */}
           <motion.button
             onClick={handlePlay}
-            whileHover={{ scale: 1.1 }}
+            whileHover={{ }}
             whileTap={{ scale: 0.97 }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#D4AF7A] rounded-full"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#D4AF7A] rounded-full group"
             aria-label={`Play video: ${title}`}
           >
             <svg
@@ -99,7 +99,7 @@ export default function VideoPlayer({
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <circle cx="36" cy="36" r="36" fill="#D4AF7A" />
+              <circle cx="36" cy="36" r="36" fill="#D4AF7A" className="transition-transform duration-300 group-hover:scale-110 origin-center" />
               <polygon points="28,20 28,52 54,36" fill="white" />
             </svg>
             

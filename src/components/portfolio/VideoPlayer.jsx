@@ -1,18 +1,8 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
 
-/**
- * Lazy-loaded video player with thumbnail-first approach.
- * Supports YouTube, Vimeo, and self-hosted videos.
- *
- * Props:
- *  - type: "youtube" | "vimeo" | "self"
- *  - videoId: YouTube or Vimeo video ID
- *  - src: URL for self-hosted video
- *  - poster: Thumbnail URL (auto-generated for YouTube if omitted)
- *  - title: Accessible title for the iframe
- *  - startAt: YouTube start time in seconds
- */
+const R2_BASE = "https://assets.needmoconsult.com";
+
 export default function VideoPlayer({
   type = "youtube",
   videoId,
@@ -20,59 +10,42 @@ export default function VideoPlayer({
   poster,
   title = "Project video",
   startAt = 0,
+  orientation = "horizontal", // "horizontal" | "vertical"
 }) {
   const [playing, setPlaying] = useState(false);
   const [loaded, setLoaded] = useState(false);
-  const containerRef = useRef(null);
 
-  // Auto-thumbnail for YouTube
   const thumbnailSrc = poster
-    ? poster
+    ? (poster.startsWith("http") ? poster : `${R2_BASE}/${poster}`)
     : type === "youtube"
     ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
     : null;
 
-  // Build embed URL
+  const videoSrc = src && !src.startsWith("http") ? `${R2_BASE}/${src}` : src;
+
   const embedSrc = (() => {
     if (type === "youtube") {
       const params = new URLSearchParams({
-        autoplay: "1",
-        rel: "0",
-        modestbranding: "1",
-        controls: "1",
-        color: "white",
+        autoplay: "1", rel: "0", modestbranding: "1", controls: "1", color: "white",
         ...(startAt > 0 ? { start: String(startAt) } : {}),
       });
       return `https://www.youtube.com/embed/${videoId}?${params}`;
     }
     if (type === "vimeo") {
       const params = new URLSearchParams({
-        title: "0",
-        byline: "0",
-        portrait: "0",
-        color: "FF6B35",
-        autoplay: "1",
-        muted: "0",
+        title: "0", byline: "0", portrait: "0", color: "D4AF7A", autoplay: "1",
       });
       return `https://player.vimeo.com/video/${videoId}?${params}`;
     }
     return null;
   })();
 
-  const handlePlay = () => {
-    // Respect prefers-reduced-motion
-    setPlaying(true);
-  };
+  const aspectClass = orientation === "vertical" ? "aspect-[9/16]" : "aspect-[16/9]";
 
   return (
-    <div
-      ref={containerRef}
-      className="relative w-full overflow-hidden rounded-xl bg-gray-900"
-      style={{ aspectRatio: "16 / 9" }}
-    >
+    <div className={`relative w-full overflow-hidden rounded-xl bg-gray-900 ${aspectClass}`}>
       {!playing ? (
         <>
-          {/* Thumbnail */}
           {thumbnailSrc && (
             <img
               src={thumbnailSrc}
@@ -81,45 +54,29 @@ export default function VideoPlayer({
               loading="lazy"
             />
           )}
-          {/* Dark gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-
-          {/* Play Button */}
           <motion.button
-            onClick={handlePlay}
-            whileHover={{ }}
+            onClick={() => setPlaying(true)}
             whileTap={{ scale: 0.97 }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 focus:outline-none focus-visible:ring-4 focus-visible:ring-[#D4AF7A] rounded-full group"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 group focus:outline-none focus-visible:ring-4 focus-visible:ring-[#D4AF7A] rounded-full"
             aria-label={`Play video: ${title}`}
           >
-            <svg
-              width="72"
-              height="72"
-              viewBox="0 0 72 72"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="36" cy="36" r="36" fill="#D4AF7A" className="transition-transform duration-300 group-hover:scale-110 origin-center" />
+            <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg"
+              className="transition-transform duration-300 group-hover:scale-110">
+              <circle cx="36" cy="36" r="36" fill="#D4AF7A" />
               <polygon points="28,20 28,52 54,36" fill="white" />
             </svg>
-            
           </motion.button>
         </>
       ) : (
         <>
-          {/* Loading shimmer behind iframe */}
-          {!loaded && (
-            <div className="absolute inset-0 bg-gray-900 transition-opacity duration-300" />
-          )}
-
+          {!loaded && <div className="absolute inset-0 bg-gray-900 transition-opacity duration-300" />}
           {type === "self" ? (
             <video
-              className="absolute inset-0 w-full h-full object-cover"
-              src={src}
-              poster={poster}
-              controls
-              autoPlay
-              playsInline
+              className="absolute inset-0 w-full h-full object-contain"
+              src={videoSrc}
+              poster={thumbnailSrc}
+              controls autoPlay playsInline
               onCanPlay={() => setLoaded(true)}
               title={title}
             />
@@ -131,7 +88,6 @@ export default function VideoPlayer({
               frameBorder="0"
               allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
               allowFullScreen
-              loading="lazy"
               onLoad={() => setLoaded(true)}
             />
           )}

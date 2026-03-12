@@ -60,6 +60,7 @@ export default function VideoModal({ item, onClose }) {
                 videoId={item.videoId}
                 src={item.videoSrc}
                 poster={item.thumbnail}
+                orientation={item.orientation || "horizontal"}
                 title={`${item.project} – ${item.client}`}
               />
             </div>

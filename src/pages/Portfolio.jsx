@@ -32,10 +32,10 @@ const portfolioItems = [
   {
     id: 1, type: "self", category: "content", orientation: "vertical",
     client: "Professional Vocal Mixing", project: "Youtube Video Series",
-    description: "Created Professional Vocal Mixing Youtube series with branded templates and engaging captions.",
-    results: { views: "250K", engagement: "15%", followers: "+5K" },
+    description: "A Real Estate Dynamic Style video editing for tiktok and instagram.",
+    results: { views: "", engagement: "15%", followers: "" },
     thumbnail: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop",
-    Src: "https://assets.needmoconsult.com/Kafeel%20Amed%20-%20Reall%20Estate%20Test%20Clip.mp4",         // for self-hosted MP4
+    src: "https://assets.needmoconsult.com/Kafeel%20Amed%20-%20Reall%20Estate%20Test%20Clip.mp4",         // for self-hosted MP4
   },
   {
     id: 2, type: "video", category: "paid", orientation: "vertical",

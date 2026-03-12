@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { getWaitlist, sendNewsletter as apiSendNewsletter } from "@/lib/api";
+import { adminLogin, getWaitlist, sendNewsletter as apiSendNewsletter } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Send, Users, Mail, Plus, Trash2, Eye, LogOut,
   ChevronRight, CheckCircle, XCircle, Loader2, Lock
 } from "lucide-react";
 
-const ADMIN_PASSWORD = "needmo2026"; // change this to your preferred password
 
 // ─── Auth Gate ────────────────────────────────────────────────────────────────
 function AuthGate({ onAuth }) {
+  const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
   const [error, setError] = useState(false);
   const [shake, setShake] = useState(false);
 
-  const handleSubmit = () => {
-    if (pw === ADMIN_PASSWORD) {
+  const handleSubmit = async () => {
+    try {
+      await adminLogin(email, pw);
       onAuth();
-    } else {
+    } catch (err) {
       setError(true);
       setShake(true);
       setTimeout(() => setShake(false), 500);
@@ -41,8 +42,15 @@ function AuthGate({ onAuth }) {
         <p className="text-white/40 text-sm text-center mb-6">NEEDMO CONSULT Dashboard</p>
 
         <input
+          type="email"
+          placeholder="Email address"
+          value={email}
+          onChange={e => { setEmail(e.target.value); setError(false); }}
+          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[#D4AF7A]/50 transition-colors mb-3"
+        />
+        <input
           type="password"
-          placeholder="Enter password"
+          placeholder="Password"
           value={pw}
           onChange={e => { setPw(e.target.value); setError(false); }}
           onKeyDown={e => e.key === "Enter" && handleSubmit()}

@@ -203,7 +203,7 @@ export default function Portfolio() {
                         </div>
                       </div>
                       {/* Play button */}
-                      {item.type === "video" && (
+                      {(item.type === "video" || item.type === "self") && (
                         <button
                           onClick={() => setSelectedItem(item)}
                           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-[#D4AF7A] rounded-full flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-110"
@@ -218,7 +218,7 @@ export default function Portfolio() {
                         {categories.find((c) => c.id === item.category)?.label}
                       </Badge>
                       {/* Orientation tag */}
-                      {item.type === "video" && (
+                      {(item.type === "video" || item.type === "self") && (
                         <span className="absolute bottom-4 left-4 text-[10px] bg-black/50 text-white px-2 py-0.5 rounded-full uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
                           {isVertical ? "Vertical" : "Horizontal"}
                         </span>

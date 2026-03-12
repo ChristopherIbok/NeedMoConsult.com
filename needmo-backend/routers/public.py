@@ -54,7 +54,7 @@ async def submit_contact(req: ContactRequest, background_tasks: BackgroundTasks,
     try:
         await send_email_async(
             to=ADMIN_EMAIL,
-            subject=f"📬 New Enquiry from {req.name}",
+            subject=f" New Enquiry from {req.name}",
             html_body=contact_notification_email(
                 name=req.name,
                 email=req.email,

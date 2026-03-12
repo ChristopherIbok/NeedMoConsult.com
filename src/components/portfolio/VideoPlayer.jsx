@@ -43,7 +43,7 @@ export default function VideoPlayer({
   const aspectClass = orientation === "vertical" ? "aspect-[9/16]" : "aspect-[16/9]";
 
   return (
-    <div className={`relative w-full overflow-hidden rounded-xl bg-gray-900 ${aspectClass}`}>
+    <div className={`relative w-full overflow-hidden rounded-xl bg-gray-900 ${aspectClass} max-h-[75vh]`}>
       {!playing ? (
         <>
           {thumbnailSrc && (

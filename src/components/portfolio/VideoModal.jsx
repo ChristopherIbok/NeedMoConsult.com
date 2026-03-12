@@ -54,7 +54,7 @@ export default function VideoModal({ item, onClose }) {
             </button>
 
             {/* Video */}
-            <div className="rounded-2xl overflow-hidden shadow-2xl">
+            <div className="rounded-2xl overflow-hidden shadow-2xl" style={{ maxHeight: "75vh" }}>
               <VideoPlayer
                 type={item.type || "youtube"}
                 videoId={item.videoId}

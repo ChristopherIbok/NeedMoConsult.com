@@ -56,7 +56,7 @@ export default function VideoModal({ item, onClose }) {
             {/* Video */}
             <div className="rounded-2xl overflow-hidden shadow-2xl">
               <VideoPlayer
-                type={item.videoType || "youtube"}
+                type={item.type || "youtube"}
                 videoId={item.videoId}
                 src={item.src}
                 poster={item.thumbnail}

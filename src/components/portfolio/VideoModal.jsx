@@ -64,7 +64,7 @@ export default function VideoModal({ item, onClose }) {
             </button>
             {/* Video Frame: Using aspect-ratio */}
             <div 
-              className={`relative overflow-hidden rounded-2xl shadow-2xl bg-black ${
+              className={`relative overflow-hidden rounded-2xl shadow-2xl bg-black focus:outline-none focus:ring-0" ${
                 isVertical ? "aspect-[9/16] w-full" : "aspect-video"
               }`}
             >

@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import VideoModal from "@/components/portfolio/VideoModal";
 import ContactCTA from "@/components/landing/ContactCTA";
+import { Content } from "@radix-ui/react-select";
 
 const R2 = "https://assets.needmoconsult.com";
 
@@ -38,12 +39,12 @@ const portfolioItems = [
     src: "https://assets.needmoconsult.com/Kafeel%20Amed%20-%20Reall%20Estate%20Test%20Clip.mp4",         // for self-hosted MP4
   },
   {
-    id: 2, type: "video", category: "paid", orientation: "vertical",
+    id: 2, type: "self", category: "content", orientation: "vertical",
     client: "Urban Threads", project: "TikTok Ad Campaign",
     description: "Launch campaign for new clothing line targeting Gen Z audience.",
     results: { impressions: "", ctr: "", revenue: "" },
     thumbnail: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=800&fit=crop",
-    videoId: "fFVyiiU4jZA",
+    src: "https://assets.needmoconsult.com/Making-Content-Test-Job.mp4",
   },
   {
     id: 3, type: "image", category: "content", orientation: "horizontal",
@@ -61,12 +62,12 @@ const portfolioItems = [
     featured: true,
   },
   {
-    id: 5, type: "video", category: "growth", orientation: "vertical",
-    client: "Fitness Influencer Sarah", project: "Content Creation & Management",
-    description: "Full-service content production and account management for fitness creator.",
-    results: { followers: "+40K", sponsorships: "2", income: "$15K/mo" },
+    id: 5, type: "self", category: "content", orientation: "vertical",
+    client: "Nik Shevchenko", project: "Content Creation & Management",
+    description: "AI Omni Necklace | Product Launch Promo.",
+    results: { followers: "", sponsorships: "", income: "" },
     thumbnail: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&h=800&fit=crop",
-    videoId: "dQw4w9WgXcQ",
+    src: "https://assets.needmoconsult.com/Omi-Neklace.mp4",
   },
   {
     id: 6, type: "image", category: "paid", orientation: "horizontal",

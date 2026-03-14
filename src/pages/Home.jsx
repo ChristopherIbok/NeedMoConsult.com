@@ -2,7 +2,6 @@ import React from "react";
 import HeroSection from "@/components/landing/HeroSection";
 import ValueProps from "@/components/landing/ValueProps";
 import ServicesOverview from "@/components/landing/ServicesOverview";
-import PortfolioSection from "@/components/landing/PortfolioSection";
 import PricingSection from "@/components/landing/PricingSection";
 import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import AboutSection from "@/components/landing/AboutSection";
@@ -21,8 +20,6 @@ export default function Home() {
       <HeroSection />
       <ValueProps />
       <ServicesOverview />
-      <PortfolioSection />
-      <PricingSection />
       <TestimonialsSection />
       <AboutSection />
       <ContactCTA />

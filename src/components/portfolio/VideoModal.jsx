@@ -1,14 +1,9 @@
 import React, { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Eye, Heart, TrendingUp } from "lucide-react";
+import { X } from "lucide-react";
 import VideoPlayer from "./VideoPlayer";
 
-/**
- * Full-screen video lightbox modal.
- * Pass `item` (portfolio object) to open, null to close.
- */
 export default function VideoModal({ item, onClose }) {
-  // ESC key to close
   useEffect(() => {
     if (!item) return;
     const handler = (e) => {
@@ -22,6 +17,9 @@ export default function VideoModal({ item, onClose }) {
     };
   }, [item, onClose]);
 
+  // Determine if we should use a slim container for vertical content
+  const isVertical = item?.orientation === "vertical" || item?.aspect === "9:16";
+
   return (
     <AnimatePresence>
       {item && (
@@ -29,32 +27,38 @@ export default function VideoModal({ item, onClose }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6"
           onClick={onClose}
         >
           {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/90 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-black/95 backdrop-blur-md" />
 
-          {/* Content */}
+          {/* Wrapper: Dynamic width based on orientation */}
           <motion.div
             initial={{ scale: 0.94, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.94, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="relative z-10 w-full max-w-4xl"
+            className={`relative z-10 w-full flex flex-col ${
+              isVertical ? "max-w-[400px]" : "max-w-5xl"
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close button */}
+            {/* Close button - Positioned relative to the video box */}
             <button
               onClick={onClose}
-              className="absolute -top-12 right-0 text-white/70 hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF7A] rounded-full p-1"
+              className="absolute -top-10 right-0 md:-right-10 md:top-0 text-white/70 hover:text-white transition-colors p-2"
               aria-label="Close video"
             >
-              <X className="w-7 h-7" />
+              <X className="w-8 h-8" />
             </button>
 
-            {/* Video */}
-            <div className="rounded-2xl overflow-hidden shadow-2xl" style={{ maxHeight: "75vh" }}>
+            {/* Video Frame: Using aspect-ratio to prevent jumps */}
+            <div 
+              className={`relative overflow-hidden rounded-2xl shadow-2xl bg-black ${
+                isVertical ? "aspect-[9/16]" : "aspect-video"
+              }`}
+            >
               <VideoPlayer
                 type={item.type || "youtube"}
                 videoId={item.videoId}
@@ -65,33 +69,33 @@ export default function VideoModal({ item, onClose }) {
               />
             </div>
 
-            {/* Info bar */}
-            <div className="mt-4 bg-white/5 backdrop-blur rounded-xl px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <p className="text-[#D4AF7A] text-xs font-semibold uppercase tracking-widest mb-0.5">
+            {/* Info Bar: Detached but visually linked */}
+            <div className="mt-3 bg-[#1A1A1A] border border-white/5 rounded-2xl px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex-1">
+                <p className="text-[#D4AF7A] text-[10px] font-bold uppercase tracking-[0.2em] mb-1">
                   {item.client}
                 </p>
                 <h3 className="text-white font-bold text-lg leading-tight">
                   {item.project}
                 </h3>
                 {item.description && (
-                  <p className="text-white/60 text-sm mt-1">
+                  <p className="text-white/50 text-sm mt-1 line-clamp-2">
                     {item.description}
                   </p>
                 )}
               </div>
 
               {item.results && (
-                <div className="flex flex-wrap gap-3 flex-shrink-0">
+                <div className="flex flex-wrap gap-2 flex-shrink-0">
                   {Object.entries(item.results).map(([key, value]) => (
                     <div
                       key={key}
-                      className="flex items-center gap-1.5 bg-white/10 rounded-lg px-3 py-1.5"
+                      className="flex flex-col items-start bg-white/5 rounded-lg px-3 py-2 min-w-[70px]"
                     >
-                      <span className="text-white font-semibold text-sm">
+                      <span className="text-white font-bold text-sm">
                         {value}
                       </span>
-                      <span className="text-white/50 text-xs capitalize">
+                      <span className="text-white/40 text-[9px] uppercase font-medium">
                         {key}
                       </span>
                     </div>

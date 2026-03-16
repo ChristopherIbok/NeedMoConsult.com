@@ -57,7 +57,7 @@ export default function VideoModal({ item, onClose }) {
             {/* Close button */}
             <button
               onClick={onClose}
-              className="absolute -top-10 right-0 md:-right-10 md:top-0 text-white/70 hover:text-white transition-colors p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#D4AF7A]"
+              className="absolute -top-10 right-0 md:-right-0 md:top-0 text-white/70 hover:text-white transition-colors p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#D4AF7A]"
               aria-label="Close video modal"
             >
               <X className="w-8 h-8" />

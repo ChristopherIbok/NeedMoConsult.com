@@ -36,7 +36,7 @@ const portfolioItems = [
     description: "A Real Estate Dynamic Style video editing for tiktok and instagram.",
     results: { views: "", engagement: "", followers: "" },
     thumbnail: "",
-    src: "https://assets.needmoconsult.com/Kafeel%20Amed%20-%20Reall%20Estate%20Test%20Clip.mp4",         // for self-hosted MP4
+    src: "https://assets.needmoconsult.com/Kafeel-Amed-Reall-Estate-Test-Clip.mp4",         // for self-hosted MP4
   },
   {
     id: 2, type: "self", category: "content", orientation: "vertical",

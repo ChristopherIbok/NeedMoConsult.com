@@ -44,7 +44,7 @@ const portfolioItems = [
     description: "Launch campaign for new clothing line targeting Gen Z audience.",
     results: { impressions: "", ctr: "", revenue: "" },
     thumbnail: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=800&fit=crop",
-    src: "https://assets.needmoconsult.com/Making-Content-Test-Job.mp4",
+    src: "https://assets.needmoconsult.com/Kafeel-Amed-Reall-Estate-Test-Clip.mp4",
   },
   {
     id: 3, type: "image", category: "content", orientation: "horizontal",

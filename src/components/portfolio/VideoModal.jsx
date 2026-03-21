@@ -45,7 +45,7 @@ export default function VideoModal({ item, onClose }) {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.94, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className={`relative z-10 w-full max-h-[95vh] sm:max-h-[90vh] flex flex-col overflow-hidden ${
+            className={`relative z-10 w-full flex flex-col ${
               isVertical ? "max-w-[320px] sm:max-w-[400px]" : "max-w-[340px] sm:max-w-2xl md:max-w-4xl lg:max-w-5xl"
             }`}
             onClick={(e) => e.stopPropagation()}

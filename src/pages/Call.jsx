@@ -35,14 +35,20 @@ export default function Call() {
   const createRoom = async () => {
     if (!hostName.trim()) return;
     setIsCreatingRoom(true);
+    setError(null);
     try {
-      const res = await request("/admin/room/create", { method: "POST" });
-      const shareUrl = `${window.location.origin}/call?room=${encodeURIComponent(res.url)}&name=${encodeURIComponent(hostName)}`;
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/public/room/create`, { method: "POST" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.detail || "Failed to create room");
+      }
+      const data = await res.json();
+      const shareUrl = `${window.location.origin}/call?room=${encodeURIComponent(data.url)}&name=${encodeURIComponent(hostName)}`;
       setRoomUrl(shareUrl);
       setShowHostPanel(true);
-      setIsCreatingRoom(false);
     } catch (err) {
-      setError("Failed to create room. Please try again.");
+      setError(err.message || "Failed to create room. Please try again.");
+    } finally {
       setIsCreatingRoom(false);
     }
   };

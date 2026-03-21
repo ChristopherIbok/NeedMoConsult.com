@@ -56,25 +56,24 @@ export default function Call() {
   const initCall = async (url, name) => {
     let daily = null;
     setIsConnecting(true);
+    setError(null);
 
     try {
       const DailyIframe = await import("@daily-co/daily-js").then((m) => m.default);
       
       daily = DailyIframe.createFrame(callFrameRef.current, {
         iframeStyle: {
-          position: "fixed",
+          position: "absolute",
           top: "0",
           left: "0",
           width: "100%",
           height: "100%",
           border: "none",
           borderRadius: "0",
-          zIndex: "1",
         },
         showLeaveButton: true,
         showFullscreenButton: true,
         showParticipantsBar: true,
-        showSettingsButton: true,
         userName: name,
       });
 
@@ -82,15 +81,14 @@ export default function Call() {
 
       daily.on("joined-meeting", () => {
         setIsConnecting(false);
-        setIsInCall(true);
-        updateParticipantCount(daily);
       });
 
       daily.on("participant-joined", () => updateParticipantCount(daily));
       daily.on("participant-left", () => updateParticipantCount(daily));
 
       daily.on("error", (e) => {
-        setError("Connection error. Please try again.");
+        console.error("Daily error:", e);
+        setError("Connection error. Please check your camera/mic permissions and try again.");
         setIsConnecting(false);
       });
 
@@ -267,7 +265,7 @@ export default function Call() {
     <main className="fixed inset-0 bg-[#0D1117] overflow-hidden">
       <SEO title="Video Call | NEEDMO CONSULT" description="Join your scheduled strategy call" robots="noindex" />
       
-      <div ref={callFrameRef} className="w-full h-full" />
+      <div ref={callFrameRef} className="absolute inset-0 w-full h-full" />
 
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 z-50">
         <button onClick={toggleAudio} className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${isAudioOn ? "bg-[#161B22] hover:bg-[#21262D] text-white" : "bg-red-500 hover:bg-red-600 text-white"}`}>

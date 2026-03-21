@@ -37,7 +37,7 @@ const sections = [
   },
   {
     title: "9. Contact Us",
-    content: `If you have any questions about this Privacy Policy, please contact us at:\n\nNEEDMO CONSULT\nLos Angeles, CA\nhello@needmoconsult.com\n+1 (989) 785-2030`,
+    content: `If you have any questions about this Privacy Policy, please contact us at:\n\nNEEDMO CONSULT\nLos Angeles, CA\nhello@needmoconsult.com\n+234 (706) 898-4590`,
   },
 ];
 

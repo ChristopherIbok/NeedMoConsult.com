@@ -228,16 +228,7 @@ export default function Portfolio() {
                     {/* Card footer */}
                     <div className="p-5">
                       <p className="text-sm text-[#D4AF7A] font-medium mb-1">{item.client}</p>
-                      <h3 className="text-base font-bold text-[#1A2332] dark:text-white mb-2">{item.project}</h3>
-                      {clientToSlug[item.client] ? (
-                        <Link to={createPageUrl(`CaseStudy?slug=${clientToSlug[item.client]}`)} className="text-sm text-[#D4AF7A] font-medium flex items-center gap-1 hover:underline">
-                          View Case Study <ExternalLink className="w-3 h-3" />
-                        </Link>
-                      ) : (
-                        <button className="text-sm text-[#D4AF7A] font-medium flex items-center gap-1 hover:underline">
-                          View Details <ExternalLink className="w-3 h-3" />
-                        </button>
-                      )}
+                      <h3 className="text-base font-bold text-[#1A2332] dark:text-white">{item.project}</h3>
                     </div>
                   </motion.div>
                 );

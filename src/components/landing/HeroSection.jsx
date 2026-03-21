@@ -60,7 +60,7 @@ export default function HeroSection() {
     <section className="relative min-h-[85vh] md:min-h-screen flex items-center pt-20 overflow-hidden">
 
       {/* Background image */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0">
         <img
           src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           alt=""
@@ -71,7 +71,7 @@ export default function HeroSection() {
       </div>
 
       {/* ── Main content ── */}
-      <div className="site-container w-full py-12 lg:py-0">
+      <div className="site-container relative z-10 w-full py-12 lg:py-0">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
           {/* Left content */}
@@ -183,7 +183,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.25 }}
-            className="relative hidden lg:block"
+            className="relative z-10 hidden lg:block"
           >
             <div className="relative w-full aspect-square">
 

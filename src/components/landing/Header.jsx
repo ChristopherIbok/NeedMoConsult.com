@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/ui/ThemeProvider";
 import { motion, AnimatePresence } from "framer-motion";
 import { LogoHorizontal } from "@/components/brand/Logo";
-import { LogoBadge } from "@/components/brand/Logo";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const navItems = [

@@ -1,18 +1,13 @@
 import React from "react";
 import SEO from "@/components/ui/SEO";
-import { Link } from "react-router-dom";
-import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import {
   Target,
   TrendingUp,
-  Users,
   Heart,
   Award,
   Zap,
   Shield,
-  ArrowRight,
 } from "lucide-react";
 import ContactCTA from "@/components/landing/ContactCTA";
 

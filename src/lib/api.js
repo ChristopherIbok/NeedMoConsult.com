@@ -103,3 +103,4 @@ export const getBlogPosts = () => request("/public/blog");
 export const getBlogPost = (id) => request(`/public/blog/${id}`);
 export const createBooking = (payload) =>
   request("/public/booking", { method: "POST", body: JSON.stringify(payload) });
+// Returns: { message, id, call_url? }

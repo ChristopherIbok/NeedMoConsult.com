@@ -70,4 +70,5 @@ class Booking(Base):
     time       = Column(String, nullable=False)
     message    = Column(Text, nullable=True)
     status     = Column(String, default="pending")
+    call_url   = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

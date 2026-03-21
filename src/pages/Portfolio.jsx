@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import VideoModal from "@/components/portfolio/VideoModal";
 import ContactCTA from "@/components/landing/ContactCTA";
-import { Content } from "@radix-ui/react-select";
 
 const R2 = "https://assets.needmoconsult.com";
 

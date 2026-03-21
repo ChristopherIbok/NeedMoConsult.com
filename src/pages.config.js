@@ -52,6 +52,7 @@ import Admin from "./pages/Admin";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import BrandKit from "./pages/BrandKit";
+import Call from "./pages/Call";
 import CaseStudy from "./pages/CaseStudy";
 import Contact from "./pages/Contact";
 import Home from "./pages/Home";
@@ -68,6 +69,7 @@ export const PAGES = {
   Blog: Blog,
   BlogPost: BlogPost,
   BrandKit: BrandKit,
+  Call: Call,
   CaseStudy: CaseStudy,
   Contact: Contact,
   Home: Home,

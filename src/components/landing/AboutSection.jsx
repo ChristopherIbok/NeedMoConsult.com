@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { motion } from "framer-motion";
 import { ArrowRight, Pencil, TrendingUp, Users } from "lucide-react";
-import { LogoStacked } from "@/components/brand/Logo";
 import AnimatedCounter from "@/components/ui/AnimatedCounter";
 
 const values = [

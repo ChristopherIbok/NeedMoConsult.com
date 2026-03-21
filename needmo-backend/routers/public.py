@@ -143,9 +143,55 @@ class BookingRequest(BaseModel):
     time: str
     message: Optional[str] = ""
 
+async def create_daily_room(booking_id: int):
+    """Create a Daily.co room for the booking call."""
+    import httpx
+    
+    api_key = os.getenv("DAILY_API_KEY")
+    domain = os.getenv("DAILY_DOMAIN", "https://needmo.daily.co")
+    
+    if not api_key:
+        logger.warning("DAILY_API_KEY not configured - call links won't be generated")
+        return None
+    
+    room_name = f"needmo-booking-{booking_id}"
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "https://api.daily.co/v1/rooms",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {api_key}",
+                },
+                json={
+                    "name": room_name,
+                    "privacy": "public",
+                    "properties": {
+                        "max_participants": 6,
+                        "enable_screenshare": True,
+                        "enable_chat": True,
+                        "enable_recording": "cloud",
+                        "exp": None,  # Room doesn't expire
+                    },
+                },
+                timeout=10.0,
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                return data.get("url")
+            else:
+                logger.error(f"Daily.co room creation failed: {response.status_code} - {response.text}")
+                return None
+    except Exception as e:
+        logger.error(f"Daily.co API error: {e}")
+        return None
+
 @router.post("/booking")
-async def create_booking(req: BookingRequest, db: Session = Depends(get_db)):
-    """Save a booking request."""
+async def create_booking(req: BookingRequest, background_tasks: BackgroundTasks,
+                         db: Session = Depends(get_db)):
+    """Save a booking request and create a Daily.co call room."""
     entry = models.Booking(
         name=req.name,
         email=req.email,
@@ -158,4 +204,15 @@ async def create_booking(req: BookingRequest, db: Session = Depends(get_db)):
     db.add(entry)
     db.commit()
     db.refresh(entry)
-    return {"message": "Booking confirmed!", "id": entry.id}
+    
+    call_url = await create_daily_room(entry.id)
+    
+    if call_url:
+        entry.call_url = call_url
+        db.commit()
+    
+    return {
+        "message": "Booking confirmed!", 
+        "id": entry.id,
+        "call_url": call_url,
+    }

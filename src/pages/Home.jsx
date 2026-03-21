@@ -2,7 +2,6 @@ import React from "react";
 import HeroSection from "@/components/landing/HeroSection";
 import ValueProps from "@/components/landing/ValueProps";
 import ServicesOverview from "@/components/landing/ServicesOverview";
-import PricingSection from "@/components/landing/PricingSection";
 import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import AboutSection from "@/components/landing/AboutSection";
 import ContactCTA from "@/components/landing/ContactCTA";

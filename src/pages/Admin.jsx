@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { adminLogin, getWaitlist, sendNewsletter as apiSendNewsletter } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Send, Users, Mail, Plus, Trash2, Eye, LogOut,
-  ChevronRight, CheckCircle, XCircle, Loader2, Lock
+  Send, Users, Mail, Plus, Trash2, Eye, LogOut, CheckCircle, XCircle, Loader2, Lock
 } from "lucide-react";
 
 

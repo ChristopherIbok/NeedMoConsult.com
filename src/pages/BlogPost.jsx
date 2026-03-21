@@ -33,7 +33,7 @@ export default function BlogPost() {
   const pageTitle = post?.hero_title || post?.subject || "NEEDMO CONSULT Insights";
 
   const share = {
-    twitter:  () => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(pageTitle)}&url=${encodeURIComponent(pageUrl)}&via=needmoconsult`, "_blank"),
+    twitter:  () => window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(pageTitle)}&url=${encodeURIComponent(pageUrl)}&via=needmoconsult`, "_blank"),
     linkedin: () => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl)}`, "_blank"),
     facebook: () => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`, "_blank"),
     copy: () => {

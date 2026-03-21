@@ -4,8 +4,6 @@ from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 from typing import List, Optional
 from sqlalchemy.orm import Session
-import httpx
-import os
 import logging
 
 from database import get_db
@@ -139,46 +137,3 @@ def list_newsletters(db: Session = Depends(get_db), admin=Depends(get_current_ad
         .order_by(models.Newsletter.sent_at.desc())
         .all()
     )
-
-
-# ── Video Call Rooms ───────────────────────────────────────────────────────────
-@router.post("/room/create")
-async def create_room(admin=Depends(get_current_admin)):
-    """Create a Daily.co meeting room and return the URL."""
-    api_key = os.getenv("DAILY_API_KEY")
-    
-    if not api_key:
-        raise HTTPException(status_code=500, detail="Daily.co API key not configured")
-    
-    room_name = f"needmo-meeting-{os.urandom(4).hex()}"
-    
-    try:
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                "https://api.daily.co/v1/rooms",
-                headers={
-                    "Content-Type": "application/json",
-                    "Authorization": f"Bearer {api_key}",
-                },
-                json={
-                    "name": room_name,
-                    "privacy": "public",
-                    "properties": {
-                        "max_participants": 6,
-                        "enable_screenshare": True,
-                        "enable_chat": True,
-                        "enable_recording": "cloud",
-                    },
-                },
-                timeout=10.0,
-            )
-            
-            if response.status_code == 200:
-                data = response.json()
-                return {"url": data.get("url"), "name": room_name}
-            else:
-                logger.error(f"Daily.co error: {response.status_code} - {response.text}")
-                raise HTTPException(status_code=500, detail="Failed to create meeting room")
-    except Exception as e:
-        logger.error(f"Room creation error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to create meeting room")

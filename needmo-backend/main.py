@@ -35,3 +35,10 @@ app.include_router(admin.router,  prefix="/admin",  tags=["Admin 🔒"])
 @app.get("/", tags=["Health"])
 def health():
     return {"status": "NEEDMO Consult API is running ✅"}
+
+
+# ── WebRTC Signaling WebSocket ────────────────────────────────────────────────
+@app.websocket("/ws/call")
+async def websocket_endpoint(websocket):
+    from routers.signaling import websocket_handler
+    await websocket_handler(websocket)

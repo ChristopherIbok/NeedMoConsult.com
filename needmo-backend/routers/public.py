@@ -146,7 +146,7 @@ class BookingRequest(BaseModel):
 @router.post("/booking")
 async def create_booking(req: BookingRequest, background_tasks: BackgroundTasks,
                          db: Session = Depends(get_db)):
-    """Save a booking request. Call link generated when meeting starts."""
+    """Save a booking request."""
     entry = models.Booking(
         name=req.name,
         email=req.email,
@@ -164,3 +164,48 @@ async def create_booking(req: BookingRequest, background_tasks: BackgroundTasks,
         "message": "Booking confirmed!", 
         "id": entry.id,
     }
+
+
+@router.post("/room/create")
+async def create_room():
+    """Create a Daily.co meeting room."""
+    import httpx
+    import os
+    
+    api_key = os.getenv("DAILY_API_KEY")
+    
+    if not api_key:
+        raise HTTPException(status_code=500, detail="Video calls not configured. Add DAILY_API_KEY to backend environment.")
+    
+    room_name = f"needmo-{os.urandom(4).hex()}"
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "https://api.daily.co/v1/rooms",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {api_key}",
+                },
+                json={
+                    "name": room_name,
+                    "privacy": "public",
+                    "properties": {
+                        "max_participants": 6,
+                        "enable_screenshare": True,
+                        "enable_chat": True,
+                    },
+                },
+                timeout=10.0,
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                return {"url": data.get("url"), "name": room_name}
+            else:
+                raise HTTPException(status_code=500, detail="Failed to create meeting room")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Room creation error: {e}")
+        raise HTTPException(status_code=500, detail="Failed to create meeting room")

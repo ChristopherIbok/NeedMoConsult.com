@@ -134,6 +134,38 @@ function AuthGate({ onAuth }) {
 }
 
 // ─── Project Management Components ───────────────────────────────────────────
+function ProjectProgress({ projects, tasks, selectedProject }) {
+  const getProjectProgress = (projectId) => {
+    const projectTasks = tasks.filter(t => t.project_id === projectId);
+    if (projectTasks.length === 0) return 0;
+    const done = projectTasks.filter(t => t.status === "done").length;
+    return Math.round((done / projectTasks.length) * 100);
+  };
+
+  const currentProgress = selectedProject 
+    ? getProjectProgress(selectedProject)
+    : Math.round((tasks.filter(t => t.status === "done").length / Math.max(tasks.length, 1)) * 100);
+
+  return (
+    <div className="mb-6 bg-white dark:bg-[#1A2332] rounded-xl p-4 border border-gray-100 dark:border-white/10">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-sm font-medium text-[#1A2332] dark:text-white">Task Progress</span>
+        <span className="text-sm font-bold text-[#D4AF7A]">{currentProgress}%</span>
+      </div>
+      <div className="h-2 bg-gray-100 dark:bg-white/10 rounded-full overflow-hidden">
+        <div 
+          className="h-full bg-gradient-to-r from-[#D4AF7A] to-green-500 rounded-full transition-all duration-500"
+          style={{ width: `${currentProgress}%` }}
+        />
+      </div>
+      <div className="flex justify-between mt-2 text-xs text-gray-400">
+        <span>{tasks.filter(t => t.status === "done").length} completed</span>
+        <span>{tasks.filter(t => t.status !== "done").length} remaining</span>
+      </div>
+    </div>
+  );
+}
+
 function KanbanBoard({ projects, tasks, onUpdateTask, onDeleteTask, currentUser }) {
   const columns = ["todo", "in_progress", "review", "done"];
   
@@ -185,6 +217,8 @@ function KanbanBoard({ projects, tasks, onUpdateTask, onDeleteTask, currentUser 
 
 function TaskCard({ task, projectName, onUpdate, onDelete, currentUser }) {
   const [showMenu, setShowMenu] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState(task.title);
 
   const cycleStatus = () => {
     const order = ["todo", "in_progress", "review", "done"];
@@ -192,10 +226,50 @@ function TaskCard({ task, projectName, onUpdate, onDelete, currentUser }) {
     onUpdate(task.id, { status: order[(idx + 1) % 4] });
   };
 
+  const toggleDone = () => {
+    const newStatus = task.status === "done" ? "todo" : "done";
+    onUpdate(task.id, { status: newStatus });
+  };
+
+  const saveTitle = () => {
+    if (editTitle.trim() && editTitle !== task.title) {
+      onUpdate(task.id, { title: editTitle.trim() });
+    }
+    setIsEditing(false);
+  };
+
   return (
-    <div className="bg-white dark:bg-[#1A2332] rounded-xl p-4 border border-gray-100 dark:border-white/10 shadow-sm hover:shadow-md transition-shadow group">
-      <div className="flex items-start justify-between mb-2">
-        <h4 className="text-sm font-medium text-[#1A2332] dark:text-white flex-1">{task.title}</h4>
+    <div className={`bg-white dark:bg-[#1A2332] rounded-xl p-4 border shadow-sm hover:shadow-md transition-all group ${task.status === "done" ? "opacity-60" : ""}`}>
+      <div className="flex items-start gap-3 mb-2">
+        <button
+          onClick={toggleDone}
+          className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
+            task.status === "done"
+              ? "bg-green-500 border-green-500"
+              : "border-gray-300 dark:border-gray-600 hover:border-[#D4AF7A]"
+          }`}
+        >
+          {task.status === "done" && <CheckCircle className="w-3 h-3 text-white" />}
+        </button>
+        <div className="flex-1 min-w-0">
+          {isEditing ? (
+            <input
+              value={editTitle}
+              onChange={e => setEditTitle(e.target.value)}
+              onBlur={saveTitle}
+              onKeyDown={e => e.key === "Enter" && saveTitle()}
+              autoFocus
+              className="w-full bg-transparent border-b border-[#D4AF7A] text-sm font-medium text-[#1A2332] dark:text-white outline-none"
+            />
+          ) : (
+            <h4
+              onClick={() => setIsEditing(true)}
+              className={`text-sm font-medium text-[#1A2332] dark:text-white cursor-pointer hover:text-[#D4AF7A] ${task.status === "done" ? "line-through" : ""}`}
+            >
+              {task.title}
+            </h4>
+          )}
+        </div>
         <div className="relative">
           <button
             onClick={() => setShowMenu(!showMenu)}
@@ -206,10 +280,22 @@ function TaskCard({ task, projectName, onUpdate, onDelete, currentUser }) {
           {showMenu && (
             <div className="absolute right-0 top-8 bg-white dark:bg-[#0F1824] rounded-xl shadow-xl border border-gray-100 dark:border-white/10 py-1 z-10 w-36">
               <button
+                onClick={() => { toggleDone(); setShowMenu(false); }}
+                className="w-full px-3 py-2 text-left text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5"
+              >
+                {task.status === "done" ? "Mark Incomplete" : "Mark Done"}
+              </button>
+              <button
                 onClick={() => { cycleStatus(); setShowMenu(false); }}
                 className="w-full px-3 py-2 text-left text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5"
               >
                 Move Next →
+              </button>
+              <button
+                onClick={() => { setIsEditing(true); setShowMenu(false); }}
+                className="w-full px-3 py-2 text-left text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5"
+              >
+                Edit Title
               </button>
               <button
                 onClick={() => onDelete(task.id)}
@@ -880,6 +966,15 @@ export default function Office() {
                     </motion.div>
                   )}
                 </AnimatePresence>
+
+                {/* Progress Bar */}
+                {tasks.length > 0 && (
+                  <ProjectProgress 
+                    projects={projects} 
+                    tasks={selectedProject ? tasks.filter(t => t.project_id === selectedProject) : tasks}
+                    selectedProject={selectedProject}
+                  />
+                )}
 
                 {/* Kanban Board */}
                 {loadingProjects ? (

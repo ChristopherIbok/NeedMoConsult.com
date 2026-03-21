@@ -1,6 +1,0 @@
-<svg width="800" height="200" viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg">
-  <rect width="800" height="200" fill="#FFFFFF"/>
-  <text x="50" y="130" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="#1A2332" letter-spacing="-2">NEEDMO</text>
-  <text x="420" y="130" font-family="Arial, sans-serif" font-size="28" font-weight="normal" fill="#D4AF7A" letter-spacing="8">CONSULT</text>
-  <rect x="50" y="145" width="700" height="2" fill="#D4AF7A"/>
-</svg>

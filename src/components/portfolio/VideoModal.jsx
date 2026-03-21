@@ -39,14 +39,14 @@ export default function VideoModal({ item, onClose }) {
           className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 md:p-8 bg-black/95"
           onClick={onClose}
         >
-          {/* Wrapper: Dynamic width based on orientation */}
+          {/* Wrapper */}
           <motion.div
             initial={{ scale: 0.94, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.94, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
             className={`relative z-10 w-full max-h-[95vh] sm:max-h-[90vh] flex flex-col overflow-hidden ${
-              isVertical ? "max-w-[320px] sm:max-w-[400px]" : "max-w-full sm:max-w-5xl"
+              isVertical ? "max-w-[320px] sm:max-w-[400px]" : "max-w-[340px] sm:max-w-2xl md:max-w-4xl lg:max-w-5xl"
             }`}
             onClick={(e) => e.stopPropagation()}
             tabIndex={-1} 
@@ -54,7 +54,7 @@ export default function VideoModal({ item, onClose }) {
             {/* Close button */}
             <button
               onClick={onClose}
-              className="absolute -top-12 sm:-top-10 right-0 sm:right-2 text-white/70 hover:text-white transition-colors p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-[#D4AF7A] z-20 bg-black/50 rounded-full"
+              className="absolute -top-12 sm:-top-10 right-0 sm:right-2 text-white/70 hover:text-white transition-colors p-2 z-20 bg-black/50 rounded-full focus:outline-none focus:ring-2 focus:ring-[#D4AF7A]"
               aria-label="Close video modal"
             >
               <X className="w-6 h-6 sm:w-8 sm:h-8" />
@@ -65,7 +65,6 @@ export default function VideoModal({ item, onClose }) {
                 isVertical ? "aspect-[9/16] w-full" : "aspect-video w-full"
               }`}
             >
-              {/* Augmented VideoPlayer with ref for focus */}
               <div ref={videoRef}>
                 <VideoPlayer
                   type={item.type || "youtube"}
@@ -77,36 +76,36 @@ export default function VideoModal({ item, onClose }) {
                 />
               </div>
             </div>
-            {/* Info Bar */}
-            <div className="mt-3 bg-[#1A1A1A] border border-white/5 rounded-2xl p-3 sm:p-4 md:px-6 md:py-5">
-              {/* Client & Project - Single line, no breaks */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3 mb-3">
-                <p className="text-[#D4AF7A] text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] whitespace-nowrap">
+            {/* Info Bar - Wider and more spacious */}
+            <div className="mt-3 bg-[#1A1A1A] border border-white/5 rounded-2xl p-4 sm:p-5 md:p-6">
+              {/* Client & Project */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3 mb-2 sm:mb-3">
+                <p className="text-[#D4AF7A] text-[11px] sm:text-sm md:text-base font-bold uppercase tracking-[0.1em] sm:tracking-[0.15em] whitespace-nowrap">
                   {item.client}
                 </p>
-                <span className="hidden sm:inline text-white/30">•</span>
-                <h3 className="text-white font-bold text-sm sm:text-base md:text-lg leading-tight truncate">
+                <span className="hidden sm:inline text-white/30 text-lg">·</span>
+                <h3 className="text-white font-bold text-base sm:text-lg md:text-xl leading-tight truncate">
                   {item.project}
                 </h3>
               </div>
               {/* Description */}
               {item.description && (
-                <p className="text-white/50 text-xs sm:text-sm md:text-base leading-relaxed mb-3 md:mb-4">
+                <p className="text-white/60 text-sm sm:text-base md:text-lg leading-relaxed mb-4 sm:mb-5">
                   {item.description}
                 </p>
               )}
               {/* Results - At the bottom */}
               {item.results && Object.keys(item.results).length > 0 && (
-                <div className="flex flex-wrap gap-2 pt-3 border-t border-white/10">
+                <div className="flex flex-wrap gap-2 sm:gap-3 pt-3 sm:pt-4 border-t border-white/10">
                   {Object.entries(item.results).map(([key, value]) => (
                     <div
                       key={key}
-                      className="flex items-center gap-2 bg-white/5 rounded-lg px-2.5 sm:px-3 py-1.5"
+                      className="flex items-center gap-2 sm:gap-3 bg-white/5 rounded-lg px-3 sm:px-4 py-2 sm:py-2.5"
                     >
-                      <span className="text-white/40 text-[9px] sm:text-[10px] md:text-xs uppercase font-medium whitespace-nowrap">
+                      <span className="text-white/50 text-xs sm:text-sm uppercase font-medium whitespace-nowrap">
                         {key}:
                       </span>
-                      <span className="text-white font-bold text-xs sm:text-sm md:text-base whitespace-nowrap">
+                      <span className="text-white font-bold text-sm sm:text-base md:text-lg whitespace-nowrap">
                         {value || "—"}
                       </span>
                     </div>

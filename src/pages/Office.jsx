@@ -732,13 +732,16 @@ export default function Office() {
                   <div className="flex gap-3">
                     <button
                       onClick={() => {
-                        if (projects.length > 0 && !selectedProject) {
+                        if (projects.length === 0) {
+                          alert("No projects. Create a project first.");
+                          return;
+                        }
+                        if (!selectedProject) {
                           setSelectedProject(projects[0].id);
                         }
                         setShowNewTask(true);
                       }}
-                      disabled={projects.length === 0}
-                      className="flex items-center gap-2 px-4 py-2 border border-[#1A2332]/20 dark:border-white/20 rounded-xl text-sm font-medium text-[#1A2332] dark:text-white hover:bg-white dark:hover:bg-white/5 transition-colors disabled:opacity-50"
+                      className="flex items-center gap-2 px-4 py-2 border border-[#1A2332]/20 dark:border-white/20 rounded-xl text-sm font-medium text-[#1A2332] dark:text-white hover:bg-white dark:hover:bg-white/5 transition-colors"
                     >
                       <CheckSquare className="w-4 h-4" />
                       Add Task

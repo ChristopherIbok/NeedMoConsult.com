@@ -431,26 +431,16 @@ export default function Office() {
 
   // Fetch tasks
   const fetchTasks = async () => {
-    console.log("Fetching tasks...");
     try {
-      const token = localStorage.getItem("needmo_token");
-      console.log("Token:", token ? "exists" : "missing");
       const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/tasks`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${localStorage.getItem("needmo_token")}` },
       });
-      console.log("Tasks response:", res.status, res.ok);
       if (res.ok) {
         const data = await res.json();
-        console.log("Tasks data:", data);
         setTasks(data);
-      } else {
-        const errText = await res.text();
-        console.error("Tasks error:", res.status, errText);
-        setTaskError("Failed to load tasks: " + res.status);
       }
     } catch (err) {
       console.error("Failed to fetch tasks:", err);
-      setTaskError("Network error loading tasks");
     }
   };
 
@@ -480,9 +470,7 @@ export default function Office() {
 
   // Create task
   const createTask = async () => {
-    console.log("Creating task:", newTask, "project:", selectedProject);
     if (!newTask.title.trim() || !selectedProject) {
-      console.log("Validation failed - title:", newTask.title.trim(), "project:", selectedProject);
       setTaskError("Please select a project and enter a task title");
       return;
     }
@@ -495,27 +483,22 @@ export default function Office() {
           Authorization: `Bearer ${localStorage.getItem("needmo_token")}` },
         body: JSON.stringify({ ...newTask, project_id: selectedProject, created_by: currentUser?.email }),
       });
-      console.log("Create task response:", res.status);
       if (res.ok) {
         const task = await res.json();
-        console.log("Created task:", task);
         setTasks([task, ...tasks]);
         setShowNewTask(false);
         setNewTask({ title: "", status: "todo", priority: "medium", assignee: "", due_date: "" });
       } else {
-        const err = await res.json().catch(() => ({}));
-        console.error("Create task error:", err);
-        setTaskError(err.detail || "Failed to create task");
+        const err = await res.text();
+        setTaskError("Error: " + res.status + " - " + err);
       }
     } catch (err) {
-      console.error("Failed to create task:", err);
-      setTaskError("Network error creating task");
+      setTaskError("Network error: " + err.message);
     }
   };
 
   // Update task
   const updateTask = async (taskId, updates) => {
-    console.log("Updating task:", taskId, updates);
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/tasks/${taskId}`, {
         method: "PATCH",
@@ -524,10 +507,11 @@ export default function Office() {
           Authorization: `Bearer ${localStorage.getItem("needmo_token")}` },
         body: JSON.stringify(updates),
       });
-      console.log("Update response:", res.status);
       if (res.ok) {
         const updated = await res.json();
         setTasks(tasks.map(t => t.id === taskId ? updated : t));
+      } else {
+        setTaskError("Failed to update task: " + res.status);
       }
     } catch (err) {
       console.error("Failed to update task:", err);
@@ -748,7 +732,6 @@ export default function Office() {
                   <div className="flex gap-3">
                     <button
                       onClick={() => {
-                        console.log("Opening task modal, selectedProject:", selectedProject, "projects:", projects.length);
                         if (projects.length > 0 && !selectedProject) {
                           setSelectedProject(projects[0].id);
                         }

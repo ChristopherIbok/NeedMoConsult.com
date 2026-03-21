@@ -1,5 +1,8 @@
 import { useEffect } from "react";
 
+const API_BASE = import.meta.env.VITE_API_URL || "https://api.needmoconsult.com";
+const DEFAULT_LOGO = `${API_BASE}/static/assets/Logo-Dark.svg`;
+
 /**
  * SEO — injects meta tags into <head> dynamically.
  * Safe against null/undefined/non-string values.
@@ -19,9 +22,7 @@ export default function SEO({
     const defaultDesc = "Brand intelligence, social media strategy and content consulting insights from NEEDMO CONSULT.";
     const desc      = (typeof description === "string" && description) ? description : defaultDesc;
     const canonical = (typeof url === "string" && url) ? url : window.location.href;
-    const ogImage   = (typeof image === "string" && image)
-      ? image
-      : "https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.webp?V=7?V=6?V=5";
+    const ogImage   = (typeof image === "string" && image) ? image : DEFAULT_LOGO;
     const safeTags  = Array.isArray(tags) ? tags.filter(t => typeof t === "string") : [];
 
     // ── Page title ───────────────────────────────────────────────
@@ -92,10 +93,10 @@ export default function SEO({
         "@type": "Organization",
         "name": siteName,
         "url": "https://needmoconsult.com",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.webp?V=7?V=6?V=5"
-        }
+          "logo": {
+            "@type": "ImageObject",
+            "url": DEFAULT_LOGO
+          }
       },
       ...(publishedAt && { "datePublished": publishedAt }),
       ...(safeTags.length && { "keywords": safeTags.join(", ") }),

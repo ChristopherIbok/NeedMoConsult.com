@@ -1372,7 +1372,7 @@ function NewsletterPreview({ form, tips }) {
       <div style={{ maxWidth: 580, margin: "0 auto", backgroundColor: "#fff" }}>
         <div style={{ height: 3, backgroundColor: "#D4AF7A" }} />
         <div style={{ backgroundColor: "#1A2332", padding: "18px 32px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <img src="https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Light.webp?V=7?V=5?V=4" alt="NEEDMO" height={28} style={{ height: 28 }} />
+          <img src={`${import.meta.env.VITE_API_URL || "https://api.needmoconsult.com"}/static/assets/Logo-Light.svg`} alt="NEEDMO" height={28} style={{ height: 28 }} />
           <p style={{ margin: 0, fontSize: 9, color: "rgba(255,255,255,0.35)", fontFamily: G, letterSpacing: 3, textTransform: "uppercase" }}>Weekly Insights</p>
         </div>
         <div style={{ padding: "18px 32px", borderBottom: "1px solid #EEEBE5", display: "flex", justifyContent: "space-between" }}>
@@ -1411,7 +1411,7 @@ function NewsletterPreview({ form, tips }) {
           <a href={form.offerUrl} style={{ display: "inline-block", backgroundColor: "#D4AF7A", color: "#1A2332", fontSize: 11, textDecoration: "none", padding: "13px 32px", fontFamily: G, letterSpacing: 3, textTransform: "uppercase" }}>{form.offerLabel} →</a>
         </div>
         <div style={{ borderTop: "1px solid #EEEBE5", backgroundColor: "#F9F7F4", padding: "28px 32px", textAlign: "center" }}>
-          <img src="https://qemjyupxlivyylpbnsjo.supabase.co/storage/v1/object/public/assets/Logo-Dark.webp?V=7?V=6?V=5?V=4" alt="NEEDMO" height={22} style={{ display: "block", margin: "0 auto 6px", height: 22 }} />
+          <img src={`${import.meta.env.VITE_API_URL || "https://api.needmoconsult.com"}/static/assets/Logo-Dark.svg`} alt="NEEDMO" height={22} style={{ display: "block", margin: "0 auto 6px", height: 22 }} />
           <p style={{ margin: "0 0 20px", fontSize: 9, color: "#B8A882", fontFamily: G, letterSpacing: 3, textTransform: "uppercase" }}>Your Brand Deserves More</p>
           <p style={{ margin: "0 0 6px", fontSize: 10, color: "#B8A882", fontFamily: G, lineHeight: 1.6 }}>© {year} NEEDMO CONSULT · Lagos, Nigeria · hello@needmoconsult.com</p>
           <p style={{ margin: 0, fontSize: 10, color: "#B8A882", fontFamily: G }}>needmoconsult.com · Privacy Policy · Unsubscribe</p>

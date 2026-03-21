@@ -503,7 +503,7 @@ export default function Admin() {
                           <p className="text-sm text-gray-500 mb-3">
                             Hi <strong>{selectedSubscriber?.name || "{Name}"}</strong>, {welcomeForm.intro}
                           </p>
-                          <span className="inline-block px-4 py-2 bg-[#FF6B35] text-white text-xs font-semibold rounded-full">
+                          <span className="inline-block px-4 py-2 bg-[#D4AF7A] text-white text-xs font-semibold rounded-full">
                             {welcomeForm.ctaText} →
                           </span>
                         </div>

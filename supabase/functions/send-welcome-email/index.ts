@@ -86,7 +86,7 @@ serve(async (req) => {
 
           <!-- Top accent bar -->
           <tr>
-            <td style="background-color:#FF6B35;height:6px;font-size:0;line-height:0;">&nbsp;</td>
+            <td style="background-color:#D4AF7A;height:6px;font-size:0;line-height:0;">&nbsp;</td>
           </tr>
 
           <!-- Logo + Date -->
@@ -141,7 +141,7 @@ serve(async (req) => {
           <!-- What to expect -->
           <tr>
             <td style="padding:24px 40px 4px;">
-              <p style="margin:0;font-size:11px;font-weight:700;color:#FF6B35;text-transform:uppercase;letter-spacing:2px;font-family:Arial,sans-serif;">What to expect</p>
+              <p style="margin:0;font-size:11px;font-weight:700;color:#D4AF7A;text-transform:uppercase;letter-spacing:2px;font-family:Arial,sans-serif;">What to expect</p>
             </td>
           </tr>
 
@@ -158,7 +158,7 @@ serve(async (req) => {
           <tr>
             <td align="center" style="padding:0 40px 36px;">
               <a href="https://needmoconsult.com"
-                 style="display:inline-block;background-color:#FF6B35;color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;padding:14px 40px;border-radius:50px;font-family:Arial,sans-serif;letter-spacing:0.5px;">
+                 style="display:inline-block;background-color:#D4AF7A;color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;padding:14px 40px;border-radius:50px;font-family:Arial,sans-serif;letter-spacing:0.5px;">
                 Visit Our Website &rarr;
               </a>
             </td>

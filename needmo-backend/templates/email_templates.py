@@ -1,6 +1,6 @@
 """templates/email_templates.py — Branded HTML emails for NEEDMO Consult."""
 
-BRAND_COLOR = "#FF6B35"
+BRAND_COLOR = "#D4AF7A"
 BRAND_NAME  = "NEEDMO Consult"
 BRAND_URL   = "https://needmoconsult.com"
 

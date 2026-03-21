@@ -146,51 +146,51 @@ export default function Pricing() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.08 }}
-                className={`relative bg-white dark:bg-[#1E2830] rounded-2xl p-6 border-2 transition-all duration-300 hover:border-[#D4AF7A] ${
+                className={`relative bg-white dark:bg-[#1E2830] rounded-2xl p-4 sm:p-6 border-2 transition-all duration-300 hover:border-[#D4AF7A] overflow-hidden ${
                   pkg.popular
                     ? "border-[#D4AF7A] scale-[1.02] shadow-xl"
                     : "border-gray-200 dark:border-[#2A3540]"
                 }`}
               >
                 {pkg.popular && (
-                  <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#D4AF7A] text-[#1A2332] font-semibold px-4 py-1">
+                  <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#D4AF7A] text-[#1A2332] font-semibold px-4 py-1 whitespace-nowrap">
                     <Star className="w-3 h-3 mr-1 fill-current" />
                     Most Popular
                   </Badge>
                 )}
 
-                <div className="text-center mb-6 pt-2">
-                  <h3 className="text-xl font-bold text-[#1A2332] dark:text-white mb-2">{pkg.name}</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 italic mb-4">{pkg.target}</p>
-                  <div className="mb-2">
-                    <span className="text-xs text-gray-500 dark:text-gray-400 block mb-1 uppercase tracking-wider">Starting at</span>
-                    <span className="text-4xl font-bold text-[#1A2332] dark:text-white">{formatPrice(pkg.basePrice)}</span>
-                    <span className="text-gray-500 dark:text-gray-400">/mo</span>
+                <div className="text-center mb-4 sm:mb-6 pt-2">
+                  <h3 className="text-lg sm:text-xl font-bold text-[#1A2332] dark:text-white mb-1 sm:mb-2">{pkg.name}</h3>
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 italic mb-3 sm:mb-4">{pkg.target}</p>
+                  <div>
+                    <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 block mb-1 uppercase tracking-wider">Starting at</span>
+                    <span className="text-3xl sm:text-4xl font-bold text-[#1A2332] dark:text-white">{formatPrice(pkg.basePrice)}</span>
+                    <span className="text-gray-500 dark:text-gray-400 text-sm">/mo</span>
                   </div>
                 </div>
 
-                <div className="space-y-6 mb-8">
+                <div className="space-y-4 sm:space-y-6 mb-6 sm:mb-8">
                   <div>
-                    <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-3">What's Included</p>
-                    <ul className="space-y-2.5">
+                    <p className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2 sm:mb-3">What's Included</p>
+                    <ul className="space-y-1.5 sm:space-y-2">
                       {pkg.features.map((feature) => (
-                        <li key={feature} className="flex items-start gap-2.5">
-                          <Check className="w-4 h-4 text-[#D4AF7A] flex-shrink-0 mt-0.5" />
-                          <span className="text-sm text-[#333333] dark:text-gray-300">{feature}</span>
+                        <li key={feature} className="flex items-start gap-2">
+                          <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#D4AF7A] flex-shrink-0 mt-0.5" />
+                          <span className="text-xs sm:text-sm text-[#333333] dark:text-gray-300 leading-tight">{feature}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
                   {pkg.notIncluded.length > 0 && (
                     <div>
-                      <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-3">Not Included</p>
-                      <ul className="space-y-2">
+                      <p className="text-[10px] sm:text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2 sm:mb-3">Not Included</p>
+                      <ul className="space-y-1.5 sm:space-y-2">
                         {pkg.notIncluded.map((feature) => (
-                          <li key={feature} className="flex items-start gap-2.5">
-                            <span className="w-4 h-4 flex items-center justify-center flex-shrink-0">
+                          <li key={feature} className="flex items-start gap-2">
+                            <span className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex items-center justify-center flex-shrink-0 mt-0.5">
                               <span className="w-1.5 h-0.5 bg-gray-300 dark:bg-gray-600 rounded" />
                             </span>
-                            <span className="text-sm text-gray-400">{feature}</span>
+                            <span className="text-xs sm:text-sm text-gray-400 leading-tight">{feature}</span>
                           </li>
                         ))}
                       </ul>
@@ -199,7 +199,7 @@ export default function Pricing() {
                 </div>
 
                 <Link to={createPageUrl("Contact")} className="block">
-                  <Button className={`w-full font-semibold transition-all hover:scale-[1.02] ${
+                  <Button className={`w-full font-semibold transition-all hover:scale-[1.02] text-sm sm:text-base ${
                     pkg.popular
                       ? "bg-[#D4AF7A] hover:bg-[#C49A5E] text-[#1A2332]"
                       : "bg-[#1A2332] hover:bg-[#2A3342] text-white dark:bg-white dark:text-[#1A2332] dark:hover:bg-gray-100"

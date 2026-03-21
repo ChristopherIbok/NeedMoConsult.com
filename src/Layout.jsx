@@ -8,7 +8,7 @@ import NewsletterPopup from "@/components/ui/NewsletterPopup";
 
 export default function Layout({ children }) {
   const location = useLocation();
-  const isAdmin = location.pathname.toLowerCase().includes("/admin");
+  const isOffice = location.pathname.toLowerCase().includes("/office");
 
   return (
     <ThemeProvider>
@@ -114,11 +114,11 @@ export default function Layout({ children }) {
         }
       `}</style>
       <div className="min-h-screen bg-white dark:bg-[#0D1117] transition-colors">
-        {!isAdmin && <Header />}
+        {!isOffice && <Header />}
         {children}
-        {!isAdmin && <Footer />}
-        {!isAdmin && <ScrollToTop />}
-        {!isAdmin && <NewsletterPopup />}
+        {!isOffice && <Footer />}
+        {!isOffice && <ScrollToTop />}
+        {!isOffice && <NewsletterPopup />}
       </div>
     </ThemeProvider>
   );

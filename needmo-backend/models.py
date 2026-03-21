@@ -72,3 +72,35 @@ class Booking(Base):
     status     = Column(String, default="pending")
     call_url   = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class Project(Base):
+    __tablename__ = "projects"
+
+    id          = Column(Integer, primary_key=True, index=True)
+    name        = Column(String, nullable=False)
+    client      = Column(String, nullable=True)
+    description = Column(Text, nullable=True)
+    status      = Column(String, default="active")  # active, completed, on_hold
+    priority    = Column(String, default="medium")   # low, medium, high, urgent
+    due_date    = Column(String, nullable=True)
+    budget      = Column(String, nullable=True)
+    created_by  = Column(String, nullable=True)
+    created_at  = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at  = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class Task(Base):
+    __tablename__ = "tasks"
+
+    id          = Column(Integer, primary_key=True, index=True)
+    project_id  = Column(Integer, nullable=False)
+    title       = Column(String, nullable=False)
+    description = Column(Text, nullable=True)
+    status      = Column(String, default="todo")  # todo, in_progress, review, done
+    priority    = Column(String, default="medium")
+    assignee    = Column(String, nullable=True)
+    due_date    = Column(String, nullable=True)
+    created_by  = Column(String, nullable=True)
+    created_at  = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at  = Column(DateTime(timezone=True), server_default=func.now())

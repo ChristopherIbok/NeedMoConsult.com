@@ -163,3 +163,168 @@ async def send_welcome_email_route(req: WelcomeEmailRequest, admin=Depends(get_c
     await send_welcome_email(req.email, html)
     
     return {"message": "Welcome email sent!", "to": req.email}
+
+
+# ── Projects ──────────────────────────────────────────────────────────────────
+class ProjectCreate(BaseModel):
+    name: str
+    client: Optional[str] = ""
+    description: Optional[str] = ""
+    status: str = "active"
+    priority: str = "medium"
+    due_date: Optional[str] = ""
+    budget: Optional[str] = ""
+    created_by: Optional[str] = ""
+
+
+class ProjectUpdate(BaseModel):
+    name: Optional[str] = None
+    client: Optional[str] = None
+    description: Optional[str] = None
+    status: Optional[str] = None
+    priority: Optional[str] = None
+    due_date: Optional[str] = None
+    budget: Optional[str] = None
+
+
+@router.get("/projects")
+def list_projects(db: Session = Depends(get_db), admin=Depends(get_current_admin)):
+    """List all projects."""
+    projects = db.query(models.Project).order_by(models.Project.created_at.desc()).all()
+    return projects
+
+
+@router.post("/projects")
+def create_project(req: ProjectCreate, db: Session = Depends(get_db),
+                   admin=Depends(get_current_admin)):
+    """Create a new project."""
+    project = models.Project(
+        name=req.name,
+        client=req.client or "",
+        description=req.description or "",
+        status=req.status,
+        priority=req.priority,
+        due_date=req.due_date or "",
+        budget=req.budget or "",
+        created_by=req.created_by or admin.email,
+    )
+    db.add(project)
+    db.commit()
+    db.refresh(project)
+    return project
+
+
+@router.patch("/projects/{project_id}")
+def update_project(project_id: int, req: ProjectUpdate, db: Session = Depends(get_db),
+                   admin=Depends(get_current_admin)):
+    """Update a project."""
+    project = db.query(models.Project).filter(models.Project.id == project_id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    for field, value in req.model_dump(exclude_unset=True).items():
+        if value is not None:
+            setattr(project, field, value)
+    
+    db.commit()
+    db.refresh(project)
+    return project
+
+
+@router.delete("/projects/{project_id}")
+def delete_project(project_id: int, db: Session = Depends(get_db),
+                   admin=Depends(get_current_admin)):
+    """Delete a project and its tasks."""
+    project = db.query(models.Project).filter(models.Project.id == project_id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    db.query(models.Task).filter(models.Task.project_id == project_id).delete()
+    db.delete(project)
+    db.commit()
+    return {"message": "Project deleted"}
+
+
+# ── Tasks ─────────────────────────────────────────────────────────────────────
+class TaskCreate(BaseModel):
+    project_id: int
+    title: str
+    description: Optional[str] = ""
+    status: str = "todo"
+    priority: str = "medium"
+    assignee: Optional[str] = ""
+    due_date: Optional[str] = ""
+
+
+class TaskUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    status: Optional[str] = None
+    priority: Optional[str] = None
+    assignee: Optional[str] = None
+    due_date: Optional[str] = None
+
+
+@router.get("/projects/{project_id}/tasks")
+def list_tasks(project_id: int, db: Session = Depends(get_db),
+               admin=Depends(get_current_admin)):
+    """List all tasks for a project."""
+    tasks = db.query(models.Task).filter(models.Task.project_id == project_id).order_by(models.Task.created_at.desc()).all()
+    return tasks
+
+
+@router.get("/tasks")
+def list_all_tasks(db: Session = Depends(get_db), admin=Depends(get_current_admin)):
+    """List all tasks across projects."""
+    tasks = db.query(models.Task).order_by(models.Task.created_at.desc()).all()
+    return tasks
+
+
+@router.post("/tasks")
+def create_task(req: TaskCreate, db: Session = Depends(get_db),
+                admin=Depends(get_current_admin)):
+    """Create a new task."""
+    task = models.Task(
+        project_id=req.project_id,
+        title=req.title,
+        description=req.description or "",
+        status=req.status,
+        priority=req.priority,
+        assignee=req.assignee or "",
+        due_date=req.due_date or "",
+        created_by=admin.email,
+    )
+    db.add(task)
+    db.commit()
+    db.refresh(task)
+    return task
+
+
+@router.patch("/tasks/{task_id}")
+def update_task(task_id: int, req: TaskUpdate, db: Session = Depends(get_db),
+                admin=Depends(get_current_admin)):
+    """Update a task."""
+    task = db.query(models.Task).filter(models.Task.id == task_id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    for field, value in req.model_dump(exclude_unset=True).items():
+        if value is not None:
+            setattr(task, field, value)
+    
+    db.commit()
+    db.refresh(task)
+    return task
+
+
+@router.delete("/tasks/{task_id}")
+def delete_task(task_id: int, db: Session = Depends(get_db),
+                admin=Depends(get_current_admin)):
+    """Delete a task."""
+    task = db.query(models.Task).filter(models.Task.id == task_id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    db.delete(task)
+    db.commit()
+    return {"message": "Task deleted"}

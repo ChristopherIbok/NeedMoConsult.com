@@ -112,3 +112,22 @@ export const getBlogPost = (id) => request(`/public/blog/${id}`);
 export const createBooking = (payload) =>
   request("/public/booking", { method: "POST", body: JSON.stringify(payload) });
 // Returns: { message, id, call_url? }
+
+// ── Projects ──────────────────────────────────────────────────────────────────
+export const getProjects = () => request("/admin/projects");
+export const createProject = (payload) =>
+  request("/admin/projects", { method: "POST", body: JSON.stringify(payload) });
+export const updateProject = (id, payload) =>
+  request(`/admin/projects/${id}`, { method: "PATCH", body: JSON.stringify(payload) });
+export const deleteProject = (id) =>
+  request(`/admin/projects/${id}`, { method: "DELETE" });
+
+// ── Tasks ─────────────────────────────────────────────────────────────────────
+export const getTasks = () => request("/admin/tasks");
+export const getProjectTasks = (projectId) => request(`/admin/projects/${projectId}/tasks`);
+export const createTask = (payload) =>
+  request("/admin/tasks", { method: "POST", body: JSON.stringify(payload) });
+export const updateTask = (id, payload) =>
+  request(`/admin/tasks/${id}`, { method: "PATCH", body: JSON.stringify(payload) });
+export const deleteTask = (id) =>
+  request(`/admin/tasks/${id}`, { method: "DELETE" });

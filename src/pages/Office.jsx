@@ -363,6 +363,7 @@ export default function Office() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [newProject, setNewProject] = useState({ name: "", client: "", priority: "medium", due_date: "", budget: "" });
   const [newTask, setNewTask] = useState({ title: "", status: "todo", priority: "medium", assignee: "", due_date: "" });
+  const [taskError, setTaskError] = useState(null);
 
   // Welcome email state
   const [welcomeForm, setWelcomeForm] = useState({
@@ -437,9 +438,12 @@ export default function Office() {
       if (res.ok) {
         const data = await res.json();
         setTasks(data);
+      } else {
+        setTaskError("Failed to load tasks");
       }
     } catch (err) {
       console.error("Failed to fetch tasks:", err);
+      setTaskError("Network error loading tasks");
     }
   };
 
@@ -470,13 +474,13 @@ export default function Office() {
   // Create task
   const createTask = async () => {
     if (!newTask.title.trim() || !selectedProject) return;
+    setTaskError(null);
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/tasks`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("needmo_token")}`,
-        },
+          Authorization: `Bearer ${localStorage.getItem("needmo_token")}` },
         body: JSON.stringify({ ...newTask, project_id: selectedProject, created_by: currentUser?.email }),
       });
       if (res.ok) {
@@ -484,9 +488,13 @@ export default function Office() {
         setTasks([task, ...tasks]);
         setShowNewTask(false);
         setNewTask({ title: "", status: "todo", priority: "medium", assignee: "", due_date: "" });
+      } else {
+        const err = await res.json().catch(() => ({}));
+        setTaskError(err.detail || "Failed to create task");
       }
     } catch (err) {
       console.error("Failed to create task:", err);
+      setTaskError("Network error creating task");
     }
   };
 
@@ -497,8 +505,7 @@ export default function Office() {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("needmo_token")}`,
-        },
+          Authorization: `Bearer ${localStorage.getItem("needmo_token")}` },
         body: JSON.stringify(updates),
       });
       if (res.ok) {
@@ -974,6 +981,17 @@ export default function Office() {
                     tasks={selectedProject ? tasks.filter(t => t.project_id === selectedProject) : tasks}
                     selectedProject={selectedProject}
                   />
+                )}
+
+                {/* Error Display */}
+                {taskError && (
+                  <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+                    <AlertCircle className="w-5 h-5 text-red-500" />
+                    <p className="text-red-700 text-sm">{taskError}</p>
+                    <button onClick={() => setTaskError(null)} className="ml-auto text-red-400 hover:text-red-600">
+                      <XCircle className="w-4 h-4" />
+                    </button>
+                  </div>
                 )}
 
                 {/* Kanban Board */}

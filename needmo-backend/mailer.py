@@ -95,3 +95,9 @@ async def send_bulk_emails(
         "failed": len(failed),
         "failed_list": failed,
     }
+
+
+async def send_welcome_email(to: str, html_body: str) -> dict:
+    """Send a welcome email to a subscriber."""
+    subject = "Welcome to the NEEDMO CONSULT Newsletter!"
+    return await send_email_async(to, subject, html_body)

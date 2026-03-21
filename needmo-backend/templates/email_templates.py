@@ -35,21 +35,22 @@ def _base(content: str, preview: str = "") -> str:
 </body></html>"""
 
 
-def welcome_email(first_name: str) -> str:
+def welcome_email(first_name: str = "", headline: str = "Welcome to the Family!", intro: str = "", cta_text: str = "Visit Our Website", cta_url: str = BRAND_URL) -> str:
+    display_name = first_name or "there"
+    intro_text = intro or f"Thanks for subscribing to the {BRAND_NAME} newsletter. You've just made a great decision for your brand."
     return _base(f"""
-    <h2 style="color:#222;margin-top:0;">Welcome to {BRAND_NAME}, {first_name}! 🎉</h2>
+    <h2 style="color:#222;margin-top:0;">{headline}</h2>
     <p style="color:#555;line-height:1.7;">
-      We're thrilled to have you on board. We'll keep you updated with
-      exclusive insights, brand strategy tips, and NEEDMO news.
+      Hi <strong>{display_name}</strong>, {intro_text}
     </p>
     <div style="text-align:center;margin:30px 0;">
-      <a href="{BRAND_URL}" style="background:{BRAND_COLOR};color:#fff;padding:14px 32px;
+      <a href="{cta_url}" style="background:{BRAND_COLOR};color:#fff;padding:14px 32px;
          border-radius:6px;text-decoration:none;font-weight:bold;font-size:15px;">
-        Visit Our Website
+        {cta_text}
       </a>
     </div>
     <p style="color:#555;">Warmly,<br/><strong>The {BRAND_NAME} Team</strong></p>
-    """, preview=f"Welcome aboard, {first_name}!")
+    """, preview=f"Welcome aboard, {display_name}!")
 
 
 def contact_notification_email(name, email, phone, message, service="N/A") -> str:

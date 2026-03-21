@@ -72,6 +72,10 @@ export const sendNewsletter = (payload) =>
   request("/admin/newsletter/send", { method: "POST", body: JSON.stringify(payload) });
 //  payload: { subject, headline, body_html, cta_text?, cta_url? }
 
+export const sendWelcomeEmail = (payload) =>
+  request("/admin/welcome-email", { method: "POST", body: JSON.stringify(payload) });
+//  payload: { email, name?, headline?, intro?, cta_text?, cta_url? }
+
 export const createMeetingRoom = () =>
   request("/admin/room/create", { method: "POST" });
 //  Returns: { url, name }

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { adminLogin, getWaitlist, sendNewsletter as apiSendNewsletter } from "@/lib/api";
+import { adminLogin, getWaitlist, sendNewsletter as apiSendNewsletter, sendWelcomeEmail as apiSendWelcomeEmail } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Send, Users, Mail, Plus, Trash2, Eye, LogOut, CheckCircle, XCircle, Loader2, Lock, Video
+  Send, Users, Mail, Plus, Trash2, Eye, LogOut, CheckCircle, XCircle, Loader2, Lock, Video, MailOpen
 } from "lucide-react";
 
 
@@ -71,13 +71,24 @@ function AuthGate({ onAuth }) {
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 export default function Admin() {
   const [authed, setAuthed] = useState(false);
-  const [tab, setTab] = useState("compose"); // "compose" | "subscribers"
+  const [tab, setTab] = useState("compose"); // "compose" | "subscribers" | "welcome"
   const [subscribers, setSubscribers] = useState([]);
   const [loadingSubs, setLoadingSubs] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendResult, setSendResult] = useState(null); // { ok, count } | { error }
   const [preview, setPreview] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
+
+  // Welcome email form state
+  const [welcomeForm, setWelcomeForm] = useState({
+    headline: "Welcome to the Family!",
+    intro: "Thanks for subscribing to the NEEDMO CONSULT newsletter. You've just made a great decision for your brand.",
+    ctaText: "Visit Our Website",
+    ctaUrl: "https://needmoconsult.com",
+  });
+  const [selectedSubscriber, setSelectedSubscriber] = useState(null);
+  const [sendingWelcome, setSendingWelcome] = useState(false);
+  const [welcomeResult, setWelcomeResult] = useState(null);
 
   // Form state
   const [form, setForm] = useState({
@@ -202,6 +213,7 @@ export default function Admin() {
           <nav className="flex-1 px-4 py-4 space-y-1">
             {[
               { id: "compose", icon: Mail, label: "Compose Newsletter" },
+              { id: "welcome", icon: MailOpen, label: "Welcome Email" },
               { id: "subscribers", icon: Users, label: "Subscribers" },
             ].map(item => (
               <button
@@ -209,7 +221,7 @@ export default function Admin() {
                 onClick={() => setTab(item.id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                   tab === item.id
-                    ? "bg-[#D4AF7A] text-[#1A2332]"
+                    ? "bg-[#D4AF7A] text-[##1A2332]"
                     : "text-white/50 hover:text-white hover:bg-white/5"
                 }`}
               >
@@ -383,6 +395,152 @@ export default function Admin() {
                     </div>
                   </Card>
 
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ── WELCOME EMAIL TAB ── */}
+          {tab === "welcome" && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+              <div className="flex items-center justify-between mb-8">
+                <div>
+                  <h1 className="text-2xl font-bold text-[#1A2332] dark:text-white">Welcome Email</h1>
+                  <p className="text-gray-500 text-sm mt-1">Send a customized welcome email to a subscriber</p>
+                </div>
+              </div>
+
+              {/* Send Result */}
+              <AnimatePresence>
+                {welcomeResult && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className={`mb-6 px-5 py-4 rounded-xl flex items-center gap-3 ${
+                      welcomeResult.ok ? "bg-green-50 border border-green-200" : "bg-red-50 border border-red-200"
+                    }`}
+                  >
+                    {welcomeResult.ok
+                      ? <><CheckCircle className="w-5 h-5 text-green-500" /><p className="text-green-700 text-sm font-medium">Welcome email sent to {welcomeResult.email}!</p></>
+                      : <><XCircle className="w-5 h-5 text-red-500" /><p className="text-red-700 text-sm font-medium">{welcomeResult.error}</p></>
+                    }
+                    <button onClick={() => setWelcomeResult(null)} className="ml-auto text-gray-400 hover:text-gray-600"><XCircle className="w-4 h-4" /></button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Email Editor */}
+                <div className="space-y-6">
+                  <Card title="Email Content">
+                    <Field label="Headline">
+                      <input 
+                        value={welcomeForm.headline} 
+                        onChange={e => setWelcomeForm(f => ({ ...f, headline: e.target.value }))} 
+                        placeholder="Welcome to the Family!" 
+                      />
+                    </Field>
+                    <Field label="Introduction">
+                      <textarea 
+                        rows={4} 
+                        value={welcomeForm.intro} 
+                        onChange={e => setWelcomeForm(f => ({ ...f, intro: e.target.value }))} 
+                        placeholder="Thanks for subscribing to the NEEDMO CONSULT newsletter..." 
+                      />
+                    </Field>
+                    <div className="grid grid-cols-2 gap-3">
+                      <Field label="Button Text">
+                        <input 
+                          value={welcomeForm.ctaText} 
+                          onChange={e => setWelcomeForm(f => ({ ...f, ctaText: e.target.value }))} 
+                          placeholder="Visit Our Website" 
+                        />
+                      </Field>
+                      <Field label="Button URL">
+                        <input 
+                          value={welcomeForm.ctaUrl} 
+                          onChange={e => setWelcomeForm(f => ({ ...f, ctaUrl: e.target.value }))} 
+                          placeholder="https://needmoconsult.com" 
+                        />
+                      </Field>
+                    </div>
+                  </Card>
+                </div>
+
+                {/* Preview */}
+                <div className="space-y-6">
+                  <Card title="Select Recipient">
+                    <p className="text-sm text-gray-500 mb-3">Choose a subscriber to send this email to:</p>
+                    <div className="space-y-2 max-h-64 overflow-y-auto">
+                      {subscribers.map(sub => (
+                        <button
+                          key={sub.id}
+                          onClick={() => setSelectedSubscriber(sub)}
+                          className={`w-full text-left px-4 py-3 rounded-xl border transition-all ${
+                            selectedSubscriber?.id === sub.id 
+                              ? "border-[#D4AF7A] bg-[#D4AF7A]/10" 
+                              : "border-gray-200 dark:border-white/10 hover:border-[#D4AF7A]/50"
+                          }`}
+                        >
+                          <p className="text-sm font-medium text-[#1A2332] dark:text-white">{sub.name || "No name"}</p>
+                          <p className="text-xs text-gray-500">{sub.email}</p>
+                        </button>
+                      ))}
+                    </div>
+                  </Card>
+
+                  {/* Preview Card */}
+                  <Card title="Preview">
+                    <div className="bg-gray-50 dark:bg-[#0D1117] rounded-xl p-4 space-y-3">
+                      <p className="text-xs text-[#D4AF7A] font-semibold uppercase tracking-wider">Subject</p>
+                      <p className="text-sm text-[#1A2332] dark:text-white">Welcome to the NEEDMO CONSULT Newsletter!</p>
+                      
+                      <div className="border-t border-gray-200 dark:border-white/10 pt-3">
+                        <p className="text-xs text-[#D4AF7A] font-semibold uppercase tracking-wider">Preview</p>
+                        <div className="mt-2 p-4 bg-white dark:bg-[#1A2332] rounded-xl">
+                          <h3 className="text-base font-bold text-[#1A2332] dark:text-white mb-2">{welcomeForm.headline}</h3>
+                          <p className="text-sm text-gray-500 mb-3">
+                            Hi <strong>{selectedSubscriber?.name || "{Name}"}</strong>, {welcomeForm.intro}
+                          </p>
+                          <span className="inline-block px-4 py-2 bg-[#FF6B35] text-white text-xs font-semibold rounded-full">
+                            {welcomeForm.ctaText} →
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={async () => {
+                        if (!selectedSubscriber) {
+                          setWelcomeResult({ error: "Please select a subscriber first" });
+                          return;
+                        }
+                        setSendingWelcome(true);
+                        setWelcomeResult(null);
+                        try {
+                          await apiSendWelcomeEmail({
+                            email: selectedSubscriber.email,
+                            name: selectedSubscriber.name,
+                            headline: welcomeForm.headline,
+                            intro: welcomeForm.intro,
+                            cta_text: welcomeForm.ctaText,
+                            cta_url: welcomeForm.ctaUrl,
+                          });
+                          setWelcomeResult({ ok: true, email: selectedSubscriber.email });
+                          setSelectedSubscriber(null);
+                        } catch (err) {
+                          setWelcomeResult({ error: err.message });
+                        }
+                        setSendingWelcome(false);
+                      }}
+                      disabled={!selectedSubscriber || sendingWelcome}
+                      className="w-full mt-4 flex items-center justify-center gap-2 px-6 py-3 bg-[#D4AF7A] hover:bg-[#C49A5E] text-[#1A2332] font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {sendingWelcome ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                      {sendingWelcome ? "Sending..." : "Send Welcome Email"}
+                    </button>
+                  </Card>
                 </div>
               </div>
             </motion.div>

@@ -8,8 +8,8 @@ import logging
 
 from database import get_db
 from core.security import get_current_admin
-from mailer import send_bulk_emails
-from templates.email_templates import newsletter_email, BRAND_URL
+from mailer import send_bulk_emails, send_welcome_email
+from templates.email_templates import newsletter_email, welcome_email, BRAND_URL
 import models
 
 logger = logging.getLogger(__name__)
@@ -137,3 +137,29 @@ def list_newsletters(db: Session = Depends(get_db), admin=Depends(get_current_ad
         .order_by(models.Newsletter.sent_at.desc())
         .all()
     )
+
+
+# ── Welcome Email ─────────────────────────────────────────────────────────────
+class WelcomeEmailRequest(BaseModel):
+    email: str
+    name: str = ""
+    headline: str = "Welcome to the Family!"
+    intro: str = "Thanks for subscribing to the NEEDMO CONSULT newsletter. You've just made a great decision for your brand."
+    cta_text: str = "Visit Our Website"
+    cta_url: str = "https://needmoconsult.com"
+
+
+@router.post("/welcome-email")
+async def send_welcome_email_route(req: WelcomeEmailRequest, admin=Depends(get_current_admin)):
+    """Send a customized welcome email to a subscriber."""
+    html = welcome_email(
+        first_name=req.name,
+        headline=req.headline,
+        intro=req.intro,
+        cta_text=req.cta_text,
+        cta_url=req.cta_url,
+    )
+    
+    await send_welcome_email(req.email, html)
+    
+    return {"message": "Welcome email sent!", "to": req.email}

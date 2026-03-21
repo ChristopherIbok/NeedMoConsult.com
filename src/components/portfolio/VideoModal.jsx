@@ -79,38 +79,40 @@ export default function VideoModal({ item, onClose }) {
             </div>
             {/* Info Bar */}
             <div className="mt-3 bg-[#1A1A1A] border border-white/5 rounded-2xl p-4 sm:px-5 sm:py-4">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                <div className="flex-1 min-w-0">
-                  <p className="text-[#D4AF7A] text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] mb-1">
-                    {item.client}
-                  </p>
-                  <h3 className="text-white font-bold text-base sm:text-lg leading-tight truncate">
-                    {item.project}
-                  </h3>
-                  {item.description && (
-                    <p className="text-white/50 text-xs sm:text-sm mt-1 leading-relaxed">
-                      {item.description}
-                    </p>
-                  )}
-                </div>
-                {item.results && Object.keys(item.results).length > 0 && (
-                  <div className="flex flex-wrap gap-2 flex-shrink-0">
-                    {Object.entries(item.results).map(([key, value]) => (
-                      <div
-                        key={key}
-                        className="flex flex-col items-center bg-white/5 rounded-lg px-3 py-2 min-w-[60px] sm:min-w-[70px]"
-                      >
-                        <span className="text-white font-bold text-xs sm:text-sm whitespace-nowrap">
-                          {value || "—"}
-                        </span>
-                        <span className="text-white/40 text-[8px] sm:text-[9px] uppercase font-medium whitespace-nowrap">
-                          {key}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
+              {/* Client & Project - Single line, no breaks */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3">
+                <p className="text-[#D4AF7A] text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] whitespace-nowrap">
+                  {item.client}
+                </p>
+                <span className="hidden sm:inline text-white/30">•</span>
+                <h3 className="text-white font-bold text-base sm:text-lg leading-tight truncate">
+                  {item.project}
+                </h3>
               </div>
+              {/* Description */}
+              {item.description && (
+                <p className="text-white/50 text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4">
+                  {item.description}
+                </p>
+              )}
+              {/* Results - At the bottom */}
+              {item.results && Object.keys(item.results).length > 0 && (
+                <div className="flex flex-wrap gap-2 pt-3 border-t border-white/10">
+                  {Object.entries(item.results).map(([key, value]) => (
+                    <div
+                      key={key}
+                      className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-1.5"
+                    >
+                      <span className="text-white/40 text-[9px] sm:text-[10px] uppercase font-medium whitespace-nowrap">
+                        {key}:
+                      </span>
+                      <span className="text-white font-bold text-xs sm:text-sm whitespace-nowrap">
+                        {value || "—"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </motion.div>
         </motion.div>

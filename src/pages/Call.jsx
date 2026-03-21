@@ -98,16 +98,32 @@ export default function Call() {
     if (!stream) return;
     
     // Connect to signaling server
-    const wsUrl = `${import.meta.env.VITE_API_URL.replace("http", "ws")}/ws/call`;
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const wsProtocol = apiUrl.startsWith("https") ? "wss" : "ws";
+    const wsUrl = `${wsProtocol}://${apiUrl.replace(/^https?:\/\//, "")}/ws/call`;
+    
+    console.log("Connecting to:", wsUrl);
+    
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
     
+    // Timeout for connection
+    const connectionTimeout = setTimeout(() => {
+      if (ws.readyState !== WebSocket.OPEN) {
+        setError("Connection timeout. Please ensure the backend is deployed with WebSocket support.");
+        ws.close();
+      }
+    }, 10000);
+    
     ws.onopen = async () => {
+      clearTimeout(connectionTimeout);
+      console.log("WebSocket connected");
       ws.send(JSON.stringify({ type: "create" }));
     };
     
     ws.onmessage = async (event) => {
       const msg = JSON.parse(event.data);
+      console.log("Received:", msg.type);
       
       if (msg.type === "room-created") {
         setRoomId(msg.roomId);
@@ -139,8 +155,10 @@ export default function Call() {
       }
     };
     
-    ws.onerror = () => {
-      setError("Connection error. Please check your internet.");
+    ws.onerror = (e) => {
+      clearTimeout(connectionTimeout);
+      console.error("WebSocket error:", e);
+      setError("Connection failed. Please ensure the backend is deployed with WebSocket support (Render redeploy needed).");
     };
   };
 
@@ -158,11 +176,22 @@ export default function Call() {
     const stream = await startLocalVideo();
     if (!stream) return;
     
-    const wsUrl = `${import.meta.env.VITE_API_URL.replace("http", "ws")}/ws/call`;
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const wsProtocol = apiUrl.startsWith("https") ? "wss" : "ws";
+    const wsUrl = `${wsProtocol}://${apiUrl.replace(/^https?:\/\//, "")}/ws/call`;
+    
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
     
+    const connectionTimeout = setTimeout(() => {
+      if (ws.readyState !== WebSocket.OPEN) {
+        setError("Connection timeout. Backend may not support WebSockets yet.");
+        ws.close();
+      }
+    }, 10000);
+    
     ws.onopen = async () => {
+      clearTimeout(connectionTimeout);
       ws.send(JSON.stringify({ type: "join", roomId: joinRoomId }));
     };
     

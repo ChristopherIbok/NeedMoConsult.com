@@ -14,9 +14,8 @@ import { useTheme } from "@/components/ui/ThemeProvider";
  */
 
 // ─── Hosted logo URLs ──────────────────────────────────────────────────────────
-const API_BASE = import.meta.env.VITE_API_URL || "https://api.needmoconsult.com";
-const LOGO_DARK = `${API_BASE}/static/assets/Logo-Dark.svg`;
-const LOGO_LIGHT = `${API_BASE}/static/assets/Logo-Light.svg`;
+const LOGO_DARK = "https://assets.needmoconsult.com/Logo-Dark.webp";
+const LOGO_LIGHT = "https://assets.needmoconsult.com/Logo-Light.webp";
 
 // ─── NM Monogram Icon ──────────────────────────────────────────────────────────
 export function NMIcon({ size = 40, className = "" }) {

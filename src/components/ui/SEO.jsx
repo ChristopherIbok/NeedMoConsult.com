@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 
-const API_BASE = import.meta.env.VITE_API_URL || "https://api.needmoconsult.com";
-const DEFAULT_LOGO = `${API_BASE}/static/assets/Logo-Dark.svg`;
+const DEFAULT_LOGO = "https://assets.needmoconsult.com/Logo-Dark.webp";
 
 /**
  * SEO — injects meta tags into <head> dynamically.

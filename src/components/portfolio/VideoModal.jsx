@@ -36,7 +36,7 @@ export default function VideoModal({ item, onClose }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 md:p-6 bg-black/95"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 md:p-8 bg-black/95"
           onClick={onClose}
         >
           {/* Wrapper: Dynamic width based on orientation */}
@@ -78,20 +78,20 @@ export default function VideoModal({ item, onClose }) {
               </div>
             </div>
             {/* Info Bar */}
-            <div className="mt-3 bg-[#1A1A1A] border border-white/5 rounded-2xl p-4 sm:px-5 sm:py-4">
+            <div className="mt-3 bg-[#1A1A1A] border border-white/5 rounded-2xl p-3 sm:p-4 md:px-6 md:py-5">
               {/* Client & Project - Single line, no breaks */}
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-3">
-                <p className="text-[#D4AF7A] text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] whitespace-nowrap">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3 mb-3">
+                <p className="text-[#D4AF7A] text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] whitespace-nowrap">
                   {item.client}
                 </p>
                 <span className="hidden sm:inline text-white/30">•</span>
-                <h3 className="text-white font-bold text-base sm:text-lg leading-tight truncate">
+                <h3 className="text-white font-bold text-sm sm:text-base md:text-lg leading-tight truncate">
                   {item.project}
                 </h3>
               </div>
               {/* Description */}
               {item.description && (
-                <p className="text-white/50 text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4">
+                <p className="text-white/50 text-xs sm:text-sm md:text-base leading-relaxed mb-3 md:mb-4">
                   {item.description}
                 </p>
               )}
@@ -101,12 +101,12 @@ export default function VideoModal({ item, onClose }) {
                   {Object.entries(item.results).map(([key, value]) => (
                     <div
                       key={key}
-                      className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-1.5"
+                      className="flex items-center gap-2 bg-white/5 rounded-lg px-2.5 sm:px-3 py-1.5"
                     >
-                      <span className="text-white/40 text-[9px] sm:text-[10px] uppercase font-medium whitespace-nowrap">
+                      <span className="text-white/40 text-[9px] sm:text-[10px] md:text-xs uppercase font-medium whitespace-nowrap">
                         {key}:
                       </span>
-                      <span className="text-white font-bold text-xs sm:text-sm whitespace-nowrap">
+                      <span className="text-white font-bold text-xs sm:text-sm md:text-base whitespace-nowrap">
                         {value || "—"}
                       </span>
                     </div>

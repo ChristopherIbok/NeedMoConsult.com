@@ -107,13 +107,13 @@ export default function Call() {
   // Error State
   if (error) {
     return (
-      <main className="min-h-screen bg-[#0D1117] flex items-center justify-center p-4">
-        <div className="bg-[#161B22] rounded-2xl p-8 max-w-md w-full text-center">
-          <div className="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-4">
-            <VideoOff className="w-8 h-8 text-red-400" />
+      <main className="min-h-screen bg-white dark:bg-[#0D1117] flex items-center justify-center p-4">
+        <div className="bg-white dark:bg-[#161B22] rounded-2xl p-8 max-w-md w-full text-center shadow-lg">
+          <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-500/20 flex items-center justify-center mx-auto mb-4">
+            <VideoOff className="w-8 h-8 text-red-600 dark:text-red-400" />
           </div>
-          <h1 className="text-xl font-bold text-white mb-2">Unable to Join Call</h1>
-          <p className="text-gray-400 mb-6">{error}</p>
+          <h1 className="text-xl font-bold text-[#1A2332] dark:text-white mb-2">Unable to Join Call</h1>
+          <p className="text-gray-500 dark:text-gray-400 mb-6">{error}</p>
           <button
             onClick={() => window.location.reload()}
             className="w-full bg-[#D4AF7A] hover:bg-[#C49A5E] text-[#1A2332] font-semibold py-3 rounded-xl transition-colors"
@@ -128,11 +128,11 @@ export default function Call() {
   // Connecting
   if (status === "connecting") {
     return (
-      <main className="min-h-screen bg-[#0D1117] flex items-center justify-center">
+      <main className="min-h-screen bg-white dark:bg-[#0D1117] flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-[#D4AF7A] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-white text-lg">Joining meeting...</p>
-          <p className="text-gray-400 text-sm mt-2">Setting up video</p>
+          <p className="text-[#1A2332] dark:text-white text-lg">Joining meeting...</p>
+          <p className="text-gray-500 dark:text-gray-400 text-sm mt-2">Setting up video</p>
         </div>
       </main>
     );
@@ -141,14 +141,14 @@ export default function Call() {
   // Join Form
   if (status === "idle") {
     return (
-      <main className="min-h-screen bg-gradient-to-br from-[#0D1117] to-[#161B22] flex items-center justify-center p-4">
-        <div className="bg-[#161B22] rounded-3xl p-8 max-w-md w-full">
+      <main className="min-h-screen bg-gradient-to-br from-white to-gray-50 dark:from-[#0D1117] dark:to-[#161B22] flex items-center justify-center p-4">
+        <div className="bg-white dark:bg-[#161B22] rounded-3xl p-8 max-w-md w-full shadow-xl">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-full bg-[#D4AF7A]/20 flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 rounded-full bg-[#D4AF7A]/10 dark:bg-[#D4AF7A]/20 flex items-center justify-center mx-auto mb-4">
               <Video className="w-8 h-8 text-[#D4AF7A]" />
             </div>
-            <h1 className="text-2xl font-bold text-white mb-2">Join Strategy Call</h1>
-            <p className="text-gray-400">Enter your name to join the meeting</p>
+            <h1 className="text-2xl font-bold text-[#1A2332] dark:text-white mb-2">Join Strategy Call</h1>
+            <p className="text-gray-500 dark:text-gray-400">Enter your name to join the meeting</p>
           </div>
 
           <form onSubmit={handleJoin} className="space-y-4">
@@ -158,7 +158,7 @@ export default function Call() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Enter your name"
-                className="w-full bg-[#0D1117] border border-white/10 rounded-xl px-4 py-3 text-white text-center text-lg outline-none focus:border-[#D4AF7A] transition-colors"
+                className="w-full bg-gray-50 dark:bg-[#0D1117] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-[#1A2332] dark:text-white text-center text-lg outline-none focus:border-[#D4AF7A] transition-colors"
                 autoFocus
               />
             </div>
@@ -174,7 +174,7 @@ export default function Call() {
 
           <button
             onClick={() => navigate("/")}
-            className="w-full mt-4 text-gray-400 hover:text-white py-2 transition-colors"
+            className="w-full mt-4 text-gray-500 dark:text-gray-400 hover:text-[#1A2332] dark:hover:text-white py-2 transition-colors"
           >
             Cancel
           </button>
@@ -185,7 +185,7 @@ export default function Call() {
 
   // Main Call UI
   return (
-    <main className="fixed inset-0 bg-[#0D1117] overflow-hidden">
+    <main className="fixed inset-0 bg-white dark:bg-[#0D1117] overflow-hidden">
       <SEO title="Video Call | NEEDMO CONSULT" robots="noindex" />
       
       <div ref={callFrameRef} className="absolute inset-0 w-full h-full" />
@@ -195,7 +195,9 @@ export default function Call() {
         <button
           onClick={toggleAudio}
           className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${
-            isAudioOn ? "bg-[#161B22] hover:bg-[#21262D] text-white" : "bg-red-500 hover:bg-red-600 text-white"
+            isAudioOn 
+              ? "bg-gray-100 dark:bg-[#161B22] hover:bg-gray-200 dark:hover:bg-[#21262D] text-[#1A2332] dark:text-white" 
+              : "bg-red-500 hover:bg-red-600 text-white"
           }`}
         >
           {isAudioOn ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
@@ -204,7 +206,9 @@ export default function Call() {
         <button
           onClick={toggleVideo}
           className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${
-            isVideoOn ? "bg-[#161B22] hover:bg-[#21262D] text-white" : "bg-red-500 hover:bg-red-600 text-white"
+            isVideoOn 
+              ? "bg-gray-100 dark:bg-[#161B22] hover:bg-gray-200 dark:hover:bg-[#21262D] text-[#1A2332] dark:text-white" 
+              : "bg-red-500 hover:bg-red-600 text-white"
           }`}
         >
           {isVideoOn ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
@@ -219,9 +223,9 @@ export default function Call() {
       </div>
 
       {/* Info badge */}
-      <div className="absolute top-6 left-6 bg-[#161B22]/80 backdrop-blur-sm rounded-xl px-4 py-2 z-50">
-        <p className="text-white font-medium">NEEDMO Strategy Call</p>
-        <p className="text-gray-400 text-sm">{status === "connected" ? "Connected" : "Connecting..."}</p>
+      <div className="absolute top-6 left-6 bg-white/90 dark:bg-[#161B22]/80 backdrop-blur-sm rounded-xl px-4 py-2 z-50">
+        <p className="text-[#1A2332] dark:text-white font-medium">NEEDMO Strategy Call</p>
+        <p className="text-gray-500 dark:text-gray-400 text-sm">{status === "connected" ? "Connected" : "Connecting..."}</p>
       </div>
     </main>
   );

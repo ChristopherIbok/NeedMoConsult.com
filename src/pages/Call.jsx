@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import SEO from "@/components/ui/SEO";
 import { Video, VideoOff, Mic, MicOff, PhoneOff } from "lucide-react";
 
-const STATIC_ROOM_URL = "https://needmo.daily.co/consult";
+const STATIC_ROOM_URL = "https://needmo.daily.co/NeedMoConsultCall";
 
 export default function Call() {
   const navigate = useNavigate();

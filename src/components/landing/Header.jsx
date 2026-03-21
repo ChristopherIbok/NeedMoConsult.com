@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,8 +23,11 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const isMobile = useIsMobile();
+  const location = useLocation();
 
-  const isDark = theme === "dark";
+  // On home page hero (not scrolled), always use dark mode
+  const isHomeHero = location.pathname === "/" || location.pathname === "/Home" || location.pathname === "/home";
+  const isDark = isHomeHero && !isScrolled ? true : theme === "dark";
 
   // Menu colors based on theme
   const menuBg       = isDark ? "rgba(26, 35, 50, 0.97)" : "#F4F4F6";
@@ -65,7 +68,12 @@ export default function Header() {
                 <Link
                   key={item.name}
                   to={createPageUrl(item.page)}
-                  className="text-sm font-medium text-[#2D2D3A] dark:text-gray-300 hover:text-[#D4AF7A] dark:hover:text-[#D4AF7A] transition-colors relative group"
+                  className="text-sm font-medium transition-colors relative group"
+                  style={{
+                    color: isDark ? "#FFFFFF" : "#2D2D3A",
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = "#D4AF7A"}
+                  onMouseLeave={(e) => e.currentTarget.style.color = isDark ? "#FFFFFF" : "#2D2D3A"}
                 >
                   {item.name}
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#D4AF7A] transition-all group-hover:w-full" />
@@ -119,7 +127,7 @@ export default function Header() {
                 className="lg:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg transition-colors"
                 aria-label="Open menu"
               >
-                <Menu className="w-6 h-6 text-[#121C2D] dark:text-white" />
+                <Menu className="w-6 h-6" style={{ color: isDark ? "#FFFFFF" : "#121C2D" }} />
               </button>
             </div>
           </div>

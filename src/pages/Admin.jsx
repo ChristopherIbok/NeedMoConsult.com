@@ -235,7 +235,7 @@ export default function Admin() {
           <div className="px-4 py-4 border-t border-white/10">
             <p className="text-white/30 text-xs uppercase tracking-wider mb-3 px-4">Quick Actions</p>
             <a
-              href="/call?action=host"
+              href="/call"
               target="_blank"
               rel="noopener noreferrer"
               className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all bg-[#D4AF7A]/10 text-[#D4AF7A] hover:bg-[#D4AF7A]/20"

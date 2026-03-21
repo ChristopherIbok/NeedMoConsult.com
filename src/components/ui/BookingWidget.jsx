@@ -106,9 +106,7 @@ export default function BookingWidget() {
   };
 
   if (step === 3) {
-    const callLinkUrl = callUrl 
-      ? `/call?room=${encodeURIComponent(callUrl)}&name=${encodeURIComponent(formData.name)}`
-      : null;
+    const callLinkUrl = `/call?name=${encodeURIComponent(formData.name)}`;
 
     return (
       <motion.div

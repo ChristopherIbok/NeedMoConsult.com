@@ -57,27 +57,17 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="relative min-h-[85vh] md:min-h-screen flex items-center pt-20 overflow-hidden bg-gradient-to-b from-[#F9F7F4] to-white dark:from-[#0F1419] dark:to-[#1A2332]">
+    <section className="relative min-h-[85vh] md:min-h-screen flex items-center pt-20 overflow-hidden">
 
-      {/* Background dot pattern */}
-      <div className="absolute inset-0 opacity-[0.035] dark:opacity-[0.06] pointer-events-none">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, #1A2332 1px, transparent 0)`,
-            backgroundSize: "40px 40px",
-          }}
+      {/* Background image */}
+      <div className="absolute inset-0 z-0">
+        <img
+          src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          alt=""
+          className="w-full h-full object-cover object-center"
         />
-      </div>
-
-      {/* Floating background shapes */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="floating-shape absolute w-64 h-64 rounded-full bg-[#D4AF7A] opacity-[0.07] -top-16 -left-16" />
-        <div className="floating-shape-reverse absolute w-48 h-48 rounded-full bg-[#1A2332] dark:F9F7F4 opacity-[0.04] top-1/2 right-0 translate-x-1/2" />
-        <div
-          className="floating-shape absolute w-32 h-32 rounded-full bg-[#D4AF7A] opacity-[0.08] bottom-20 left-1/3"
-          style={{ animationDelay: "2s" }}
-        />
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0D1117]/80 via-[#0D1117]/60 to-[#0D1117]/90" />
       </div>
 
       {/* ── Main content ── */}
@@ -106,7 +96,7 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-[2.2rem] sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#1A2332] dark:text-white leading-[1.15]"
+              className="text-[2.2rem] sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.15]"
             >
               Your Brand
               <br />
@@ -122,7 +112,7 @@ export default function HeroSection() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-base sm:text-lg text-[#555555] dark:text-gray-300 leading-relaxed max-w-xl"
+              className="text-base sm:text-lg text-white/80 leading-relaxed max-w-xl"
             >
               NeedMo Consult is a strategic social media agency helping
               businesses, creators, and brands turn their online presence into
@@ -176,11 +166,11 @@ export default function HeroSection() {
                   transition={{ delay: 0.6 + i * 0.1, type: "spring", stiffness: 200 }}
                   className="text-center sm:text-left"
                 >
-                  <div className="text-xl sm:text-2xl md:text-3xl font-bold text-[#1A2332] dark:text-white flex items-baseline justify-center sm:justify-start">
+                  <div className="text-xl sm:text-2xl md:text-3xl font-bold text-white flex items-baseline justify-center sm:justify-start">
                     <AnimatedCounter value={stat.value} />
                     <span className="ml-0.5">{stat.suffix}</span>
                   </div>
-                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-medium mt-0.5">
+                  <p className="text-xs sm:text-sm text-white/60 font-medium mt-0.5">
                     {stat.label}
                   </p>
                 </motion.div>
@@ -270,11 +260,11 @@ export default function HeroSection() {
         transition={{ duration: 0.4 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none"
       >
-        <span className="text-xs text-[#1A2332]/50 dark:text-white/40 font-medium tracking-widest uppercase">Scroll</span>
+        <span className="text-xs text-white/60 font-medium tracking-widest uppercase">Scroll</span>
         <motion.div
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 1.5, repeat: Infinity }}
-          className="w-6 h-10 border-2 border-[#1A2332]/30 dark:border-white/30 rounded-full flex items-start justify-center p-2"
+          className="w-6 h-10 border-2 border-white/30 rounded-full flex items-start justify-center p-2"
         >
           <div className="w-1 h-2 bg-[#D4AF7A] rounded-full" />
         </motion.div>

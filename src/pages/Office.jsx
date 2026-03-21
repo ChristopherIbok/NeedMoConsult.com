@@ -515,6 +515,7 @@ export default function Office() {
 
   // Update task
   const updateTask = async (taskId, updates) => {
+    console.log("Updating task:", taskId, updates);
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/tasks/${taskId}`, {
         method: "PATCH",
@@ -523,6 +524,7 @@ export default function Office() {
           Authorization: `Bearer ${localStorage.getItem("needmo_token")}` },
         body: JSON.stringify(updates),
       });
+      console.log("Update response:", res.status);
       if (res.ok) {
         const updated = await res.json();
         setTasks(tasks.map(t => t.id === taskId ? updated : t));

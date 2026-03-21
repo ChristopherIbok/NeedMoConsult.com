@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { adminLogin, getWaitlist, sendNewsletter as apiSendNewsletter } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Send, Users, Mail, Plus, Trash2, Eye, LogOut, CheckCircle, XCircle, Loader2, Lock
+  Send, Users, Mail, Plus, Trash2, Eye, LogOut, CheckCircle, XCircle, Loader2, Lock, Video
 } from "lucide-react";
 
 
@@ -218,6 +218,20 @@ export default function Admin() {
               </button>
             ))}
           </nav>
+
+          {/* Quick Actions */}
+          <div className="px-4 py-4 border-t border-white/10">
+            <p className="text-white/30 text-xs uppercase tracking-wider mb-3 px-4">Quick Actions</p>
+            <a
+              href="/call?action=host"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all bg-[#D4AF7A]/10 text-[#D4AF7A] hover:bg-[#D4AF7A]/20"
+            >
+              <Video className="w-4 h-4" />
+              Start Meeting
+            </a>
+          </div>
 
           {/* Logout */}
           <div className="px-4 py-4 border-t border-white/10">

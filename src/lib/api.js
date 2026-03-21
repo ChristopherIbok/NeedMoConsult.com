@@ -12,7 +12,7 @@ export const setToken = (t) => localStorage.setItem("needmo_token", t);
 export const clearToken = () => localStorage.removeItem("needmo_token");
 
 // ── Core fetch helper ─────────────────────────────────────────────────────────
-async function request(path, options = {}) {
+export async function request(path, options = {}) {
   const token = getToken();
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
@@ -71,6 +71,10 @@ export const getNewsletters     = () => request("/admin/newsletters");
 export const sendNewsletter = (payload) =>
   request("/admin/newsletter/send", { method: "POST", body: JSON.stringify(payload) });
 //  payload: { subject, headline, body_html, cta_text?, cta_url? }
+
+export const createMeetingRoom = () =>
+  request("/admin/room/create", { method: "POST" });
+//  Returns: { url, name }
 
 
 // ── Usage Examples ─────────────────────────────────────────────────────────────

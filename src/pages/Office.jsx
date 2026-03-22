@@ -805,11 +805,11 @@ export default function Office() {
         
         <nav className="flex items-center gap-2">
           {[
-            { id: "projects", label: "Projects" },
-            { id: "tasks", label: "Tasks" },
-            { id: "compose", label: "Newsletter" },
+            { id: "projects", label: "Projects & Tasks" },
             { id: "subscribers", label: "Subscribers", badge: activeCount },
             { id: "contacts", label: "Contacts", badge: unreadContacts },
+            { id: "compose", label: "Newsletter" },
+            { id: "welcome", label: "Welcome Email" },
           ].map(item => (
             <button
               key={item.id}
@@ -828,6 +828,7 @@ export default function Office() {
             <a
               href="/call"
               target="_blank"
+              rel="noopener noreferrer"
               className="text-white/60 hover:text-[#D4AF7A] text-sm"
             >
               Start Meeting

@@ -794,7 +794,6 @@ export default function Office() {
 
   return (
     <div className="min-h-screen bg-[#F2F2F0] dark:bg-[#0F1419]">
-      {/* Mobile Toggle */}
       <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
         className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-[#1A2332] text-white rounded-lg shadow-lg"
@@ -802,8 +801,8 @@ export default function Office() {
         {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>
       <div className="flex">
-          {/* Sidebar - Collapsible */}
-          <div className={`${sidebarOpen ? 'w-64' : 'w-0 lg:w-16'} bg-[#1A2332] flex flex-col min-h-screen fixed left-0 top-0 bottom-0 z-40 transition-all duration-300 overflow-hidden`}>
+        <div className={`${sidebarOpen ? 'w-64' : 'w-0 lg:w-16'} bg-[#1A2332] flex flex-col min-h-screen fixed left-0 top-0 bottom-0 z-40 transition-all duration-300 overflow-hidden`}>
+          <div className={`${sidebarOpen ? 'w-64' : 'w-0 lg:w-16'} bg-[#1A2332] flex flex-col min-h-[calc(100vh-80px)] fixed left-0 top-20 bottom-0 z-40 transition-all duration-300 overflow-hidden`}>
             {/* Logo */}
             <div className="px-4 lg:px-6 py-6 border-b border-white/10">
               <div className="flex items-center gap-3">
@@ -846,8 +845,7 @@ export default function Office() {
             {/* Nav */}
             <nav className="flex-1 px-4 py-4 space-y-1">
               {[
-                { id: "projects", icon: FolderKanban, label: "Projects" },
-                { id: "tasks", icon: CheckSquare, label: "Tasks" },
+                { id: "projects", icon: FolderKanban, label: "Projects & Tasks" },
                 { id: "compose", icon: Mail, label: "Compose Newsletter" },
                 { id: "welcome", icon: MailOpen, label: "Welcome Email" },
                 { id: "subscribers", icon: Users, label: "Subscribers", badge: activeCount },
@@ -917,85 +915,78 @@ export default function Office() {
             {/* ── PROJECTS TAB ── */}
             {tab === "projects" && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center justify-between mb-8">
                   <div>
-                    <h1 className="text-2xl font-bold text-[#1A2332] dark:text-white">Projects</h1>
-                    <p className="text-gray-500 text-sm mt-1">{projects.length} projects</p>
+                    <h1 className="text-2xl font-bold text-[#1A2332] dark:text-white">Projects & Tasks</h1>
+                    <p className="text-gray-500 text-sm mt-1">{projects.length} projects · {tasks.filter(t => t.status !== "done").length} active tasks</p>
                   </div>
-                  <button
-                    onClick={() => setShowNewProject(true)}
-                    className="flex items-center gap-2 px-6 py-2 bg-[#D4AF7A] hover:bg-[#C49A5E] text-[#1A2332] rounded-xl text-sm font-bold transition-colors"
-                  >
-                    <Plus className="w-4 h-4" />
-                    New Project
-                  </button>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => {
+                        if (projects.length === 0) {
+                          alert("No projects. Create a project first.");
+                          return;
+                        }
+                        if (!selectedProject) {
+                          setSelectedProject(projects[0].id);
+                        }
+                        setShowNewTask(true);
+                      }}
+                      className="flex items-center gap-2 px-4 py-2 border border-[#1A2332]/20 dark:border-white/20 rounded-xl text-sm font-medium text-[#1A2332] dark:text-white hover:bg-white dark:hover:bg-white/5 transition-colors"
+                    >
+                      <CheckSquare className="w-4 h-4" />
+                      Add Task
+                    </button>
+                    <button
+                      onClick={() => setShowNewProject(true)}
+                      className="flex items-center gap-2 px-6 py-2 bg-[#1A2332] hover:bg-[#2A3342] text-white rounded-xl text-sm font-bold transition-colors"
+                    >
+                      <Plus className="w-4 h-4" />
+                      New Project
+                    </button>
+                  </div>
                 </div>
 
-                {/* Projects Table - Monday.com style */}
-                <div className="bg-white dark:bg-[#1A2332] rounded-2xl border border-gray-100 dark:border-white/10 overflow-hidden">
-                  <table className="w-full">
-                    <thead className="bg-gray-50 dark:bg-white/5">
-                      <tr>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Project Name</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Client</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Priority</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Tasks</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Due Date</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Created By</th>
-                        <th className="text-center px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100 dark:divide-white/10">
-                      {projects.length === 0 ? (
-                        <tr>
-                          <td colSpan={7} className="px-4 py-8 text-center text-gray-400">No projects yet. Create one to get started.</td>
-                        </tr>
-                      ) : projects.map(project => (
-                        <tr key={project.id} className="hover:bg-gray-50 dark:hover:bg-white/5">
-                          <td className="px-4 py-3">
-                            <button
-                              onClick={() => { setSelectedProject(project.id); setTab("tasks"); }}
-                              className="text-sm font-medium text-[#D4AF7A] hover:underline"
-                            >
-                              {project.name}
-                            </button>
-                          </td>
-                          <td className="px-4 py-3 text-sm text-gray-500">{project.client || "-"}</td>
-                          <td className="px-4 py-3">
-                            <span className={`text-xs px-2 py-1 rounded-full ${
-                              project.priority === "high" ? "bg-red-100 text-red-600" :
-                              project.priority === "medium" ? "bg-yellow-100 text-yellow-600" :
-                              "bg-gray-100 text-gray-600"
-                            }`}>
-                              {project.priority}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 text-sm text-gray-500">
-                            {tasks.filter(t => t.project_id === project.id).length} tasks
-                          </td>
-                          <td className="px-4 py-3 text-sm text-gray-400">{project.due_date || "-"}</td>
-                          <td className="px-4 py-3 text-sm text-gray-400">{project.created_by || "-"}</td>
-                          <td className="px-4 py-3">
-                            <div className="flex items-center justify-center gap-2">
-                              <button 
-                                onClick={() => { setSelectedProject(project.id); setShowNewProject(true); }} 
-                                className="p-1 text-gray-400 hover:text-[#D4AF7A]"
-                              >
-                                <Edit3 className="w-4 h-4" />
-                              </button>
-                              <button 
-                                onClick={() => deleteProject(project.id)} 
-                                className="p-1 text-gray-400 hover:text-red-500"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                {/* Projects Filter */}
+                {projects.length > 0 && (
+                  <div className="mb-6 flex items-center gap-2 flex-wrap">
+                    <Filter className="w-4 h-4 text-gray-400" />
+                    <button
+                      onClick={() => setSelectedProject(null)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                        !selectedProject ? "bg-[#D4AF7A] text-[#1A2332]" : "bg-white dark:bg-white/10 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/20"
+                      }`}
+                    >
+                      All Projects
+                    </button>
+                    {projects.map(p => (
+                      <div key={p.id} className="flex items-center gap-1">
+                        <button
+                          onClick={() => setSelectedProject(p.id)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                            selectedProject === p.id ? "bg-[#D4AF7A] text-[#1A2332]" : "bg-white dark:bg-white/10 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/20"
+                          }`}
+                        >
+                          {p.name}
+                        </button>
+                        <button
+                          onClick={() => { setSelectedProject(p.id); setShowNewProject(true); }}
+                          className="p-1 text-gray-400 hover:text-[#D4AF7A] transition-colors"
+                          title="Edit project"
+                        >
+                          <Edit3 className="w-3 h-3" />
+                        </button>
+                        <button
+                          onClick={() => deleteProject(p.id)}
+                          className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+                          title="Delete project"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
                 {/* New Project Modal */}
                 <AnimatePresence>
@@ -1382,100 +1373,6 @@ export default function Office() {
                     onViewDetail={openTaskDetail}
                   />
                 )}
-              </motion.div>
-            )}
-
-            {/* ── TASKS TAB ── */}
-            {tab === "tasks" && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h1 className="text-2xl font-bold text-[#1A2332] dark:text-white">Tasks</h1>
-                    <p className="text-gray-500 text-sm mt-1">{tasks.length} tasks · {tasks.filter(t => t.status !== "done").length} active</p>
-                  </div>
-                  <button
-                    onClick={() => {
-                      if (projects.length === 0) {
-                        alert("No projects. Create a project first.");
-                        return;
-                      }
-                      if (!selectedProject) setSelectedProject(projects[0].id);
-                      setShowNewTask(true);
-                    }}
-                    className="flex items-center gap-2 px-4 py-2 bg-[#D4AF7A] hover:bg-[#C49A5E] text-[#1A2332] rounded-xl text-sm font-bold transition-colors"
-                  >
-                    <Plus className="w-4 h-4" />
-                    Add Task
-                  </button>
-                </div>
-
-                {/* Tasks Table - Monday.com style */}
-                <div className="bg-white dark:bg-[#1A2332] rounded-2xl border border-gray-100 dark:border-white/10 overflow-hidden">
-                  <table className="w-full">
-                    <thead className="bg-gray-50 dark:bg-white/5">
-                      <tr>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Task</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Status</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Priority</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Assignee</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Project</th>
-                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Due Date</th>
-                        <th className="text-center px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100 dark:divide-white/10">
-                      {tasks.length === 0 ? (
-                        <tr>
-                          <td colSpan={7} className="px-4 py-8 text-center text-gray-400">No tasks yet. Create one to get started.</td>
-                        </tr>
-                      ) : tasks.map(task => (
-                        <tr key={task.id} className="hover:bg-gray-50 dark:hover:bg-white/5">
-                          <td className="px-4 py-3">
-                            <div className="flex items-center gap-3">
-                              <button
-                                onClick={() => {
-                                  const newStatus = task.status === "done" ? "todo" : "done";
-                                  updateTask(task.id, { status: newStatus });
-                                }}
-                                className={`w-5 h-5 rounded-md border-2 flex items-center justify-center ${
-                                  task.status === "done" ? "bg-green-500 border-green-500" : "border-gray-300"
-                                }`}
-                              >
-                                {task.status === "done" && <CheckCircle className="w-3 h-3 text-white" />}
-                              </button>
-                              <span className={`text-sm font-medium text-[#1A2332] dark:text-white ${task.status === "done" ? "line-through opacity-60" : ""}`}>
-                                {task.title}
-                              </span>
-                            </div>
-                          </td>
-                          <td className="px-4 py-3">
-                            <span className={`text-xs px-2 py-1 rounded-full ${STATUS_COLORS[task.status]}`}>
-                              {STATUS_LABELS[task.status]}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3">
-                            <span className={`text-xs ${task.priority === "high" || task.priority === "urgent" ? "text-red-500" : "text-gray-400"}`}>
-                              {task.priority}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 text-sm text-gray-500">{task.assignee || "-"}</td>
-                          <td className="px-4 py-3 text-sm text-[#D4AF7A]">{projects.find(p => p.id === task.project_id)?.name || "-"}</td>
-                          <td className="px-4 py-3 text-sm text-gray-400">{task.due_date || "-"}</td>
-                          <td className="px-4 py-3">
-                            <div className="flex items-center justify-center gap-2">
-                              <button onClick={() => openTaskDetail(task)} className="p-1 text-gray-400 hover:text-[#D4AF7A]">
-                                <Eye className="w-4 h-4" />
-                              </button>
-                              <button onClick={() => deleteTask(task.id)} className="p-1 text-gray-400 hover:text-red-500">
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
               </motion.div>
             )}
 

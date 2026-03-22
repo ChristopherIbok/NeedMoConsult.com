@@ -166,7 +166,7 @@ function ProjectProgress({ projects, tasks, selectedProject }) {
   );
 }
 
-function KanbanBoard({ projects, tasks, onUpdateTask, onDeleteTask, currentUser }) {
+function KanbanBoard({ projects, tasks, onUpdateTask, onDeleteTask, currentUser, onViewDetail }) {
   const columns = ["todo", "in_progress", "review", "done"];
   
   const getProjectName = (projectId) => {
@@ -200,6 +200,7 @@ function KanbanBoard({ projects, tasks, onUpdateTask, onDeleteTask, currentUser 
                   onUpdate={onUpdateTask}
                   onDelete={onDeleteTask}
                   currentUser={currentUser}
+                  onViewDetail={onViewDetail}
                 />
               ))}
               {columnTasks.length === 0 && (
@@ -215,7 +216,7 @@ function KanbanBoard({ projects, tasks, onUpdateTask, onDeleteTask, currentUser 
   );
 }
 
-function TaskCard({ task, projectName, onUpdate, onDelete, currentUser }) {
+function TaskCard({ task, projectName, onUpdate, onDelete, currentUser, onViewDetail }) {
   const [showMenu, setShowMenu] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task.title);
@@ -298,6 +299,12 @@ function TaskCard({ task, projectName, onUpdate, onDelete, currentUser }) {
                 className="w-full px-3 py-2 text-left text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5"
               >
                 Edit Title
+              </button>
+              <button
+                onClick={() => { setShowMenu(false); }}
+                className="w-full px-3 py-2 text-left text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5"
+              >
+                View Details
               </button>
               <button
                 onClick={() => onDelete(task.id)}
@@ -1366,6 +1373,7 @@ export default function Office() {
                     onUpdateTask={updateTask}
                     onDeleteTask={deleteTask}
                     currentUser={currentUser}
+                    onViewDetail={openTaskDetail}
                   />
                 )}
               </motion.div>

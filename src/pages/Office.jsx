@@ -794,120 +794,44 @@ export default function Office() {
 
   return (
     <div className="min-h-screen bg-[#F2F2F0] dark:bg-[#0F1419]">
-      <button
-        
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-[#1A2332] text-white rounded-lg shadow-lg"
-      >
-        
-      </button>
-      <div className="flex">
-        <div className="w-64 bg-[#1A2332] flex flex-col min-h-screen fixed left-0 top-0 bottom-0 z-40">
-          <div>
-            {/* Logo */}
-            <div className="px-4 lg:px-6 py-6 border-b border-white/10">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#D4AF7A] to-[#C49A5E] flex items-center justify-center flex-shrink-0">
-                  <Briefcase className="w-4 h-4 text-[#1A2332]" />
-                </div>
-                
-                  <div>
-                    <p className="text-white font-bold text-sm">NEEDMO Office</p>
-                    <p className="text-white/30 text-xs">{currentUser?.name || "Team Member"}</p>
-                  </div>
-              </div>
-            </div>
-
-            {/* Stats */}
-            <div className="px-4 py-4 border-b border-white/10 space-y-2">
-                <div className="bg-white/5 rounded-xl px-4 py-3 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-[#D4AF7A]/10 flex items-center justify-center">
-                    <FolderKanban className="w-4 h-4 text-[#D4AF7A]" />
-                  </div>
-                  <div>
-                    <p className="text-white font-bold text-lg leading-none">{projects.length}</p>
-                    <p className="text-white/40 text-xs">Projects</p>
-                  </div>
-                </div>
-                <div className="bg-white/5 rounded-xl px-4 py-3 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-[#D4AF7A]/10 flex items-center justify-center">
-                    <CheckSquare className="w-4 h-4 text-[#D4AF7A]" />
-                  </div>
-                  <div>
-                    <p className="text-white font-bold text-lg leading-none">{tasks.filter(t => t.status !== "done").length}</p>
-                    <p className="text-white/40 text-xs">Active Tasks</p>
-                  </div>
-                </div>
-              </div>
-
-            {/* Nav */}
-            <nav className="flex-1 px-4 py-4 space-y-1">
-              {[
-                { id: "projects", icon: FolderKanban, label: "Projects & Tasks" },
-                { id: "compose", icon: Mail, label: "Compose Newsletter" },
-                { id: "welcome", icon: MailOpen, label: "Welcome Email" },
-                { id: "subscribers", icon: Users, label: "Subscribers", badge: activeCount },
-                { id: "contacts", icon: Mail, label: "Contacts", badge: unreadContacts },
-              ].map(item => (
-                <button
-                  key={item.id}
-                  onClick={() => setTab(item.id)}
-                  className={`w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                    tab === item.id
-                      ? "bg-[#D4AF7A] text-[##1A2332]"
-                      : "text-white/50 hover:text-white hover:bg-white/5"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <item.icon className="w-4 h-4" />
-                    {item.label}
-                  </div>
-                  {item.badge > 0 && (
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${
-                      tab === item.id ? "bg-[#1A2332]/20 text-[#1A2332]" : "bg-white/10 text-white/60"
-                    }`}>
-                      {item.badge}
-                    </span>
-                  )}
-                </button>
-              ))}
-            </nav>
-
-            {/* Quick Actions */}
-            <div className="px-4 py-4 border-t border-white/10">
-              <p className="text-white/30 text-xs uppercase tracking-wider mb-3 px-4">Quick Actions</p>
-              <a
-                href="/call"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all bg-[#D4AF7A]/10 text-[#D4AF7A] hover:bg-[#D4AF7A]/20"
-              >
-                <Video className="w-4 h-4" />
-                Start Meeting
-              </a>
-              <a
-                href="/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all text-white/40 hover:text-white hover:bg-white/5 mt-2"
-              >
-                <ChevronRight className="w-4 h-4" />
-                View Website
-              </a>
-            </div>
-
-            {/* Logout */}
-            <div className="px-4 py-4 border-t border-white/10">
-              <button
-                onClick={() => { setAuthed(false); setCurrentUser(null); }}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-white/40 hover:text-white text-sm transition-colors"
-              >
-                Sign Out
-              </button>
-            </div>
+      {/* Header Nav */}
+      <header className="bg-[#1A2332] border-b border-white/10 px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#D4AF7A] to-[#C49A5E] flex items-center justify-center">
+            <Briefcase className="w-4 h-4 text-[#1A2332]" />
           </div>
+          <span className="text-white font-bold text-lg">NEEDMO Office</span>
+        </div>
+        
+        <nav className="flex items-center gap-2">
+          {[
+            { id: "projects", label: "Projects" },
+            { id: "tasks", label: "Tasks" },
+            { id: "compose", label: "Newsletter" },
+            { id: "subscribers", label: "Subscribers", badge: activeCount },
+            { id: "contacts", label: "Contacts", badge: unreadContacts },
+          ].map(item => (
+            <button
+              key={item.id}
+              onClick={() => setTab(item.id)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                tab === item.id
+                  ? "bg-[#D4AF7A] text-[#1A2332]"
+                  : "text-white/60 hover:text-white hover:bg-white/10"
+              }`}
+            >
+              {item.label}
+              {item.badge > 0 && <span className="ml-1 text-xs">({item.badge})</span>}
+            </button>
+          ))}
+          <button onClick={() => { setAuthed(false); setCurrentUser(null); }} className="text-white/40 hover:text-white text-sm ml-4">
+            Sign Out
+          </button>
+        </nav>
+      </header>
 
-          {/* Main Content */}
-          <div className="ml-64 flex-1 p-8 min-h-screen">
+      {/* Main Content */}
+      <main className="p-8">
 
             {/* ── PROJECTS TAB ── */}
             {tab === "projects" && (
@@ -1773,10 +1697,7 @@ export default function Office() {
                 </div>
               </motion.div>
             )}
-
-          </div>
-        </div>
-      </div>
+      </main>
 
       {/* ── PREVIEW MODAL ── */}
       {previewOpen && (

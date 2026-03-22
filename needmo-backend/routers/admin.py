@@ -250,8 +250,6 @@ class TaskCreate(BaseModel):
     project_id: int
     title: str
     description: Optional[str] = ""
-    links: Optional[str] = ""         # JSON array of URLs
-    image_urls: Optional[str] = ""    # JSON array of image URLs
     status: str = "todo"
     priority: str = "medium"
     assignee: Optional[str] = ""
@@ -261,8 +259,6 @@ class TaskCreate(BaseModel):
 class TaskUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
-    links: Optional[str] = None
-    image_urls: Optional[str] = None
     status: Optional[str] = None
     priority: Optional[str] = None
     assignee: Optional[str] = None
@@ -292,8 +288,6 @@ def create_task(req: TaskCreate, db: Session = Depends(get_db),
         project_id=req.project_id,
         title=req.title,
         description=req.description or "",
-        links=req.links or "",
-        image_urls=req.image_urls or "",
         status=req.status,
         priority=req.priority,
         assignee=req.assignee or "",

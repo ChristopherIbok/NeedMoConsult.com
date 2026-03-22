@@ -97,8 +97,6 @@ class Task(Base):
     project_id  = Column(Integer, nullable=False)
     title       = Column(String, nullable=False)
     description = Column(Text, nullable=True)
-    links       = Column(Text, nullable=True)      # JSON array of URLs
-    image_urls  = Column(Text, nullable=True)      # JSON array of image URLs
     status      = Column(String, default="todo")    # todo, in_progress, review, done
     priority    = Column(String, default="medium")
     assignee    = Column(String, nullable=True)

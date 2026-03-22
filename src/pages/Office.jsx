@@ -240,10 +240,13 @@ function TaskCard({ task, projectName, onUpdate, onDelete, currentUser, onViewDe
   };
 
   return (
-    <div className={`bg-white dark:bg-[#1A2332] rounded-xl p-4 border shadow-sm hover:shadow-md transition-all group ${task.status === "done" ? "opacity-60" : ""}`}>
+    <div 
+      onClick={() => onViewDetail(task)}
+      className={`bg-white dark:bg-[#1A2332] rounded-xl p-4 border shadow-sm hover:shadow-md transition-all group cursor-pointer ${task.status === "done" ? "opacity-60" : ""}`}
+    >
       <div className="flex items-start gap-3 mb-2">
         <button
-          onClick={toggleDone}
+          onClick={(e) => { e.stopPropagation(); toggleDone(); }}
           className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
             task.status === "done"
               ? "bg-green-500 border-green-500"
@@ -299,12 +302,6 @@ function TaskCard({ task, projectName, onUpdate, onDelete, currentUser, onViewDe
                 Edit Title
               </button>
               <button
-                onClick={() => { onViewDetail(task); setShowMenu(false); }}
-                className="w-full px-3 py-2 text-left text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5"
-              >
-                View Details
-              </button>
-              <button
                 onClick={() => onDelete(task.id)}
                 className="w-full px-3 py-2 text-left text-xs text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
               >
@@ -344,6 +341,27 @@ function TaskCard({ task, projectName, onUpdate, onDelete, currentUser, onViewDe
           </span>
         </div>
       )}
+      
+      {/* Task Details Preview */}
+      <div className="mt-2 pt-2 border-t border-gray-100 dark:border-white/5 space-y-1">
+        {task.description && (
+          <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">{task.description}</p>
+        )}
+        <div className="flex items-center gap-3 text-xs text-gray-400">
+          {task.links && task.links.split('\n').filter(l => l.trim()).length > 0 && (
+            <span className="flex items-center gap-1">
+              <Link2 className="w-3 h-3" />
+              {task.links.split('\n').filter(l => l.trim()).length}
+            </span>
+          )}
+          {task.image_urls && task.image_urls.split('\n').filter(i => i.trim()).length > 0 && (
+            <span className="flex items-center gap-1">
+              <Image className="w-3 h-3" />
+              {task.image_urls.split('\n').filter(i => i.trim()).length}
+            </span>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

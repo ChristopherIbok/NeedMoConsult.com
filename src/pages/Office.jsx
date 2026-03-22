@@ -347,20 +347,48 @@ function TaskCard({ task, projectName, onUpdate, onDelete, currentUser, onViewDe
         {task.description && (
           <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">{task.description}</p>
         )}
-        <div className="flex items-center gap-3 text-xs text-gray-400">
-          {task.links && task.links.split('\n').filter(l => l.trim()).length > 0 && (
-            <span className="flex items-center gap-1">
-              <Link2 className="w-3 h-3" />
-              {task.links.split('\n').filter(l => l.trim()).length}
-            </span>
-          )}
-          {task.image_urls && task.image_urls.split('\n').filter(i => i.trim()).length > 0 && (
-            <span className="flex items-center gap-1">
-              <Image className="w-3 h-3" />
-              {task.image_urls.split('\n').filter(i => i.trim()).length}
-            </span>
-          )}
-        </div>
+      </div>
+      
+      {/* Quick Actions */}
+      <div className="mt-3 pt-2 border-t border-gray-100 dark:border-white/5 flex items-center gap-1 flex-wrap">
+        <button
+          onClick={(e) => { e.stopPropagation(); onViewDetail(task); }}
+          className="px-2 py-1 text-xs bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-white/20"
+        >
+          Details
+        </button>
+        {task.status !== "todo" && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onUpdate(task.id, { status: "todo" }); }}
+            className="px-2 py-1 text-xs bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-white/20"
+          >
+            To Do
+          </button>
+        )}
+        {task.status !== "in_progress" && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onUpdate(task.id, { status: "in_progress" }); }}
+            className="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded hover:bg-blue-200 dark:hover:bg-blue-900/50"
+          >
+            In Progress
+          </button>
+        )}
+        {task.status !== "review" && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onUpdate(task.id, { status: "review" }); }}
+            className="px-2 py-1 text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded hover:bg-amber-200 dark:hover:bg-amber-900/50"
+          >
+            Review
+          </button>
+        )}
+        {task.status !== "done" && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onUpdate(task.id, { status: "done" }); }}
+            className="px-2 py-1 text-xs bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded hover:bg-green-200 dark:hover:bg-green-900/50"
+          >
+            Done
+          </button>
+        )}
       </div>
     </div>
   );
@@ -898,6 +926,13 @@ export default function Office() {
                           }`}
                         >
                           {p.name}
+                        </button>
+                        <button
+                          onClick={() => { setSelectedProject(p.id); setShowNewProject(true); }}
+                          className="p-1 text-gray-400 hover:text-[#D4AF7A] transition-colors"
+                          title="Edit project"
+                        >
+                          <Edit3 className="w-3 h-3" />
                         </button>
                         <button
                           onClick={() => deleteProject(p.id)}

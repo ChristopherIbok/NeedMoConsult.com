@@ -823,7 +823,24 @@ export default function Office() {
               {item.label}
               {item.badge > 0 && <span className="ml-1 text-xs">({item.badge})</span>}
             </button>
-          ))}
+            ))}
+          <div className="flex items-center gap-2 ml-4 border-l border-white/20 pl-4">
+            <a
+              href="/call"
+              target="_blank"
+              className="text-white/60 hover:text-[#D4AF7A] text-sm"
+            >
+              Start Meeting
+            </a>
+            <span className="text-white/20">|</span>
+            <a
+              href="/"
+              target="_blank"
+              className="text-white/40 hover:text-white text-sm"
+            >
+              View Website
+            </a>
+          </div>
           <button onClick={() => { setAuthed(false); setCurrentUser(null); }} className="text-white/40 hover:text-white text-sm ml-4">
             Sign Out
           </button>

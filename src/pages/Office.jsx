@@ -801,7 +801,7 @@ export default function Office() {
         
       </button>
       <div className="flex">
-        <div className={`${sidebarOpen ? 'w-64' : 'w-0 lg:w-16'} bg-[#1A2332] flex flex-col min-h-screen fixed left-0 top-0 bottom-0 z-40 transition-all duration-300 overflow-hidden`}>
+        <div className="w-64 bg-[#1A2332] flex flex-col min-h-screen fixed left-0 top-0 bottom-0 z-40">
           <div>
             {/* Logo */}
             <div className="px-4 lg:px-6 py-6 border-b border-white/10">
@@ -910,7 +910,7 @@ export default function Office() {
           </div>
 
           {/* Main Content */}
-          <div className={`${sidebarOpen ? 'ml-64' : 'ml-16'} flex-1 p-4 lg:p-8 transition-all duration-300 min-h-screen`}>
+          <div className="ml-64 flex-1 p-8 min-h-screen">
 
             {/* ── PROJECTS TAB ── */}
             {tab === "projects" && (

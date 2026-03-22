@@ -790,6 +790,7 @@ export default function Office() {
   if (!authed) return <AuthGate onAuth={(user) => { setCurrentUser(user); setAuthed(true); }} />;
 
   const activeCount = subscribers.filter(s => !s.status || s.status === "active").length;
+  const [emailMenuOpen, setEmailMenuOpen] = useState(false);
   const unreadContacts = contacts.filter(c => !c.is_read).length;
 
   return (
@@ -808,8 +809,6 @@ export default function Office() {
             { id: "projects", label: "Projects & Tasks" },
             { id: "subscribers", label: "Subscribers", badge: activeCount },
             { id: "contacts", label: "Contacts", badge: unreadContacts },
-            { id: "compose", label: "Newsletter" },
-            { id: "welcome", label: "Welcome Email" },
           ].map(item => (
             <button
               key={item.id}
@@ -823,7 +822,36 @@ export default function Office() {
               {item.label}
               {item.badge > 0 && <span className="ml-1 text-xs">({item.badge})</span>}
             </button>
-            ))}
+          ))}
+
+          {/* Email Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setEmailMenuOpen(!emailMenuOpen)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1 ${
+                (tab === "compose" || tab === "welcome") ? "bg-[#D4AF7A] text-[#1A2332]" : "text-white/60 hover:text-white hover:bg-white/10"
+              }`}
+            >
+              Email ▾
+            </button>
+            {emailMenuOpen && (
+              <div className="absolute top-full mt-1 right-0 bg-[#1A2332] border border-white/10 rounded-lg shadow-xl py-1 min-w-[150px] z-50">
+                <button
+                  onClick={() => { setTab("compose"); setEmailMenuOpen(false); }}
+                  className="w-full px-4 py-2 text-left text-sm text-white/60 hover:text-white hover:bg-white/5"
+                >
+                  Newsletter
+                </button>
+                <button
+                  onClick={() => { setTab("welcome"); setEmailMenuOpen(false); }}
+                  className="w-full px-4 py-2 text-left text-sm text-white/60 hover:text-white hover:bg-white/5"
+                >
+                  Welcome Email
+                </button>
+              </div>
+            )}
+          </div>
+
           <div className="flex items-center gap-2 ml-4 border-l border-white/20 pl-4">
             <a
               href="/call"

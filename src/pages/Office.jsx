@@ -1374,17 +1374,17 @@ export default function Office() {
                               <select
                                 value={task.status}
                                 onChange={(e) => updateTask(task.id, { status: e.target.value })}
-                                className={`text-xs px-2 py-1.5 rounded-md border-0 cursor-pointer font-medium ${
-                                  task.status === "todo" ? "bg-gray-100 text-gray-600" :
-                                  task.status === "in_progress" ? "bg-blue-100 text-blue-600" :
-                                  task.status === "review" ? "bg-amber-100 text-amber-600" :
-                                  "bg-green-100 text-green-600"
+                                className={`text-xs px-2 py-1.5 rounded-md border-0 cursor-pointer font-medium text-white ${
+                                  task.status === "todo" ? "bg-gray-500" :
+                                  task.status === "in_progress" ? "bg-[#1A2332]" :
+                                  task.status === "review" ? "bg-[#D4AF7A]" :
+                                  "bg-green-500"
                                 }`}
                               >
-                                <option value="todo">To Do</option>
-                                <option value="in_progress">In Progress</option>
-                                <option value="review">Review</option>
-                                <option value="done">Done</option>
+                                <option value="todo" className="text-gray-600">To Do</option>
+                                <option value="in_progress" className="text-white">In Progress</option>
+                                <option value="review" className="text-white">Review</option>
+                                <option value="done" className="text-white">Done</option>
                               </select>
                             </td>
                             <td className="px-4 py-3">

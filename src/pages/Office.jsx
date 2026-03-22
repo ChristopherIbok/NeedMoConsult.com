@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Send, Users, Mail, Plus, Trash2, Eye, CheckCircle, XCircle, Loader2, Lock, Video, MailOpen,
   Briefcase, CheckSquare, Square, Clock, AlertCircle, ChevronRight, FolderKanban, Calendar,
-  User, MoreVertical, Edit3, ArrowLeft, Zap, Target, Filter, Link2, Image, MessageSquare, Paperclip, X
+  User, MoreVertical, Edit3, ArrowLeft, Zap, Target, Filter, Link2, Image, MessageSquare, Paperclip, X, Menu
 } from "lucide-react";
 
 const TEAM_MEMBERS = [
@@ -410,6 +410,9 @@ export default function Office() {
   const [newTask, setNewTask] = useState({ title: "", status: "todo", priority: "medium", assignee: "", due_date: "" });
   const [taskError, setTaskError] = useState(null);
   
+  // Sidebar toggle
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  
   // Task detail modal
   const [taskDetail, setTaskDetail] = useState(null);
   const [taskComments, setTaskComments] = useState([]);
@@ -754,43 +757,54 @@ export default function Office() {
     <div className="min-h-screen bg-[#F2F2F0] dark:bg-[#0F1419]">
       <Header />
       <div className="pt-20">
+        {/* Mobile Toggle */}
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="lg:hidden fixed top-24 left-4 z-50 p-2 bg-[#1A2332] text-white rounded-lg shadow-lg"
+        >
+          {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        </button>
         <div className="flex">
-          {/* Sidebar */}
-          <div className="w-64 bg-[#1A2332] flex flex-col min-h-[calc(100vh-80px)] fixed left-0 top-20 bottom-0 z-40">
+          {/* Sidebar - Collapsible */}
+          <div className={`${sidebarOpen ? 'w-64' : 'w-0 lg:w-16'} bg-[#1A2332] flex flex-col min-h-[calc(100vh-80px)] fixed left-0 top-20 bottom-0 z-40 transition-all duration-300 overflow-hidden`}>
             {/* Logo */}
-            <div className="px-6 py-6 border-b border-white/10">
+            <div className="px-4 lg:px-6 py-6 border-b border-white/10">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#D4AF7A] to-[#C49A5E] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#D4AF7A] to-[#C49A5E] flex items-center justify-center flex-shrink-0">
                   <Briefcase className="w-4 h-4 text-[#1A2332]" />
                 </div>
-                <div>
-                  <p className="text-white font-bold text-sm">NEEDMO Office</p>
-                  <p className="text-white/30 text-xs">{currentUser?.name || "Team Member"}</p>
-                </div>
+                {sidebarOpen && (
+                  <div>
+                    <p className="text-white font-bold text-sm">NEEDMO Office</p>
+                    <p className="text-white/30 text-xs">{currentUser?.name || "Team Member"}</p>
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Stats */}
-            <div className="px-4 py-4 border-b border-white/10 space-y-2">
-              <div className="bg-white/5 rounded-xl px-4 py-3 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-[#D4AF7A]/10 flex items-center justify-center">
-                  <FolderKanban className="w-4 h-4 text-[#D4AF7A]" />
+            {/* Stats - Only show when expanded */}
+            {sidebarOpen && (
+              <div className="px-4 py-4 border-b border-white/10 space-y-2">
+                <div className="bg-white/5 rounded-xl px-4 py-3 flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-[#D4AF7A]/10 flex items-center justify-center">
+                    <FolderKanban className="w-4 h-4 text-[#D4AF7A]" />
+                  </div>
+                  <div>
+                    <p className="text-white font-bold text-lg leading-none">{projects.length}</p>
+                    <p className="text-white/40 text-xs">Projects</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-white font-bold text-lg leading-none">{projects.length}</p>
-                  <p className="text-white/40 text-xs">Projects</p>
+                <div className="bg-white/5 rounded-xl px-4 py-3 flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-[#D4AF7A]/10 flex items-center justify-center">
+                    <CheckSquare className="w-4 h-4 text-[#D4AF7A]" />
+                  </div>
+                  <div>
+                    <p className="text-white font-bold text-lg leading-none">{tasks.filter(t => t.status !== "done").length}</p>
+                    <p className="text-white/40 text-xs">Active Tasks</p>
+                  </div>
                 </div>
               </div>
-              <div className="bg-white/5 rounded-xl px-4 py-3 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                  <CheckSquare className="w-4 h-4 text-blue-400" />
-                </div>
-                <div>
-                  <p className="text-white font-bold text-lg leading-none">{tasks.filter(t => t.status !== "done").length}</p>
-                  <p className="text-white/40 text-xs">Active Tasks</p>
-                </div>
-              </div>
-            </div>
+            )}
 
             {/* Nav */}
             <nav className="flex-1 px-4 py-4 space-y-1">
@@ -860,7 +874,7 @@ export default function Office() {
           </div>
 
           {/* Main Content */}
-          <div className="ml-64 flex-1 p-8">
+          <div className={`${sidebarOpen ? 'ml-64' : 'ml-0 lg:ml-16'} flex-1 p-4 lg:p-8 transition-all duration-300`}>
 
             {/* ── PROJECTS TAB ── */}
             {tab === "projects" && (

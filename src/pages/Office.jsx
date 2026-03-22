@@ -349,44 +349,36 @@ function TaskCard({ task, projectName, onUpdate, onDelete, currentUser, onViewDe
         )}
       </div>
       
-      {/* Quick Actions */}
-      <div className="mt-3 pt-2 border-t border-gray-100 dark:border-white/5 flex items-center gap-1 flex-wrap">
+      {/* Quick Actions - Only show next status option */}
+      <div className="mt-3 pt-2 border-t border-gray-100 dark:border-white/5 flex items-center gap-1">
         <button
           onClick={(e) => { e.stopPropagation(); onViewDetail(task); }}
-          className="px-2 py-1 text-xs bg-[#D4AF7A]/20 text-[#D4AF7A] rounded hover:bg-[#D4AF7A]/30"
+          className="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-white/10"
         >
           Details
         </button>
-        {task.status !== "todo" && (
-          <button
-            onClick={(e) => { e.stopPropagation(); onUpdate(task.id, { status: "todo" }); }}
-            className="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-white/10"
-          >
-            To Do
-          </button>
-        )}
-        {task.status !== "in_progress" && (
+        {task.status === "todo" && (
           <button
             onClick={(e) => { e.stopPropagation(); onUpdate(task.id, { status: "in_progress" }); }}
             className="px-2 py-1 text-xs bg-[#D4AF7A] text-[#1A2332] rounded hover:bg-[#C49A5E]"
           >
-            In Progress
+            → In Progress
           </button>
         )}
-        {task.status !== "review" && (
+        {task.status === "in_progress" && (
           <button
             onClick={(e) => { e.stopPropagation(); onUpdate(task.id, { status: "review" }); }}
             className="px-2 py-1 text-xs border border-[#D4AF7A] text-[#D4AF7A] rounded hover:bg-[#D4AF7A]/10"
           >
-            Review
+            → Review
           </button>
         )}
-        {task.status !== "done" && (
+        {task.status === "review" && (
           <button
             onClick={(e) => { e.stopPropagation(); onUpdate(task.id, { status: "done" }); }}
             className="px-2 py-1 text-xs bg-[#1A2332] text-white rounded hover:bg-[#2A3342]"
           >
-            Done
+            → Done
           </button>
         )}
       </div>

@@ -814,13 +814,11 @@ export default function Office() {
                     <p className="text-white font-bold text-sm">NEEDMO Office</p>
                     <p className="text-white/30 text-xs">{currentUser?.name || "Team Member"}</p>
                   </div>
-                )}
               </div>
             </div>
 
-            {/* Stats - Only show when expanded */}
-            
-              <div className="px-4 py-4 border-b border-white/10 space-y-2">
+            {/* Stats */}
+            <div className="px-4 py-4 border-b border-white/10 space-y-2">
                 <div className="bg-white/5 rounded-xl px-4 py-3 flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-[#D4AF7A]/10 flex items-center justify-center">
                     <FolderKanban className="w-4 h-4 text-[#D4AF7A]" />
@@ -840,7 +838,6 @@ export default function Office() {
                   </div>
                 </div>
               </div>
-            )}
 
             {/* Nav */}
             <nav className="flex-1 px-4 py-4 space-y-1">

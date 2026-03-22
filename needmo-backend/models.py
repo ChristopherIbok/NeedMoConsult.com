@@ -97,10 +97,22 @@ class Task(Base):
     project_id  = Column(Integer, nullable=False)
     title       = Column(String, nullable=False)
     description = Column(Text, nullable=True)
-    status      = Column(String, default="todo")  # todo, in_progress, review, done
+    links       = Column(Text, nullable=True)      # JSON array of URLs
+    image_urls  = Column(Text, nullable=True)      # JSON array of image URLs
+    status      = Column(String, default="todo")    # todo, in_progress, review, done
     priority    = Column(String, default="medium")
     assignee    = Column(String, nullable=True)
     due_date    = Column(String, nullable=True)
     created_by  = Column(String, nullable=True)
     created_at  = Column(DateTime(timezone=True), server_default=func.now())
     updated_at  = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class TaskComment(Base):
+    __tablename__ = "task_comments"
+
+    id          = Column(Integer, primary_key=True, index=True)
+    task_id     = Column(Integer, nullable=False)
+    author      = Column(String, nullable=True)
+    content     = Column(Text, nullable=False)
+    created_at  = Column(DateTime(timezone=True), server_default=func.now())

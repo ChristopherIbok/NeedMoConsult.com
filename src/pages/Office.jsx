@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Send, Users, Mail, Plus, Trash2, Eye, CheckCircle, XCircle, Loader2, Lock, Video, MailOpen,
   Briefcase, CheckSquare, Square, Clock, AlertCircle, ChevronRight, FolderKanban, Calendar,
-  User, MoreVertical, Edit3, ArrowLeft, Zap, Target, Filter
+  User, MoreVertical, Edit3, ArrowLeft, Zap, Target, Filter, Link2, Image, MessageSquare, Paperclip, X
 } from "lucide-react";
 
 const TEAM_MEMBERS = [
@@ -166,7 +166,7 @@ function ProjectProgress({ projects, tasks, selectedProject }) {
   );
 }
 
-function KanbanBoard({ projects, tasks, onUpdateTask, onDeleteTask, currentUser }) {
+function KanbanBoard({ projects, tasks, onUpdateTask, onDeleteTask, currentUser, onViewDetail }) {
   const columns = ["todo", "in_progress", "review", "done"];
   
   const getProjectName = (projectId) => {
@@ -200,6 +200,7 @@ function KanbanBoard({ projects, tasks, onUpdateTask, onDeleteTask, currentUser 
                   onUpdate={onUpdateTask}
                   onDelete={onDeleteTask}
                   currentUser={currentUser}
+                  onViewDetail={onViewDetail}
                 />
               ))}
               {columnTasks.length === 0 && (
@@ -215,7 +216,7 @@ function KanbanBoard({ projects, tasks, onUpdateTask, onDeleteTask, currentUser 
   );
 }
 
-function TaskCard({ task, projectName, onUpdate, onDelete, currentUser }) {
+function TaskCard({ task, projectName, onUpdate, onDelete, currentUser, onViewDetail }) {
   const [showMenu, setShowMenu] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task.title);
@@ -298,6 +299,12 @@ function TaskCard({ task, projectName, onUpdate, onDelete, currentUser }) {
                 Edit Title
               </button>
               <button
+                onClick={() => { onViewDetail(task); setShowMenu(false); }}
+                className="w-full px-3 py-2 text-left text-xs text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5"
+              >
+                View Details
+              </button>
+              <button
                 onClick={() => onDelete(task.id)}
                 className="w-full px-3 py-2 text-left text-xs text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
               >
@@ -364,6 +371,15 @@ export default function Office() {
   const [newProject, setNewProject] = useState({ name: "", client: "", priority: "medium", due_date: "", budget: "" });
   const [newTask, setNewTask] = useState({ title: "", status: "todo", priority: "medium", assignee: "", due_date: "" });
   const [taskError, setTaskError] = useState(null);
+  
+  // Task detail modal
+  const [taskDetail, setTaskDetail] = useState(null);
+  const [taskComments, setTaskComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
+  const [taskLinks, setTaskLinks] = useState("");
+  const [taskImages, setTaskImages] = useState("");
+  const [taskDescription, setTaskDescription] = useState("");
+  const [loadingComments, setLoadingComments] = useState(false);
 
   // Welcome email state
   const [welcomeForm, setWelcomeForm] = useState({
@@ -531,6 +547,73 @@ export default function Office() {
       }
     } catch (err) {
       console.error("Failed to delete task:", err);
+    }
+  };
+
+  // Open task detail modal
+  const openTaskDetail = async (task) => {
+    setTaskDetail(task);
+    setTaskDescription(task.description || "");
+    setTaskLinks(task.links || "");
+    setTaskImages(task.image_urls || "");
+    setLoadingComments(true);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/tasks/${task.id}/comments`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("needmo_token")}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setTaskComments(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch comments:", err);
+    }
+    setLoadingComments(false);
+  };
+
+  // Add comment
+  const addComment = async () => {
+    if (!newComment.trim() || !taskDetail) return;
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/tasks/${taskDetail.id}/comments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("needmo_token")}` },
+        body: JSON.stringify({ task_id: taskDetail.id, content: newComment }),
+      });
+      if (res.ok) {
+        const comment = await res.json();
+        setTaskComments([...taskComments, comment]);
+        setNewComment("");
+      }
+    } catch (err) {
+      console.error("Failed to add comment:", err);
+    }
+  };
+
+  // Save task details (description, links, images)
+  const saveTaskDetails = async () => {
+    if (!taskDetail) return;
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/tasks/${taskDetail.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("needmo_token")}` },
+        body: JSON.stringify({
+          description: taskDescription,
+          links: taskLinks,
+          image_urls: taskImages,
+        }),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setTasks(tasks.map(t => t.id === taskDetail.id ? updated : t));
+        setTaskDetail(updated);
+      }
+    } catch (err) {
+      console.error("Failed to save task details:", err);
     }
   };
 
@@ -983,6 +1066,143 @@ export default function Office() {
                   )}
                 </AnimatePresence>
 
+                {/* Task Detail Modal */}
+                <AnimatePresence>
+                  {taskDetail && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+                      onClick={() => setTaskDetail(null)}
+                    >
+                      <motion.div
+                        initial={{ scale: 0.95, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0.95, opacity: 0 }}
+                        onClick={e => e.stopPropagation()}
+                        className="bg-white dark:bg-[#1A2332] rounded-2xl p-6 w-full max-w-2xl border border-gray-100 dark:border-white/10 max-h-[90vh] overflow-y-auto"
+                      >
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-lg font-bold text-[#1A2332] dark:text-white">Task Details</h3>
+                          <button onClick={() => setTaskDetail(null)} className="text-gray-400 hover:text-gray-600">
+                            <X className="w-5 h-5" />
+                          </button>
+                        </div>
+                        
+                        {/* Title */}
+                        <div className="mb-4">
+                          <label className="block text-xs font-semibold text-gray-400 mb-1">Title</label>
+                          <p className="text-[#1A2332] dark:text-white font-medium">{taskDetail.title}</p>
+                        </div>
+
+                        {/* Description */}
+                        <div className="mb-4">
+                          <label className="block text-xs font-semibold text-gray-400 mb-1">Description</label>
+                          <textarea
+                            value={taskDescription}
+                            onChange={e => setTaskDescription(e.target.value)}
+                            placeholder="Add a description..."
+                            rows={3}
+                            className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-[#1A2332] dark:text-white outline-none focus:border-[#D4AF7A]/50"
+                          />
+                        </div>
+
+                        {/* Links */}
+                        <div className="mb-4">
+                          <label className="block text-xs font-semibold text-gray-400 mb-1 flex items-center gap-1">
+                            <Link2 className="w-3 h-3" /> Links (one per line)
+                          </label>
+                          <textarea
+                            value={taskLinks}
+                            onChange={e => setTaskLinks(e.target.value)}
+                            placeholder="https://example.com&#10;https://docs.com"
+                            rows={2}
+                            className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-[#1A2332] dark:text-white outline-none focus:border-[#D4AF7A]/50"
+                          />
+                        </div>
+
+                        {/* Images */}
+                        <div className="mb-4">
+                          <label className="block text-xs font-semibold text-gray-400 mb-1 flex items-center gap-1">
+                            <Image className="w-3 h-3" /> Image URLs (one per line)
+                          </label>
+                          <textarea
+                            value={taskImages}
+                            onChange={e => setTaskImages(e.target.value)}
+                            placeholder="https://example.com/image.jpg"
+                            rows={2}
+                            className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2.5 text-sm text-[#1A2332] dark:text-white outline-none focus:border-[#D4AF7A]/50"
+                          />
+                          {taskImages && (
+                            <div className="mt-2 flex gap-2 flex-wrap">
+                              {taskImages.split('\n').filter(url => url.trim()).map((url, i) => (
+                                <img 
+                                  key={i} 
+                                  src={url.trim()} 
+                                  alt="" 
+                                  className="w-16 h-16 object-cover rounded-lg" 
+                                  onError={(e) => { e.currentTarget.style.display = 'none'; }} 
+                                />
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Save Button */}
+                        <button
+                          onClick={saveTaskDetails}
+                          className="w-full px-4 py-2 bg-[#D4AF7A] hover:bg-[#C49A5E] text-[#1A2332] font-bold rounded-xl text-sm transition-colors mb-6"
+                        >
+                          Save Details
+                        </button>
+
+                        {/* Comments Section */}
+                        <div className="border-t border-gray-100 dark:border-white/10 pt-4">
+                          <h4 className="text-sm font-semibold text-[#1A2332] dark:text-white mb-3 flex items-center gap-2">
+                            <MessageSquare className="w-4 h-4" /> Comments
+                          </h4>
+                          
+                          {/* Comment List */}
+                          <div className="space-y-3 mb-4 max-h-48 overflow-y-auto">
+                            {loadingComments ? (
+                              <p className="text-gray-400 text-sm">Loading...</p>
+                            ) : taskComments.length === 0 ? (
+                              <p className="text-gray-400 text-sm">No comments yet</p>
+                            ) : (
+                              taskComments.map(comment => (
+                                <div key={comment.id} className="bg-gray-50 dark:bg-white/5 rounded-lg p-3">
+                                  <p className="text-xs text-[#D4AF7A] font-medium">{comment.author}</p>
+                                  <p className="text-sm text-[#1A2332] dark:text-white">{comment.content}</p>
+                                  <p className="text-xs text-gray-400 mt-1">{new Date(comment.created_at).toLocaleString()}</p>
+                                </div>
+                              ))
+                            )}
+                          </div>
+
+                          {/* Add Comment */}
+                          <div className="flex gap-2">
+                            <input
+                              value={newComment}
+                              onChange={e => setNewComment(e.target.value)}
+                              placeholder="Add a comment..."
+                              className="flex-1 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2 text-sm text-[#1A2332] dark:text-white outline-none focus:border-[#D4AF7A]/50"
+                              onKeyDown={e => e.key === "Enter" && addComment()}
+                            />
+                            <button
+                              onClick={addComment}
+                              disabled={!newComment.trim()}
+                              className="px-4 py-2 bg-[#D4AF7A] hover:bg-[#C49A5E] text-[#1A2332] font-bold rounded-xl text-sm transition-colors disabled:opacity-50"
+                            >
+                              Send
+                            </button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
                 {/* Progress Bar */}
                 {tasks.length > 0 && (
                   <ProjectProgress 
@@ -1027,6 +1247,7 @@ export default function Office() {
                     onUpdateTask={updateTask}
                     onDeleteTask={deleteTask}
                     currentUser={currentUser}
+                    onViewDetail={openTaskDetail}
                   />
                 )}
               </motion.div>

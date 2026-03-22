@@ -250,6 +250,8 @@ class TaskCreate(BaseModel):
     project_id: int
     title: str
     description: Optional[str] = ""
+    links: Optional[str] = ""         # JSON array of URLs
+    image_urls: Optional[str] = ""    # JSON array of image URLs
     status: str = "todo"
     priority: str = "medium"
     assignee: Optional[str] = ""
@@ -259,6 +261,8 @@ class TaskCreate(BaseModel):
 class TaskUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
+    links: Optional[str] = None
+    image_urls: Optional[str] = None
     status: Optional[str] = None
     priority: Optional[str] = None
     assignee: Optional[str] = None
@@ -288,6 +292,8 @@ def create_task(req: TaskCreate, db: Session = Depends(get_db),
         project_id=req.project_id,
         title=req.title,
         description=req.description or "",
+        links=req.links or "",
+        image_urls=req.image_urls or "",
         status=req.status,
         priority=req.priority,
         assignee=req.assignee or "",
@@ -328,3 +334,54 @@ def delete_task(task_id: int, db: Session = Depends(get_db),
     db.delete(task)
     db.commit()
     return {"message": "Task deleted"}
+
+
+# ── Task Comments ───────────────────────────────────────────────────────────────
+class CommentCreate(BaseModel):
+    task_id: int
+    content: str
+
+
+@router.get("/tasks/{task_id}/comments")
+def get_task_comments(task_id: int, db: Session = Depends(get_db),
+                      admin=Depends(get_current_admin)):
+    """Get all comments for a task."""
+    comments = (
+        db.query(models.TaskComment)
+        .filter(models.TaskComment.task_id == task_id)
+        .order_by(models.TaskComment.created_at.asc())
+        .all()
+    )
+    return comments
+
+
+@router.post("/tasks/{task_id}/comments")
+def create_comment(task_id: int, req: CommentCreate, db: Session = Depends(get_db),
+                   admin=Depends(get_current_admin)):
+    """Add a comment to a task."""
+    task = db.query(models.Task).filter(models.Task.id == task_id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    
+    comment = models.TaskComment(
+        task_id=task_id,
+        author=admin.email,
+        content=req.content,
+    )
+    db.add(comment)
+    db.commit()
+    db.refresh(comment)
+    return comment
+
+
+@router.delete("/comments/{comment_id}")
+def delete_comment(comment_id: int, db: Session = Depends(get_db),
+                   admin=Depends(get_current_admin)):
+    """Delete a comment."""
+    comment = db.query(models.TaskComment).filter(models.TaskComment.id == comment_id).first()
+    if not comment:
+        raise HTTPException(status_code=404, detail="Comment not found")
+    
+    db.delete(comment)
+    db.commit()
+    return {"message": "Comment deleted"}

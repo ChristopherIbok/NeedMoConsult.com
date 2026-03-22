@@ -1380,7 +1380,7 @@ export default function Office() {
                                 <select
                                   value={task.status}
                                   onChange={(e) => updateTask(task.id, { status: e.target.value })}
-                                  className={`text-xs px-2 py-1.5 rounded-md border-0 cursor-pointer font-medium w-full ${task.status === "todo" ? "text-white" : "text-white"}`}
+                                  className={`text-xs px-2 py-1.5 rounded border-0 cursor-pointer font-medium w-full bg-transparent text-white ${task.status === "todo" ? "text-white" : "text-white"}`}
                                 >
                                   <option value="todo">To Do</option>
                                   <option value="in_progress">In Progress</option>

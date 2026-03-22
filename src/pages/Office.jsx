@@ -916,26 +916,55 @@ export default function Office() {
                   </div>
                 </div>
 
-                {/* Projects Dropdown */}
+                {/* Projects Row */}
                 {projects.length > 0 && (
-                  <div className="mb-4 flex items-center gap-3">
-                    <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Project:</span>
-                    <select
-                      value={selectedProject || ""}
-                      onChange={(e) => setSelectedProject(e.target.value || null)}
-                      className="px-3 py-2 border border-gray-200 dark:border-white/20 rounded-lg text-sm bg-white dark:bg-[#1A2332] text-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#D4AF7A]"
-                    >
-                      <option value="">All Projects</option>
-                      {projects.map(p => (
-                        <option key={p.id} value={p.id}>{p.name}</option>
-                      ))}
-                    </select>
+                  <div className="mb-4 flex items-center gap-3 overflow-x-auto pb-2">
+                    {projects.map(p => (
+                      <div key={p.id} className="flex items-center gap-2 px-4 py-2 bg-[#1A2332] text-white rounded-lg flex-shrink-0">
+                        <input
+                          value={p.name}
+                          onChange={(e) => {
+                            const updated = [...projects];
+                            const idx = updated.findIndex(x => x.id === p.id);
+                            if (idx !== -1) { updated[idx] = { ...updated[idx], name: e.target.value }; setProjects(updated); }
+                          }}
+                          onBlur={() => {
+                            fetch(`${import.meta.env.VITE_API_URL}/admin/projects/${p.id}`, {
+                              method: 'PUT',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ name: p.name, client: p.client, priority: p.priority, due_date: p.due_date, budget: p.budget })
+                            }).catch(() => {});
+                          }}
+                          className="bg-transparent text-sm font-medium text-white border-0 outline-none w-32"
+                        />
+                        <input
+                          value={p.client || ""}
+                          onChange={(e) => {
+                            const updated = [...projects];
+                            const idx = updated.findIndex(x => x.id === p.id);
+                            if (idx !== -1) { updated[idx] = { ...updated[idx], client: e.target.value }; setProjects(updated); }
+                          }}
+                          onBlur={() => {
+                            fetch(`${import.meta.env.VITE_API_URL}/admin/projects/${p.id}`, {
+                              method: 'PUT',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ name: p.name, client: p.client, priority: p.priority, due_date: p.due_date, budget: p.budget })
+                            }).catch(() => {});
+                          }}
+                          placeholder="Client"
+                          className="bg-transparent text-xs text-white/70 border-0 outline-none w-24 placeholder-white/40"
+                        />
+                        <button onClick={() => deleteProject(p.id)} className="p-1 text-white/40 hover:text-red-400 transition-colors">
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
                     <button
-                      onClick={() => { if (!selectedProject && projects.length > 0) setSelectedProject(projects[0].id); setShowNewProject(true); }}
-                      className="p-2 text-gray-400 hover:text-[#D4AF7A] transition-colors"
-                      title="Edit project"
+                      onClick={() => setShowNewProject(true)}
+                      className="flex items-center gap-1 px-3 py-2 border-2 border-dashed border-[#D4AF7A] text-[#D4AF7A] rounded-lg text-sm font-medium hover:bg-[#D4AF7A]/10 transition-colors flex-shrink-0"
                     >
-                      <Edit3 className="w-4 h-4" />
+                      <Plus className="w-4 h-4" />
+                      Add Project
                     </button>
                   </div>
                 )}
@@ -1317,157 +1346,135 @@ export default function Office() {
                   </div>
                 ) : (
                   <>
-                    {/* Active Tasks Table */}
-                    {(() => {
-                      const activeTasks = (selectedProject ? tasks.filter(t => t.project_id === selectedProject && t.status !== "done") : tasks.filter(t => t.status !== "done"));
-                      return activeTasks.length > 0 && (
-                        <div className="mb-8">
-                          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Active Tasks ({activeTasks.length})</h3>
-                          <div className="bg-white dark:bg-[#1A2332] rounded-lg border border-gray-200 dark:border-white/10 overflow-hidden">
-                            <table className="w-full border-collapse">
-                              <thead className="bg-[#1A2332] dark:bg-black/20">
-                                <tr>
-                                  <th className="text-left px-4 py-3 text-xs font-semibold text-white border-r border-white/20 w-8"></th>
-                                  <th className="text-left px-4 py-3 text-xs font-semibold text-white border-r border-white/20">Task</th>
-                                  <th className="text-left px-4 py-3 text-xs font-semibold text-white border-r border-white/20">Project</th>
-                                  <th className="text-left px-4 py-3 text-xs font-semibold text-white border-r border-white/20">Client</th>
-                                  <th className="text-left px-4 py-3 text-xs font-semibold text-white border-r border-white/20">Status</th>
-                                  <th className="text-left px-4 py-3 text-xs font-semibold text-white border-r border-white/20">Priority</th>
-                                  <th className="text-left px-4 py-3 text-xs font-semibold text-white border-r border-white/20">Assignee</th>
-                                  <th className="text-left px-4 py-3 text-xs font-semibold text-white border-r border-white/20">Due Date</th>
-                                  <th className="text-center px-4 py-3 text-xs font-semibold text-white w-20">Actions</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {activeTasks.map((task, idx) => {
-                                  const project = projects.find(p => p.id === task.project_id);
-                                  const rowBg = task.status === "todo" ? "bg-white" : task.status === "in_progress" ? "bg-[#1A2332]/5" : task.status === "review" ? "bg-[#D4AF7A]/10" : "bg-green-50";
-                                  return (
-                                    <tr key={task.id} className={`border-b border-gray-200 dark:border-white/10 ${rowBg}`}>
-                                      <td className={`px-2 py-2 border-r border-gray-200 dark:border-white/10 text-center ${rowBg}`}>
-                                        <span className="text-xs text-gray-400">{idx + 1}</span>
-                                      </td>
-                                      <td className={`px-4 py-2 border-r border-gray-200 dark:border-white/10 ${rowBg}`}>
-                                        <div className="flex items-center gap-2">
-                                          <button
-                                            onClick={() => updateTask(task.id, { status: "done" })}
-                                            className="w-4 h-4 rounded-full border-2 border-gray-300 hover:border-[#D4AF7A] flex items-center justify-center transition-colors flex-shrink-0"
+                    {projects.map(project => {
+                      const projectTasks = tasks.filter(t => t.project_id === project.id);
+                      const activeTasks = projectTasks.filter(t => t.status !== "done");
+                      const completedTasks = projectTasks.filter(t => t.status === "done");
+                      return (
+                        <div key={project.id} className="mb-8">
+                          <div className="flex items-center justify-between mb-3">
+                            <h3 className="text-sm font-semibold text-[#1A2332] dark:text-white">
+                              {project.name} <span className="text-gray-400 font-normal">({project.client || 'No client'})</span>
+                              <span className="ml-2 text-xs text-gray-400">— {activeTasks.length} active, {completedTasks.length} done</span>
+                            </h3>
+                            <button
+                              onClick={() => { setSelectedProject(project.id); setShowNewTask(true); }}
+                              className="flex items-center gap-1 px-3 py-1.5 border border-dashed border-[#D4AF7A] text-[#D4AF7A] text-xs rounded-lg hover:bg-[#D4AF7A]/10 transition-colors"
+                            >
+                              <Plus className="w-3 h-3" />
+                              Add Task
+                            </button>
+                          </div>
+                          {activeTasks.length > 0 && (
+                            <div className="bg-white dark:bg-[#1A2332] rounded-lg border border-gray-200 dark:border-white/10 overflow-hidden mb-4">
+                              <table className="w-full border-collapse">
+                                <thead className="bg-[#1A2332] dark:bg-black/20">
+                                  <tr>
+                                    <th className="text-left px-3 py-2 text-xs font-semibold text-white border-r border-white/20 w-8"></th>
+                                    <th className="text-left px-3 py-2 text-xs font-semibold text-white border-r border-white/20">Task</th>
+                                    <th className="text-left px-3 py-2 text-xs font-semibold text-white border-r border-white/20">Status</th>
+                                    <th className="text-left px-3 py-2 text-xs font-semibold text-white border-r border-white/20">Priority</th>
+                                    <th className="text-left px-3 py-2 text-xs font-semibold text-white border-r border-white/20">Assignee</th>
+                                    <th className="text-left px-3 py-2 text-xs font-semibold text-white border-r border-white/20">Due Date</th>
+                                    <th className="text-center px-3 py-2 text-xs font-semibold text-white w-16">Actions</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {activeTasks.map((task, idx) => {
+                                    const rowBg = task.status === "todo" ? "bg-white" : task.status === "in_progress" ? "bg-[#1A2332]/5" : task.status === "review" ? "bg-[#D4AF7A]/10" : "bg-green-50";
+                                    return (
+                                      <tr key={task.id} className={`border-b border-gray-200 dark:border-white/10 ${rowBg}`}>
+                                        <td className={`px-2 py-2 border-r border-gray-200 dark:border-white/10 text-center ${rowBg}`}>
+                                          <span className="text-xs text-gray-400">{idx + 1}</span>
+                                        </td>
+                                        <td className={`px-3 py-2 border-r border-gray-200 dark:border-white/10 ${rowBg}`}>
+                                          <div className="flex items-center gap-2">
+                                            <button
+                                              onClick={() => updateTask(task.id, { status: "done" })}
+                                              className="w-4 h-4 rounded-full border-2 border-gray-300 hover:border-[#D4AF7A] flex items-center justify-center transition-colors flex-shrink-0"
+                                            />
+                                            <input
+                                              value={task.title}
+                                              onChange={(e) => { const updated = tasks.map(t => t.id === task.id ? { ...t, title: e.target.value } : t); setTasks(updated); }}
+                                              onBlur={() => updateTask(task.id, { title: task.title })}
+                                              className="text-sm text-gray-800 border-0 bg-transparent outline-none flex-1"
+                                            />
+                                          </div>
+                                        </td>
+                                        <td className={`px-2 py-2 border-r border-gray-200 dark:border-white/10 ${task.status === "todo" ? "bg-gray-500" : task.status === "in_progress" ? "bg-[#1A2332]" : "bg-[#D4AF7A]"}`}>
+                                          <select
+                                            value={task.status}
+                                            onChange={(e) => updateTask(task.id, { status: e.target.value })}
+                                            className="w-full h-full cursor-pointer font-medium bg-transparent text-white border-0 appearance-none focus:outline-none text-center text-sm"
+                                          >
+                                            <option value="todo">To Do</option>
+                                            <option value="in_progress">In Progress</option>
+                                            <option value="review">Review</option>
+                                            <option value="done">Done</option>
+                                          </select>
+                                        </td>
+                                        <td className={`px-3 py-2 border-r border-gray-200 dark:border-white/10 ${rowBg}`}>
+                                          <select
+                                            value={task.priority}
+                                            onChange={(e) => updateTask(task.id, { priority: e.target.value })}
+                                            className="text-xs px-2 py-1 border border-gray-200 text-gray-800 bg-white w-full"
+                                          >
+                                            <option value="low">Low</option>
+                                            <option value="medium">Medium</option>
+                                            <option value="high">High</option>
+                                            <option value="urgent">Urgent</option>
+                                          </select>
+                                        </td>
+                                        <td className={`px-3 py-2 border-r border-gray-200 dark:border-white/10 ${rowBg}`}>
+                                          <input
+                                            value={task.assignee || ""}
+                                            onChange={(e) => { const updated = tasks.map(t => t.id === task.id ? { ...t, assignee: e.target.value } : t); setTasks(updated); }}
+                                            onBlur={() => updateTask(task.id, { assignee: task.assignee })}
+                                            placeholder="Add"
+                                            className="text-sm px-2 py-1 border border-gray-200 text-gray-800 w-24 placeholder-gray-400"
                                           />
-                                          <span className="text-sm text-gray-800 font-medium">{task.title}</span>
-                                        </div>
-                                      </td>
-                                      <td className={`px-4 py-2 border-r border-gray-200 dark:border-white/10 text-sm text-gray-800 ${rowBg}`}>
-                                        {project?.name || "-"}
-                                      </td>
-                                      <td className={`px-4 py-2 border-r border-gray-200 dark:border-white/10 text-sm text-gray-800 ${rowBg}`}>
-                                        {project?.client || "-"}
-                                      </td>
-                                      <td className={`px-2 py-2 border-r border-gray-200 dark:border-white/10 ${task.status === "todo" ? "bg-gray-500" : task.status === "in_progress" ? "bg-[#1A2332]" : "bg-[#D4AF7A]"}`}>
-                                        <select
-                                          value={task.status}
-                                          onChange={(e) => updateTask(task.id, { status: e.target.value })}
-                                          className="w-full h-full cursor-pointer font-medium bg-transparent text-white border-0 appearance-none focus:outline-none text-center text-sm"
-                                        >
-                                          <option value="todo">To Do</option>
-                                          <option value="in_progress">In Progress</option>
-                                          <option value="review">Review</option>
-                                          <option value="done">Done</option>
-                                        </select>
-                                      </td>
-                                      <td className={`px-4 py-2 border-r border-gray-200 dark:border-white/10 ${rowBg}`}>
-                                        <select
-                                          value={task.priority}
-                                          onChange={(e) => updateTask(task.id, { priority: e.target.value })}
-                                          className="text-xs px-2 py-1 border border-gray-200 text-gray-800 bg-white w-full"
-                                        >
-                                          <option value="low">Low</option>
-                                          <option value="medium">Medium</option>
-                                          <option value="high">High</option>
-                                          <option value="urgent">Urgent</option>
-                                        </select>
-                                      </td>
-                                      <td className={`px-4 py-2 border-r border-gray-200 dark:border-white/10 ${rowBg}`}>
-                                        <input
-                                          value={task.assignee || ""}
-                                          onChange={(e) => updateTask(task.id, { assignee: e.target.value })}
-                                          placeholder="Add"
-                                          className="text-sm px-2 py-1 border border-gray-200 text-gray-800 w-24 placeholder-gray-400"
-                                        />
-                                      </td>
-                                      <td className={`px-4 py-2 border-r border-gray-200 dark:border-white/10 ${rowBg}`}>
-                                        <input
-                                          type="date"
-                                          value={task.due_date || ""}
-                                          onChange={(e) => updateTask(task.id, { due_date: e.target.value })}
-                                          className="text-xs px-2 py-1 border border-gray-200 text-gray-800 w-28"
-                                        />
-                                      </td>
-                                      <td className={`px-2 py-2 text-center ${rowBg}`}>
-                                        <div className="flex items-center justify-center gap-1">
-                                          <button onClick={() => openTaskDetail(task)} className="p-1 text-gray-400 hover:text-[#D4AF7A] transition-colors">
-                                            <Eye className="w-4 h-4" />
-                                          </button>
+                                        </td>
+                                        <td className={`px-3 py-2 border-r border-gray-200 dark:border-white/10 ${rowBg}`}>
+                                          <input
+                                            type="date"
+                                            value={task.due_date || ""}
+                                            onChange={(e) => updateTask(task.id, { due_date: e.target.value })}
+                                            className="text-xs px-2 py-1 border border-gray-200 text-gray-800 w-28"
+                                          />
+                                        </td>
+                                        <td className={`px-2 py-2 text-center ${rowBg}`}>
                                           <button onClick={() => deleteTask(task.id)} className="p-1 text-gray-400 hover:text-red-500 transition-colors">
                                             <Trash2 className="w-4 h-4" />
                                           </button>
-                                        </div>
-                                      </td>
-                                    </tr>
-                                  );
-                                })}
-                                {/* Add Task Row */}
-                                <tr className="bg-[#D4AF7A]/10 hover:bg-[#D4AF7A]/20 cursor-pointer border-t-2 border-[#D4AF7A]" onClick={() => {
-                                  if (projects.length === 0) {
-                                    alert("No projects. Create a project first.");
-                                    return;
-                                  }
-                                  if (!selectedProject) setSelectedProject(projects[0].id);
-                                  setShowNewTask(true);
-                                }}>
-                                  <td colSpan={9} className="px-4 py-3">
-                                    <div className="flex items-center gap-2 text-[#D4AF7A] font-medium">
-                                      <Plus className="w-4 h-4" />
-                                      <span className="text-sm">Add Task</span>
-                                    </div>
-                                  </td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      );
-                    })()}
-
-                    {/* Completed Tasks Table */}
-                    {(() => {
-                      const completedTasks = (selectedProject ? tasks.filter(t => t.project_id === selectedProject && t.status === "done") : tasks.filter(t => t.status === "done"));
-                      return completedTasks.length > 0 && (
-                        <div>
-                          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Completed ({completedTasks.length})</h3>
-                          <div className="bg-white dark:bg-[#1A2332] rounded-lg border border-gray-200 dark:border-white/10 overflow-hidden">
-                            <table className="w-full border-collapse">
-                              <thead className="bg-gray-100 dark:bg-white/5">
-                                <tr>
-                                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 border-r border-gray-200 dark:border-white/10 w-8"></th>
-                                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 border-r border-gray-200 dark:border-white/10">Task</th>
-                                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 border-r border-gray-200 dark:border-white/10">Project</th>
-                                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 border-r border-gray-200 dark:border-white/10">Client</th>
-                                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 border-r border-gray-200 dark:border-white/10">Status</th>
-                                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 border-r border-gray-200 dark:border-white/10">Priority</th>
-                                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 border-r border-gray-200 dark:border-white/10">Assignee</th>
-                                  <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 border-r border-gray-200 dark:border-white/10">Due Date</th>
-                                  <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500 w-20">Actions</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {completedTasks.map((task, idx) => {
-                                  const project = projects.find(p => p.id === task.project_id);
-                                  return (
+                                        </td>
+                                      </tr>
+                                    );
+                                  })}
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
+                          {completedTasks.length > 0 && (
+                            <div className="bg-white dark:bg-[#1A2332] rounded-lg border border-gray-200 dark:border-white/10 overflow-hidden">
+                              <table className="w-full border-collapse">
+                                <thead className="bg-gray-100 dark:bg-white/5">
+                                  <tr>
+                                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-500 border-r border-gray-200 dark:border-white/10 w-8"></th>
+                                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-500 border-r border-gray-200 dark:border-white/10">Task</th>
+                                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-500 border-r border-gray-200 dark:border-white/10">Status</th>
+                                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-500 border-r border-gray-200 dark:border-white/10">Priority</th>
+                                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-500 border-r border-gray-200 dark:border-white/10">Assignee</th>
+                                    <th className="text-left px-3 py-2 text-xs font-semibold text-gray-500 border-r border-gray-200 dark:border-white/10">Due Date</th>
+                                    <th className="text-center px-3 py-2 text-xs font-semibold text-gray-500 w-16">Actions</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {completedTasks.map((task, idx) => (
                                     <tr key={task.id} className="border-b border-gray-200 dark:border-white/10 bg-gray-50/50">
                                       <td className="px-2 py-2 border-r border-gray-200 dark:border-white/10 text-center">
                                         <span className="text-xs text-gray-400">{idx + 1}</span>
                                       </td>
-                                      <td className="px-4 py-2 border-r border-gray-200 dark:border-white/10">
+                                      <td className="px-3 py-2 border-r border-gray-200 dark:border-white/10">
                                         <div className="flex items-center gap-2">
                                           <button
                                             onClick={() => updateTask(task.id, { status: "todo" })}
@@ -1475,14 +1482,13 @@ export default function Office() {
                                           >
                                             <CheckCircle className="w-2.5 h-2.5 text-white" />
                                           </button>
-                                          <span className="text-sm text-gray-500 line-through">{task.title}</span>
+                                          <input
+                                            value={task.title}
+                                            onChange={(e) => { const updated = tasks.map(t => t.id === task.id ? { ...t, title: e.target.value } : t); setTasks(updated); }}
+                                            onBlur={() => updateTask(task.id, { title: task.title })}
+                                            className="text-sm text-gray-500 line-through border-0 bg-transparent outline-none flex-1"
+                                          />
                                         </div>
-                                      </td>
-                                      <td className="px-4 py-2 border-r border-gray-200 dark:border-white/10 text-sm text-gray-500">
-                                        {project?.name || "-"}
-                                      </td>
-                                      <td className="px-4 py-2 border-r border-gray-200 dark:border-white/10 text-sm text-gray-500">
-                                        {project?.client || "-"}
                                       </td>
                                       <td className="px-2 py-2 border-r border-gray-200 dark:border-white/10 bg-green-500">
                                         <select
@@ -1496,34 +1502,29 @@ export default function Office() {
                                           <option value="review">Review</option>
                                         </select>
                                       </td>
-                                      <td className="px-4 py-2 border-r border-gray-200 dark:border-white/10">
+                                      <td className="px-3 py-2 border-r border-gray-200 dark:border-white/10">
                                         <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600">{task.priority}</span>
                                       </td>
-                                      <td className="px-4 py-2 border-r border-gray-200 dark:border-white/10 text-sm text-gray-500">
+                                      <td className="px-3 py-2 border-r border-gray-200 dark:border-white/10 text-sm text-gray-500">
                                         {task.assignee || "-"}
                                       </td>
-                                      <td className="px-4 py-2 border-r border-gray-200 dark:border-white/10 text-sm text-gray-500">
+                                      <td className="px-3 py-2 border-r border-gray-200 dark:border-white/10 text-sm text-gray-500">
                                         {task.due_date || "-"}
                                       </td>
                                       <td className="px-2 py-2 text-center">
-                                        <div className="flex items-center justify-center gap-1">
-                                          <button onClick={() => openTaskDetail(task)} className="p-1 text-gray-400 hover:text-[#D4AF7A] transition-colors">
-                                            <Eye className="w-4 h-4" />
-                                          </button>
-                                          <button onClick={() => deleteTask(task.id)} className="p-1 text-gray-400 hover:text-red-500 transition-colors">
-                                            <Trash2 className="w-4 h-4" />
-                                          </button>
-                                        </div>
+                                        <button onClick={() => deleteTask(task.id)} className="p-1 text-gray-400 hover:text-red-500 transition-colors">
+                                          <Trash2 className="w-4 h-4" />
+                                        </button>
                                       </td>
                                     </tr>
-                                  );
-                                })}
-                              </tbody>
-                            </table>
-                          </div>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
                         </div>
                       );
-                    })()}
+                    })}
                   </>
                 )}
               </motion.div>

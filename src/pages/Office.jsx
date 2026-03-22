@@ -1333,23 +1333,23 @@ export default function Office() {
                     </button>
                   </div>
                 ) : (
-                  <div className="bg-white dark:bg-[#1A2332] rounded-xl border border-gray-200 dark:border-white/10 shadow-sm">
-                    <table className="w-full">
+                  <div className="bg-white dark:bg-[#1A2332] rounded-xl border border-gray-200 dark:border-white/10 shadow-sm overflow-hidden">
+                    <table className="w-full border-collapse">
                       <thead className="bg-[#F5F6F8] dark:bg-white/5">
                         <tr>
-                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Task</th>
-                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Project</th>
-                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Status</th>
-                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Priority</th>
-                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Assignee</th>
-                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Due Date</th>
+                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide border-r border-gray-200 dark:border-white/10">Task</th>
+                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide border-r border-gray-200 dark:border-white/10">Project</th>
+                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide border-r border-gray-200 dark:border-white/10">Status</th>
+                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide border-r border-gray-200 dark:border-white/10">Priority</th>
+                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide border-r border-gray-200 dark:border-white/10">Assignee</th>
+                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide border-r border-gray-200 dark:border-white/10">Due Date</th>
                           <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Actions</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-100 dark:divide-white/10">
+                      <tbody>
                         {(selectedProject ? tasks.filter(t => t.project_id === selectedProject) : tasks).map(task => (
-                          <tr key={task.id} className="hover:bg-[#F5F6F8] dark:hover:bg-white/5 transition-colors">
-                            <td className="px-4 py-3">
+                          <tr key={task.id} className="hover:bg-[#F5F6F8] dark:hover:bg-white/5 transition-colors border-b border-gray-200 dark:border-white/10">
+                            <td className="px-4 py-3 border-r border-gray-200 dark:border-white/10">
                               <div className="flex items-center gap-3">
                                 <button
                                   onClick={() => {
@@ -1367,10 +1367,10 @@ export default function Office() {
                                 </span>
                               </div>
                             </td>
-                            <td className="px-4 py-3">
+                            <td className="px-4 py-3 border-r border-gray-200 dark:border-white/10">
                               <span className="text-sm text-[#D4AF7A] font-medium">{projects.find(p => p.id === task.project_id)?.name || "-"}</span>
                             </td>
-                            <td className="px-4 py-3">
+                            <td className="px-4 py-3 border-r border-gray-200 dark:border-white/10">
                               <select
                                 value={task.status}
                                 onChange={(e) => updateTask(task.id, { status: e.target.value })}
@@ -1399,7 +1399,7 @@ export default function Office() {
                                 <option value="urgent">Urgent</option>
                               </select>
                             </td>
-                            <td className="px-4 py-3">
+                            <td className="px-4 py-3 border-r border-gray-200 dark:border-white/10">
                               <input
                                 value={task.assignee || ""}
                                 onChange={(e) => updateTask(task.id, { assignee: e.target.value })}
@@ -1407,7 +1407,7 @@ export default function Office() {
                                 className="text-sm px-2 py-1.5 border border-gray-200 dark:border-white/20 rounded-md bg-transparent text-gray-600 dark:text-gray-300 w-28 placeholder-gray-300"
                               />
                             </td>
-                            <td className="px-4 py-3">
+                            <td className="px-4 py-3 border-r border-gray-200 dark:border-white/10">
                               <input
                                 type="date"
                                 value={task.due_date || ""}

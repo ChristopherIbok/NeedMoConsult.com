@@ -472,6 +472,9 @@ export default function Office() {
   const [sendingWelcome, setSendingWelcome] = useState(false);
   const [welcomeResult, setWelcomeResult] = useState(null);
 
+  // Email menu state
+  const [emailMenuOpen, setEmailMenuOpen] = useState(false);
+
   // Newsletter form
   const [form, setForm] = useState({
     subject: "",
@@ -790,7 +793,6 @@ export default function Office() {
   if (!authed) return <AuthGate onAuth={(user) => { setCurrentUser(user); setAuthed(true); }} />;
 
   const activeCount = subscribers.filter(s => !s.status || s.status === "active").length;
-  const [emailMenuOpen, setEmailMenuOpen] = useState(false);
   const unreadContacts = contacts.filter(c => !c.is_read).length;
 
   return (

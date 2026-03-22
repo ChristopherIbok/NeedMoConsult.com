@@ -794,18 +794,16 @@ export default function Office() {
 
   return (
     <div className="min-h-screen bg-[#F2F2F0] dark:bg-[#0F1419]">
-      <Header />
-      <div className="pt-20">
-        {/* Mobile Toggle */}
-        <button
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="lg:hidden fixed top-24 left-4 z-50 p-2 bg-[#1A2332] text-white rounded-lg shadow-lg"
-        >
-          {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
-        <div className="flex">
+      {/* Mobile Toggle */}
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-[#1A2332] text-white rounded-lg shadow-lg"
+      >
+        {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+      </button>
+      <div className="flex">
           {/* Sidebar - Collapsible */}
-          <div className={`${sidebarOpen ? 'w-64' : 'w-0 lg:w-16'} bg-[#1A2332] flex flex-col min-h-[calc(100vh-80px)] fixed left-0 top-20 bottom-0 z-40 transition-all duration-300 overflow-hidden`}>
+          <div className={`${sidebarOpen ? 'w-64' : 'w-0 lg:w-16'} bg-[#1A2332] flex flex-col min-h-screen fixed left-0 top-0 bottom-0 z-40 transition-all duration-300 overflow-hidden`}>
             {/* Logo */}
             <div className="px-4 lg:px-6 py-6 border-b border-white/10">
               <div className="flex items-center gap-3">

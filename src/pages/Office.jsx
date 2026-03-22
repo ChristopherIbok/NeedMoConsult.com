@@ -845,7 +845,8 @@ export default function Office() {
             {/* Nav */}
             <nav className="flex-1 px-4 py-4 space-y-1">
               {[
-                { id: "projects", icon: FolderKanban, label: "Projects & Tasks" },
+                { id: "projects", icon: FolderKanban, label: "Projects" },
+                { id: "tasks", icon: CheckSquare, label: "Tasks" },
                 { id: "compose", icon: Mail, label: "Compose Newsletter" },
                 { id: "welcome", icon: MailOpen, label: "Welcome Email" },
                 { id: "subscribers", icon: Users, label: "Subscribers", badge: activeCount },
@@ -1373,6 +1374,70 @@ export default function Office() {
                     onViewDetail={openTaskDetail}
                   />
                 )}
+              </motion.div>
+            )}
+
+            {/* ── TASKS TAB ── */}
+            {tab === "tasks" && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h1 className="text-2xl font-bold text-[#1A2332] dark:text-white">Tasks</h1>
+                    <p className="text-gray-500 text-sm mt-1">{tasks.length} tasks</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      if (projects.length === 0) { alert("Create a project first"); return; }
+                      if (!selectedProject) setSelectedProject(projects[0].id);
+                      setShowNewTask(true);
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 bg-[#D4AF7A] hover:bg-[#C49A5E] text-[#1A2332] rounded-xl text-sm font-bold"
+                  >
+                    <Plus className="w-4 h-4" /> Add Task
+                  </button>
+                </div>
+
+                <div className="bg-white dark:bg-[#1A2332] rounded-2xl border border-gray-100 dark:border-white/10 overflow-hidden">
+                  <table className="w-full">
+                    <thead className="bg-gray-50 dark:bg-white/5">
+                      <tr>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Task</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Status</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Priority</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Assignee</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Project</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Due</th>
+                        <th className="text-center px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100 dark:divide-white/10">
+                      {tasks.length === 0 ? (
+                        <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-400">No tasks</td></tr>
+                      ) : tasks.map(task => (
+                        <tr key={task.id} className="hover:bg-gray-50 dark:hover:bg-white/5">
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <button onClick={() => updateTask(task.id, { status: task.status === "done" ? "todo" : "done" })} className={`w-5 h-5 rounded border-2 ${task.status === "done" ? "bg-green-500 border-green-500" : "border-gray-300"}`}>
+                                {task.status === "done" && <CheckCircle className="w-3 h-3 text-white" />}
+                              </button>
+                              <span className={`text-sm font-medium ${task.status === "done" ? "line-through opacity-60" : ""}`}>{task.title}</span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3"><span className={`text-xs px-2 py-1 rounded-full ${STATUS_COLORS[task.status]}`}>{STATUS_LABELS[task.status]}</span></td>
+                          <td className="px-4 py-3 text-sm text-gray-400">{task.priority}</td>
+                          <td className="px-4 py-3 text-sm text-gray-500">{task.assignee || "-"}</td>
+                          <td className="px-4 py-3 text-sm text-[#D4AF7A]">{projects.find(p => p.id === task.project_id)?.name || "-"}</td>
+                          <td className="px-4 py-3 text-sm text-gray-400">{task.due_date || "-"}</td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center justify-center gap-2">
+                              <button onClick={() => deleteTask(task.id)} className="p-1 text-gray-400 hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </motion.div>
             )}
 

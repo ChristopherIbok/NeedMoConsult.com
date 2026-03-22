@@ -353,14 +353,14 @@ function TaskCard({ task, projectName, onUpdate, onDelete, currentUser, onViewDe
       <div className="mt-3 pt-2 border-t border-gray-100 dark:border-white/5 flex items-center gap-1 flex-wrap">
         <button
           onClick={(e) => { e.stopPropagation(); onViewDetail(task); }}
-          className="px-2 py-1 text-xs bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-white/20"
+          className="px-2 py-1 text-xs bg-[#D4AF7A]/20 text-[#D4AF7A] rounded hover:bg-[#D4AF7A]/30"
         >
           Details
         </button>
         {task.status !== "todo" && (
           <button
             onClick={(e) => { e.stopPropagation(); onUpdate(task.id, { status: "todo" }); }}
-            className="px-2 py-1 text-xs bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-white/20"
+            className="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-white/10"
           >
             To Do
           </button>
@@ -368,7 +368,7 @@ function TaskCard({ task, projectName, onUpdate, onDelete, currentUser, onViewDe
         {task.status !== "in_progress" && (
           <button
             onClick={(e) => { e.stopPropagation(); onUpdate(task.id, { status: "in_progress" }); }}
-            className="px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded hover:bg-blue-200 dark:hover:bg-blue-900/50"
+            className="px-2 py-1 text-xs bg-[#D4AF7A] text-[#1A2332] rounded hover:bg-[#C49A5E]"
           >
             In Progress
           </button>
@@ -376,7 +376,7 @@ function TaskCard({ task, projectName, onUpdate, onDelete, currentUser, onViewDe
         {task.status !== "review" && (
           <button
             onClick={(e) => { e.stopPropagation(); onUpdate(task.id, { status: "review" }); }}
-            className="px-2 py-1 text-xs bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded hover:bg-amber-200 dark:hover:bg-amber-900/50"
+            className="px-2 py-1 text-xs border border-[#D4AF7A] text-[#D4AF7A] rounded hover:bg-[#D4AF7A]/10"
           >
             Review
           </button>
@@ -384,7 +384,7 @@ function TaskCard({ task, projectName, onUpdate, onDelete, currentUser, onViewDe
         {task.status !== "done" && (
           <button
             onClick={(e) => { e.stopPropagation(); onUpdate(task.id, { status: "done" }); }}
-            className="px-2 py-1 text-xs bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded hover:bg-green-200 dark:hover:bg-green-900/50"
+            className="px-2 py-1 text-xs bg-[#1A2332] text-white rounded hover:bg-[#2A3342]"
           >
             Done
           </button>

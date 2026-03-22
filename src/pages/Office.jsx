@@ -450,7 +450,7 @@ export default function Office() {
   const [taskError, setTaskError] = useState(null);
   
   // Sidebar toggle
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  // Sidebar fixed width
   
   // Task detail modal
   const [taskDetail, setTaskDetail] = useState(null);
@@ -795,10 +795,10 @@ export default function Office() {
   return (
     <div className="min-h-screen bg-[#F2F2F0] dark:bg-[#0F1419]">
       <button
-        onClick={() => setSidebarOpen(!sidebarOpen)}
+        
         className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-[#1A2332] text-white rounded-lg shadow-lg"
       >
-        {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        
       </button>
       <div className="flex">
         <div className={`${sidebarOpen ? 'w-64' : 'w-0 lg:w-16'} bg-[#1A2332] flex flex-col min-h-screen fixed left-0 top-0 bottom-0 z-40 transition-all duration-300 overflow-hidden`}>
@@ -809,7 +809,7 @@ export default function Office() {
                 <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#D4AF7A] to-[#C49A5E] flex items-center justify-center flex-shrink-0">
                   <Briefcase className="w-4 h-4 text-[#1A2332]" />
                 </div>
-                {sidebarOpen && (
+                
                   <div>
                     <p className="text-white font-bold text-sm">NEEDMO Office</p>
                     <p className="text-white/30 text-xs">{currentUser?.name || "Team Member"}</p>
@@ -819,7 +819,7 @@ export default function Office() {
             </div>
 
             {/* Stats - Only show when expanded */}
-            {sidebarOpen && (
+            
               <div className="px-4 py-4 border-b border-white/10 space-y-2">
                 <div className="bg-white/5 rounded-xl px-4 py-3 flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-[#D4AF7A]/10 flex items-center justify-center">
@@ -910,7 +910,7 @@ export default function Office() {
           </div>
 
           {/* Main Content */}
-          <div className={`${sidebarOpen ? 'ml-64' : 'ml-16'} flex-1 p-4 lg:p-8 transition-all duration-300 min-h-screen relative z-30 bg-[#F2F2F0] dark:bg-[#0F1419]`}>
+          <div className={`${sidebarOpen ? 'ml-64' : 'ml-16'} flex-1 p-4 lg:p-8 transition-all duration-300 min-h-screen`}>
 
             {/* ── PROJECTS TAB ── */}
             {tab === "projects" && (

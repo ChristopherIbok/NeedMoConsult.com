@@ -846,7 +846,8 @@ export default function Office() {
             {/* Nav */}
             <nav className="flex-1 px-4 py-4 space-y-1">
               {[
-                { id: "projects", icon: FolderKanban, label: "Projects & Tasks" },
+                { id: "projects", icon: FolderKanban, label: "Projects" },
+                { id: "tasks", icon: CheckSquare, label: "Tasks" },
                 { id: "compose", icon: Mail, label: "Compose Newsletter" },
                 { id: "welcome", icon: MailOpen, label: "Welcome Email" },
                 { id: "subscribers", icon: Users, label: "Subscribers", badge: activeCount },
@@ -1377,6 +1378,100 @@ export default function Office() {
               </motion.div>
             )}
 
+            {/* ── TASKS TAB ── */}
+            {tab === "tasks" && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h1 className="text-2xl font-bold text-[#1A2332] dark:text-white">Tasks</h1>
+                    <p className="text-gray-500 text-sm mt-1">{tasks.length} tasks · {tasks.filter(t => t.status !== "done").length} active</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      if (projects.length === 0) {
+                        alert("No projects. Create a project first.");
+                        return;
+                      }
+                      if (!selectedProject) setSelectedProject(projects[0].id);
+                      setShowNewTask(true);
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 bg-[#D4AF7A] hover:bg-[#C49A5E] text-[#1A2332] rounded-xl text-sm font-bold transition-colors"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Task
+                  </button>
+                </div>
+
+                {/* Tasks Table - Monday.com style */}
+                <div className="bg-white dark:bg-[#1A2332] rounded-2xl border border-gray-100 dark:border-white/10 overflow-hidden">
+                  <table className="w-full">
+                    <thead className="bg-gray-50 dark:bg-white/5">
+                      <tr>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Task</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Status</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Priority</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Assignee</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Project</th>
+                        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Due Date</th>
+                        <th className="text-center px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100 dark:divide-white/10">
+                      {tasks.length === 0 ? (
+                        <tr>
+                          <td colSpan={7} className="px-4 py-8 text-center text-gray-400">No tasks yet. Create one to get started.</td>
+                        </tr>
+                      ) : tasks.map(task => (
+                        <tr key={task.id} className="hover:bg-gray-50 dark:hover:bg-white/5">
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-3">
+                              <button
+                                onClick={() => {
+                                  const newStatus = task.status === "done" ? "todo" : "done";
+                                  updateTask(task.id, { status: newStatus });
+                                }}
+                                className={`w-5 h-5 rounded-md border-2 flex items-center justify-center ${
+                                  task.status === "done" ? "bg-green-500 border-green-500" : "border-gray-300"
+                                }`}
+                              >
+                                {task.status === "done" && <CheckCircle className="w-3 h-3 text-white" />}
+                              </button>
+                              <span className={`text-sm font-medium text-[#1A2332] dark:text-white ${task.status === "done" ? "line-through opacity-60" : ""}`}>
+                                {task.title}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className={`text-xs px-2 py-1 rounded-full ${STATUS_COLORS[task.status]}`}>
+                              {STATUS_LABELS[task.status]}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className={`text-xs ${task.priority === "high" || task.priority === "urgent" ? "text-red-500" : "text-gray-400"}`}>
+                              {task.priority}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-sm text-gray-500">{task.assignee || "-"}</td>
+                          <td className="px-4 py-3 text-sm text-[#D4AF7A]">{projects.find(p => p.id === task.project_id)?.name || "-"}</td>
+                          <td className="px-4 py-3 text-sm text-gray-400">{task.due_date || "-"}</td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center justify-center gap-2">
+                              <button onClick={() => openTaskDetail(task)} className="p-1 text-gray-400 hover:text-[#D4AF7A]">
+                                <Eye className="w-4 h-4" />
+                              </button>
+                              <button onClick={() => deleteTask(task.id)} className="p-1 text-gray-400 hover:text-red-500">
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </motion.div>
+            )}
+
             {/* ── COMPOSE TAB ── */}
             {tab === "compose" && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
@@ -1781,7 +1876,6 @@ export default function Office() {
           </div>
         </div>
       </div>
-      <Footer />
 
       {/* ── PREVIEW MODAL ── */}
       {previewOpen && (

@@ -568,6 +568,26 @@ export default function Office() {
     }
   };
 
+  // Delete project
+  const deleteProject = async (projectId) => {
+    if (!confirm("Delete this project and all its tasks?")) return;
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/admin/projects/${projectId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${localStorage.getItem("needmo_token")}` },
+      });
+      if (res.ok) {
+        setProjects(projects.filter(p => p.id !== projectId));
+        setTasks(tasks.filter(t => t.project_id !== projectId));
+        if (selectedProject === projectId) {
+          setSelectedProject(projects.length > 1 ? projects.find(p => p.id !== projectId)?.id : null);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to delete project:", err);
+    }
+  };
+
   // Open task detail modal
   const openTaskDetail = async (task) => {
     setTaskDetail(task);
@@ -870,15 +890,23 @@ export default function Office() {
                       All Projects
                     </button>
                     {projects.map(p => (
-                      <button
-                        key={p.id}
-                        onClick={() => setSelectedProject(p.id)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                          selectedProject === p.id ? "bg-[#D4AF7A] text-[#1A2332]" : "bg-white dark:bg-white/10 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/20"
-                        }`}
-                      >
-                        {p.name}
-                      </button>
+                      <div key={p.id} className="flex items-center gap-1">
+                        <button
+                          onClick={() => setSelectedProject(p.id)}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                            selectedProject === p.id ? "bg-[#D4AF7A] text-[#1A2332]" : "bg-white dark:bg-white/10 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/20"
+                          }`}
+                        >
+                          {p.name}
+                        </button>
+                        <button
+                          onClick={() => deleteProject(p.id)}
+                          className="p-1 text-gray-400 hover:text-red-500 transition-colors"
+                          title="Delete project"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
                     ))}
                   </div>
                 )}

@@ -166,7 +166,7 @@ function ProjectProgress({ projects, tasks, selectedProject }) {
   );
 }
 
-function KanbanBoard({ projects, tasks, onUpdateTask, onDeleteTask, currentUser, onViewDetail }) {
+function KanbanBoard({ projects, tasks, onUpdateTask, onDeleteTask, currentUser }) {
   const columns = ["todo", "in_progress", "review", "done"];
   
   const getProjectName = (projectId) => {
@@ -200,7 +200,6 @@ function KanbanBoard({ projects, tasks, onUpdateTask, onDeleteTask, currentUser,
                   onUpdate={onUpdateTask}
                   onDelete={onDeleteTask}
                   currentUser={currentUser}
-                  onViewDetail={onViewDetail}
                 />
               ))}
               {columnTasks.length === 0 && (
@@ -216,7 +215,7 @@ function KanbanBoard({ projects, tasks, onUpdateTask, onDeleteTask, currentUser,
   );
 }
 
-function TaskCard({ task, projectName, onUpdate, onDelete, currentUser, onViewDetail }) {
+function TaskCard({ task, projectName, onUpdate, onDelete, currentUser }) {
   const [showMenu, setShowMenu] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task.title);
@@ -241,8 +240,7 @@ function TaskCard({ task, projectName, onUpdate, onDelete, currentUser, onViewDe
 
   return (
     <div 
-      onClick={() => onViewDetail(task)}
-      className={`bg-white dark:bg-[#1A2332] rounded-xl p-4 border shadow-sm hover:shadow-md transition-all group cursor-pointer ${task.status === "done" ? "opacity-60" : ""}`}
+      className={`bg-white dark:bg-[#1A2332] rounded-xl p-4 border shadow-sm hover:shadow-md transition-all group ${task.status === "done" ? "opacity-60" : ""}`}
     >
       <div className="flex items-start gap-3 mb-2">
         <button
@@ -349,18 +347,52 @@ function TaskCard({ task, projectName, onUpdate, onDelete, currentUser, onViewDe
         )}
       </div>
       
-      {/* Quick Actions - Only show next status option */}
-      <div className="mt-3 pt-2 border-t border-gray-100 dark:border-white/5 flex items-center gap-1">
-        <button
-          onClick={(e) => { e.stopPropagation(); onViewDetail(task); }}
-          className="px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded hover:bg-gray-100 dark:hover:bg-white/10"
-        >
-          Details
-        </button>
+      {/* Quick Actions - Current as text, next as button, others as clickable text */}
+      <div className="mt-3 pt-2 border-t border-gray-100 dark:border-white/5 flex items-center gap-2 flex-wrap">
+        {/* Current status - shown as text */}
+        <span className="text-xs text-[#D4AF7A] font-medium">
+          {STATUS_LABELS[task.status]}
+        </span>
+        
+        {/* Other statuses as clickable text */}
+        {task.status !== "todo" && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onUpdate(task.id, { status: "todo" }); }}
+            className="text-xs text-gray-400 hover:text-[#D4AF7A] underline"
+          >
+            To Do
+          </button>
+        )}
+        {task.status !== "in_progress" && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onUpdate(task.id, { status: "in_progress" }); }}
+            className="text-xs text-gray-400 hover:text-[#D4AF7A] underline"
+          >
+            In Progress
+          </button>
+        )}
+        {task.status !== "review" && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onUpdate(task.id, { status: "review" }); }}
+            className="text-xs text-gray-400 hover:text-[#D4AF7A] underline"
+          >
+            Review
+          </button>
+        )}
+        {task.status !== "done" && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onUpdate(task.id, { status: "done" }); }}
+            className="text-xs text-gray-400 hover:text-[#D4AF7A] underline"
+          >
+            Done
+          </button>
+        )}
+        
+        {/* Next status as button */}
         {task.status === "todo" && (
           <button
             onClick={(e) => { e.stopPropagation(); onUpdate(task.id, { status: "in_progress" }); }}
-            className="px-2 py-1 text-xs bg-[#D4AF7A] text-[#1A2332] rounded hover:bg-[#C49A5E]"
+            className="ml-auto px-2 py-1 text-xs bg-[#D4AF7A] text-[#1A2332] rounded hover:bg-[#C49A5E]"
           >
             → In Progress
           </button>
@@ -368,7 +400,7 @@ function TaskCard({ task, projectName, onUpdate, onDelete, currentUser, onViewDe
         {task.status === "in_progress" && (
           <button
             onClick={(e) => { e.stopPropagation(); onUpdate(task.id, { status: "review" }); }}
-            className="px-2 py-1 text-xs border border-[#D4AF7A] text-[#D4AF7A] rounded hover:bg-[#D4AF7A]/10"
+            className="ml-auto px-2 py-1 text-xs border border-[#D4AF7A] text-[#D4AF7A] rounded hover:bg-[#D4AF7A]/10"
           >
             → Review
           </button>
@@ -376,7 +408,7 @@ function TaskCard({ task, projectName, onUpdate, onDelete, currentUser, onViewDe
         {task.status === "review" && (
           <button
             onClick={(e) => { e.stopPropagation(); onUpdate(task.id, { status: "done" }); }}
-            className="px-2 py-1 text-xs bg-[#1A2332] text-white rounded hover:bg-[#2A3342]"
+            className="ml-auto px-2 py-1 text-xs bg-[#1A2332] text-white rounded hover:bg-[#2A3342]"
           >
             → Done
           </button>
@@ -1334,7 +1366,6 @@ export default function Office() {
                     onUpdateTask={updateTask}
                     onDeleteTask={deleteTask}
                     currentUser={currentUser}
-                    onViewDetail={openTaskDetail}
                   />
                 )}
               </motion.div>

@@ -1333,22 +1333,22 @@ export default function Office() {
                     </button>
                   </div>
                 ) : (
-                  <div className="bg-white dark:bg-[#1A2332] rounded-2xl border border-gray-100 dark:border-white/10 overflow-hidden">
+                  <div className="bg-white dark:bg-[#1A2332] rounded-xl border border-gray-200 dark:border-white/10 shadow-sm">
                     <table className="w-full">
-                      <thead className="bg-gray-50 dark:bg-white/5">
+                      <thead className="bg-[#F5F6F8] dark:bg-white/5">
                         <tr>
-                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Task</th>
-                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Project</th>
-                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Status</th>
-                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Priority</th>
-                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Assignee</th>
-                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Due Date</th>
-                          <th className="text-center px-4 py-3 text-xs font-semibold text-gray-400 uppercase">Actions</th>
+                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Task</th>
+                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Project</th>
+                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Status</th>
+                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Priority</th>
+                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Assignee</th>
+                          <th className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Due Date</th>
+                          <th className="text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-100 dark:divide-white/10">
                         {(selectedProject ? tasks.filter(t => t.project_id === selectedProject) : tasks).map(task => (
-                          <tr key={task.id} className="hover:bg-gray-50 dark:hover:bg-white/5">
+                          <tr key={task.id} className="hover:bg-[#F5F6F8] dark:hover:bg-white/5 transition-colors">
                             <td className="px-4 py-3">
                               <div className="flex items-center gap-3">
                                 <button
@@ -1356,23 +1356,25 @@ export default function Office() {
                                     const newStatus = task.status === "done" ? "todo" : "done";
                                     updateTask(task.id, { status: newStatus });
                                   }}
-                                  className={`w-5 h-5 rounded-md border-2 flex items-center justify-center ${
-                                    task.status === "done" ? "bg-green-500 border-green-500" : "border-gray-300"
+                                  className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
+                                    task.status === "done" ? "bg-[#D4AF7A] border-[#D4AF7A]" : "border-gray-300 hover:border-[#D4AF7A]"
                                   }`}
                                 >
-                                  {task.status === "done" && <CheckCircle className="w-3 h-3 text-white" />}
+                                  {task.status === "done" && <CheckCircle className="w-2.5 h-2.5 text-white" />}
                                 </button>
-                                <span className={`text-sm font-medium text-[#1A2332] dark:text-white ${task.status === "done" ? "line-through opacity-60" : ""}`}>
+                                <span className={`text-sm text-gray-800 dark:text-white ${task.status === "done" ? "line-through opacity-50" : "font-medium"}`}>
                                   {task.title}
                                 </span>
                               </div>
                             </td>
-                            <td className="px-4 py-3 text-sm text-[#D4AF7A]">{projects.find(p => p.id === task.project_id)?.name || "-"}</td>
+                            <td className="px-4 py-3">
+                              <span className="text-sm text-[#D4AF7A] font-medium">{projects.find(p => p.id === task.project_id)?.name || "-"}</span>
+                            </td>
                             <td className="px-4 py-3">
                               <select
                                 value={task.status}
                                 onChange={(e) => updateTask(task.id, { status: e.target.value })}
-                                className={`text-xs px-2 py-1 rounded-full border-0 cursor-pointer ${
+                                className={`text-xs px-2 py-1.5 rounded-md border-0 cursor-pointer font-medium ${
                                   task.status === "todo" ? "bg-gray-100 text-gray-600" :
                                   task.status === "in_progress" ? "bg-blue-100 text-blue-600" :
                                   task.status === "review" ? "bg-amber-100 text-amber-600" :
@@ -1389,7 +1391,7 @@ export default function Office() {
                               <select
                                 value={task.priority}
                                 onChange={(e) => updateTask(task.id, { priority: e.target.value })}
-                                className="text-xs px-2 py-1 rounded border border-gray-200 dark:border-white/20 text-gray-500"
+                                className="text-xs px-2 py-1.5 rounded-md border border-gray-200 dark:border-white/20 text-gray-600 dark:text-gray-300 bg-white dark:bg-transparent"
                               >
                                 <option value="low">Low</option>
                                 <option value="medium">Medium</option>
@@ -1401,8 +1403,8 @@ export default function Office() {
                               <input
                                 value={task.assignee || ""}
                                 onChange={(e) => updateTask(task.id, { assignee: e.target.value })}
-                                placeholder="Assignee"
-                                className="text-sm px-2 py-1 border border-gray-200 dark:border-white/20 rounded bg-transparent text-gray-600 dark:text-gray-300 w-24"
+                                placeholder="Add"
+                                className="text-sm px-2 py-1.5 border border-gray-200 dark:border-white/20 rounded-md bg-transparent text-gray-600 dark:text-gray-300 w-28 placeholder-gray-300"
                               />
                             </td>
                             <td className="px-4 py-3">
@@ -1410,15 +1412,15 @@ export default function Office() {
                                 type="date"
                                 value={task.due_date || ""}
                                 onChange={(e) => updateTask(task.id, { due_date: e.target.value })}
-                                className="text-xs px-2 py-1 border border-gray-200 dark:border-white/20 rounded bg-transparent text-gray-400"
+                                className="text-xs px-2 py-1.5 border border-gray-200 dark:border-white/20 rounded-md bg-transparent text-gray-500"
                               />
                             </td>
                             <td className="px-4 py-3">
-                              <div className="flex items-center justify-center gap-2">
-                                <button onClick={() => openTaskDetail(task)} className="p-1 text-gray-400 hover:text-[#D4AF7A]">
+                              <div className="flex items-center justify-center gap-1">
+                                <button onClick={() => openTaskDetail(task)} className="p-1.5 text-gray-400 hover:text-[#D4AF7A] hover:bg-[#D4AF7A]/10 rounded transition-colors">
                                   <Eye className="w-4 h-4" />
                                 </button>
-                                <button onClick={() => deleteTask(task.id)} className="p-1 text-gray-400 hover:text-red-500">
+                                <button onClick={() => deleteTask(task.id)} className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors">
                                   <Trash2 className="w-4 h-4" />
                                 </button>
                               </div>

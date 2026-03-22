@@ -910,7 +910,7 @@ export default function Office() {
           </div>
 
           {/* Main Content */}
-          <div className={`${sidebarOpen ? 'ml-64' : 'ml-16'} flex-1 p-4 lg:p-8 transition-all duration-300 min-h-screen`}>
+          <div className={`${sidebarOpen ? 'ml-64' : 'ml-16'} flex-1 p-4 lg:p-8 transition-all duration-300 min-h-screen relative z-30 bg-[#F2F2F0] dark:bg-[#0F1419]`}>
 
             {/* ── PROJECTS TAB ── */}
             {tab === "projects" && (

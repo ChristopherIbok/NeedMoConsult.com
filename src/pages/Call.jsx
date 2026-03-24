@@ -7,15 +7,65 @@ import {
   RealtimeKitProvider,
 } from "@cloudflare/realtimekit-react";
 import { RtkMeeting } from "@cloudflare/realtimekit-react-ui";
-import { Square, Circle } from "lucide-react";
+import { Clock, Users } from "lucide-react";
 
 const CLOUDFLARE_MEETING_ID = import.meta.env.VITE_CLOUDFLARE_MEETING_ID;
 
-function MeetingUI({ isHost }) {
+function MeetingInfoBar({ meetingTime, participantCount }) {
+  const [timeLeft, setTimeLeft] = useState("");
+
+  useEffect(() => {
+    if (!meetingTime) return;
+    
+    const updateTimer = () => {
+      const start = new Date(meetingTime);
+      const now = new Date();
+      const diff = Math.floor((now - start) / 1000);
+      
+      if (diff < 0) {
+        setTimeLeft("Starting soon");
+      } else {
+        const hours = Math.floor(diff / 3600);
+        const minutes = Math.floor((diff % 3600) / 60);
+        const seconds = diff % 60;
+        
+        if (hours > 0) {
+          setTimeLeft(`${hours}h ${minutes}m`);
+        } else if (minutes > 0) {
+          setTimeLeft(`${minutes}m ${seconds}s`);
+        } else {
+          setTimeLeft(`${seconds}s`);
+        }
+      }
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, [meetingTime]);
+
+  return (
+    <div className="absolute top-4 left-4 flex items-center gap-4 z-50">
+      <div className="flex items-center gap-2 bg-black/50 px-4 py-2 rounded-lg">
+        <Clock className="w-4 h-4 text-[#D4AF7A]" />
+        <span className="text-white text-sm font-medium">{timeLeft || "In progress"}</span>
+      </div>
+      {participantCount !== undefined && (
+        <div className="flex items-center gap-2 bg-black/50 px-4 py-2 rounded-lg">
+          <Users className="w-4 h-4 text-[#D4AF7A]" />
+          <span className="text-white text-sm font-medium">{participantCount} participants</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MeetingUI({ isHost, meetingTime }) {
   const { meeting } = useRealtimeKitMeeting();
   const [viewMode, setViewMode] = useState("grid");
   const [isRecording, setIsRecording] = useState(false);
   const [recordingState, setRecordingState] = useState("IDLE");
+  const [participantCount, setParticipantCount] = useState(0);
 
   useEffect(() => {
     if (meeting?.recording) {
@@ -52,6 +102,7 @@ function MeetingUI({ isHost }) {
 
   return (
     <div className="w-full h-screen bg-[#0D1117]">
+      <MeetingInfoBar meetingTime={meetingTime} participantCount={participantCount} />
       <RtkMeeting
         mode="fixed"
         size="xl"
@@ -60,7 +111,7 @@ function MeetingUI({ isHost }) {
         gridLayout={viewMode === "spotlight" ? "column" : "row"}
       />
       {isHost && (
-        <div className="absolute top-4 right-4 flex flex-col gap-2 z-50">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 z-50">
           <div className="flex gap-2">
             <button
               onClick={() => setViewMode("grid")}
@@ -79,32 +130,15 @@ function MeetingUI({ isHost }) {
               Spotlight
             </button>
           </div>
-          <div className="flex items-center justify-center bg-black/50 p-2 rounded-lg">
-            {!isRecording ? (
-              <button
-                onClick={startRecording}
-                className="flex items-center gap-2 px-3 py-1.5 bg-red-500 hover:bg-red-600 rounded text-white text-sm font-medium"
-                title="Start Recording"
-              >
-                <Circle className="w-4 h-4 fill-current" />
-                Record
-              </button>
-            ) : (
-              <button
-                onClick={stopRecording}
-                className="flex items-center gap-2 px-3 py-1.5 bg-red-600 hover:bg-red-700 rounded text-white text-sm font-medium animate-pulse"
-                title="Stop Recording"
-              >
-                <Square className="w-4 h-4" />
-                Stop
-              </button>
-            )}
-          </div>
-          {isRecording && (
-            <span className="text-red-500 text-xs font-medium text-center bg-black/50 py-1 rounded">
-              REC
-            </span>
-          )}
+          <button
+            onClick={isRecording ? stopRecording : startRecording}
+            className={`w-4 h-4 rounded-full transition-colors ${
+              isRecording 
+                ? "bg-red-500 animate-pulse" 
+                : "bg-red-500/50 hover:bg-red-500"
+            }`}
+            title={isRecording ? "Stop Recording" : "Start Recording"}
+          />
         </div>
       )}
     </div>
@@ -115,6 +149,7 @@ export default function Call() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const role = searchParams.get("role") || "participant";
+  const meetingTime = searchParams.get("time") || null;
   const [authToken, setAuthToken] = useState(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -206,7 +241,7 @@ export default function Call() {
     return (
       <main className="fixed inset-0 bg-white dark:bg-[#0D1117] overflow-hidden">
         <RealtimeKitProvider value={client}>
-          <MeetingUI isHost={isHost} />
+          <MeetingUI isHost={isHost} meetingTime={meetingTime} />
         </RealtimeKitProvider>
       </main>
     );

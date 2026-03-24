@@ -7,8 +7,7 @@ import { pagesConfig } from "./pages.config";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import PageNotFound from "./lib/PageNotFound";
 import { AuthProvider } from "@/lib/AuthContext";
-import { Suspense } from "react";
-import { lazyWithRetry } from "@/utils/lazyWithRetry";
+import { Suspense, lazy } from "react";
 
 const PageLoader = () => (
   <div className="fixed inset-0 flex items-center justify-center">
@@ -18,7 +17,7 @@ const PageLoader = () => (
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
-const MainPage = mainPageKey ? lazyWithRetry(() => import(`./pages/${mainPageKey}.jsx`)) : null;
+const MainPage = mainPageKey ? lazy(() => import(`./pages/${mainPageKey}.jsx`)) : null;
 
 const LayoutWrapper = ({ children, currentPageName }) => {
   if (currentPageName === "Call") {

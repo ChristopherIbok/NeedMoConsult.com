@@ -33,10 +33,36 @@ export default function Call() {
   const role = searchParams.get("role") || "participant";
   const [authToken, setAuthToken] = useState(null);
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [verified, setVerified] = useState(false);
 
   const [client, initClient] = useRealtimeKitClient();
+
+  const handleVerify = async (e) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const data = await request("/public/realtimekit/verify", {
+        method: "POST",
+        body: JSON.stringify({ email: email.trim().toLowerCase() }),
+      });
+      if (data.verified) {
+        setVerified(true);
+        setName(data.name || "");
+      } else {
+        setError("Email not found in our contacts. Please contact us first.");
+      }
+    } catch (err) {
+      setError("Failed to verify email. Please try again.");
+    }
+    setLoading(false);
+  };
 
   const handleJoin = async (e) => {
     e.preventDefault();
@@ -51,7 +77,8 @@ export default function Call() {
         body: JSON.stringify({ 
           name: name.trim(), 
           meetingId: CLOUDFLARE_MEETING_ID,
-          role: role 
+          role: role,
+          email: verified ? email.trim().toLowerCase() : undefined
         }),
       });
       setAuthToken(data.authToken);
@@ -115,34 +142,61 @@ export default function Call() {
             {isHost ? "Start Meeting (Host)" : "Join Strategy Call"}
           </h1>
           <p className="text-gray-500 dark:text-gray-400">
-            {isHost ? "You have host privileges for this meeting" : "Enter your name to join the meeting"}
+            {isHost ? "You have host privileges for this meeting" : "Enter your email to join the meeting"}
           </p>
         </div>
 
-        <form onSubmit={handleJoin} className="space-y-4">
-          <div>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your name"
-              className="w-full bg-gray-50 dark:bg-[#0D1117] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-[#1A2332] dark:text-white text-center text-lg outline-none focus:border-[#D4AF7A] transition-colors"
-              autoFocus
-            />
-          </div>
+        {!isHost && !verified ? (
+          <form onSubmit={handleVerify} className="space-y-4">
+            <div>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                className="w-full bg-gray-50 dark:bg-[#0D1117] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-[#1A2332] dark:text-white text-center text-lg outline-none focus:border-[#D4AF7A] transition-colors"
+                autoFocus
+              />
+            </div>
 
-          {error && (
-            <p className="text-red-500 text-sm text-center">{error}</p>
-          )}
+            {error && (
+              <p className="text-red-500 text-sm text-center">{error}</p>
+            )}
 
-          <button
-            type="submit"
-            disabled={!name.trim() || loading}
-            className="w-full bg-[#D4AF7A] hover:bg-[#C49A5E] disabled:opacity-50 disabled:cursor-not-allowed text-[#1A2332] font-semibold py-3 rounded-xl transition-colors text-lg"
-          >
-            {loading ? "Connecting..." : isHost ? "Start Meeting" : "Join Meeting"}
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={!email.trim() || loading}
+              className="w-full bg-[#D4AF7A] hover:bg-[#C49A5E] disabled:opacity-50 disabled:cursor-not-allowed text-[#1A2332] font-semibold py-3 rounded-xl transition-colors text-lg"
+            >
+              {loading ? "Verifying..." : "Verify Email"}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleJoin} className="space-y-4">
+            <div>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your name"
+                className="w-full bg-gray-50 dark:bg-[#0D1117] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-[#1A2332] dark:text-white text-center text-lg outline-none focus:border-[#D4AF7A] transition-colors"
+                autoFocus
+              />
+            </div>
+
+            {error && (
+              <p className="text-red-500 text-sm text-center">{error}</p>
+            )}
+
+            <button
+              type="submit"
+              disabled={!name.trim() || loading}
+              className="w-full bg-[#D4AF7A] hover:bg-[#C49A5E] disabled:opacity-50 disabled:cursor-not-allowed text-[#1A2332] font-semibold py-3 rounded-xl transition-colors text-lg"
+            >
+              {loading ? "Connecting..." : isHost ? "Start Meeting" : "Join Meeting"}
+            </button>
+          </form>
+        )}
 
         <button
           onClick={() => navigate("/")}

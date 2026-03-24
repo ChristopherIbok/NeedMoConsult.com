@@ -271,3 +271,23 @@ async def realtimekit_join(req: RealtimeKitJoinRequest):
     except Exception as e:
         logger.error(f"RealtimeKit join error: {e}")
         raise HTTPException(status_code=500, detail="Failed to join meeting")
+
+
+class RealtimeKitVerifyRequest(BaseModel):
+    email: str
+
+@router.post("/realtimekit/verify")
+async def realtimekit_verify(req: RealtimeKitVerifyRequest):
+    """Verify if email exists in contacts before joining meeting."""
+    db = next(get_db())
+    try:
+        contact = db.query(models.Contact).filter(
+            models.Contact.email.ilike(req.email)
+        ).first()
+        
+        if contact:
+            return {"verified": True, "name": contact.name}
+        return {"verified": False}
+    except Exception as e:
+        logger.error(f"RealtimeKit verify error: {e}")
+        return {"verified": False}

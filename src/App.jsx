@@ -19,12 +19,16 @@ const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
 const MainPage = mainPageKey ? lazy(() => import(`@/pages/${mainPageKey}`)) : null;
 
-const LayoutWrapper = ({ children, currentPageName }) =>
-  Layout ? (
+const LayoutWrapper = ({ children, currentPageName }) => {
+  if (currentPageName === "Call") {
+    return <>{children}</>;
+  }
+  return Layout ? (
     <Layout currentPageName={currentPageName}>{children}</Layout>
   ) : (
     <>{children}</>
   );
+};
 
 const AppRoutes = () => {
   return (

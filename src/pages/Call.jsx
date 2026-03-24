@@ -101,7 +101,7 @@ function MeetingUI({ isHost, meetingTime }) {
   }
 
   return (
-    <div className="w-full h-[calc(100vh-64px)] bg-[#0D1117] relative">
+    <div className="w-full h-screen bg-[#0D1117] relative">
       <MeetingInfoBar meetingTime={meetingTime} participantCount={participantCount} />
       <div className="w-full h-full">
         <RtkMeeting
@@ -131,15 +131,13 @@ function MeetingUI({ isHost, meetingTime }) {
               Spotlight
             </button>
           </div>
-          <button
-            onClick={isRecording ? stopRecording : startRecording}
-            className={`w-4 h-4 rounded-full transition-colors ${
-              isRecording 
-                ? "bg-red-500 animate-pulse" 
-                : "bg-red-500/50 hover:bg-red-500"
-            }`}
-            title={isRecording ? "Stop Recording" : "Start Recording"}
-          />
+          {isRecording && (
+            <button
+              onClick={stopRecording}
+              className="w-4 h-4 rounded-full bg-red-500 animate-pulse transition-colors"
+              title="Stop Recording"
+            />
+          )}
         </div>
       )}
     </div>

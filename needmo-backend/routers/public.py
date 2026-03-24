@@ -214,6 +214,12 @@ async def create_room():
 class RealtimeKitJoinRequest(BaseModel):
     name: str
     meetingId: str
+    role: Optional[str] = "participant"
+
+PRESET_MAP = {
+    "host": "group-call-host",
+    "participant": "group-call-participant",
+}
 
 @router.post("/realtimekit/join")
 async def realtimekit_join(req: RealtimeKitJoinRequest):
@@ -230,6 +236,8 @@ async def realtimekit_join(req: RealtimeKitJoinRequest):
             detail="Cloudflare RealtimeKit not configured. Add CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_APP_ID, and CLOUDFLARE_API_TOKEN to backend environment."
         )
     
+    preset_name = PRESET_MAP.get(req.role, "group-call-participant")
+    
     try:
         async with httpx.AsyncClient() as client:
             response = await client.post(
@@ -240,7 +248,7 @@ async def realtimekit_join(req: RealtimeKitJoinRequest):
                 },
                 json={
                     "name": req.name,
-                    "preset_name": "group-call-host",
+                    "preset_name": preset_name,
                     "custom_participant_id": req.name,
                 },
                 timeout=15.0,

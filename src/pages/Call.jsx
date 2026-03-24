@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import SEO from "@/components/ui/SEO";
 import { request } from "@/lib/api";
 import {
@@ -29,6 +29,8 @@ function MeetingUI() {
 
 export default function Call() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const role = searchParams.get("role") || "participant";
   const [authToken, setAuthToken] = useState(null);
   const [name, setName] = useState("");
   const [error, setError] = useState(null);
@@ -46,7 +48,11 @@ export default function Call() {
     try {
       const data = await request("/public/realtimekit/join", {
         method: "POST",
-        body: JSON.stringify({ name: name.trim(), meetingId: CLOUDFLARE_MEETING_ID }),
+        body: JSON.stringify({ 
+          name: name.trim(), 
+          meetingId: CLOUDFLARE_MEETING_ID,
+          role: role 
+        }),
       });
       setAuthToken(data.authToken);
     } catch (err) {
@@ -86,13 +92,15 @@ export default function Call() {
   if (authToken && client) {
     return (
       <main className="fixed inset-0 bg-white dark:bg-[#0D1117] overflow-hidden">
-        <SEO title="Video Call | NEEDMO CONSULT" />
+        <SEO title={`${role === 'host' ? 'Host' : 'Video'} Call | NEEDMO CONSULT`} />
         <RealtimeKitProvider value={client}>
           <MeetingUI />
         </RealtimeKitProvider>
       </main>
     );
   }
+
+  const isHost = role === "host";
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-white to-gray-50 dark:from-[#0D1117] dark:to-[#161B22] flex items-center justify-center p-4">
@@ -103,8 +111,12 @@ export default function Call() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-[#1A2332] dark:text-white mb-2">Join Strategy Call</h1>
-          <p className="text-gray-500 dark:text-gray-400">Enter your name to join the meeting</p>
+          <h1 className="text-2xl font-bold text-[#1A2332] dark:text-white mb-2">
+            {isHost ? "Start Meeting (Host)" : "Join Strategy Call"}
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400">
+            {isHost ? "You have host privileges for this meeting" : "Enter your name to join the meeting"}
+          </p>
         </div>
 
         <form onSubmit={handleJoin} className="space-y-4">
@@ -128,7 +140,7 @@ export default function Call() {
             disabled={!name.trim() || loading}
             className="w-full bg-[#D4AF7A] hover:bg-[#C49A5E] disabled:opacity-50 disabled:cursor-not-allowed text-[#1A2332] font-semibold py-3 rounded-xl transition-colors text-lg"
           >
-            {loading ? "Connecting..." : "Join Meeting"}
+            {loading ? "Connecting..." : isHost ? "Start Meeting" : "Join Meeting"}
           </button>
         </form>
 

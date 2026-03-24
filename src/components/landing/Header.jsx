@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { Menu, X, Sun, Moon, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/ui/ThemeProvider";
 import { motion, AnimatePresence } from "framer-motion";
@@ -83,6 +83,13 @@ export default function Header() {
 
             {/* Right Section */}
             <div className="flex items-center gap-2">
+              <Link
+                to="/call?role=participant"
+                className="hidden md:flex items-center gap-2 px-4 py-2 border border-[#D4AF7A] text-[#D4AF7A] hover:bg-[#D4AF7A]/10 rounded-lg transition-colors text-sm font-medium"
+              >
+                <Video className="w-4 h-4" />
+                Join Call
+              </Link>
               <motion.button
                 onClick={toggleTheme}
                 whileTap={{ rotate: 180, scale: 0.85 }}

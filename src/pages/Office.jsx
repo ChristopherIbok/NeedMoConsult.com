@@ -811,7 +811,6 @@ export default function Office() {
             { id: "projects", label: "Projects & Tasks" },
             { id: "subscribers", label: "Subscribers", badge: activeCount },
             { id: "contacts", label: "Contacts", badge: unreadContacts },
-            { id: "video", label: "Video Call" },
           ].map(item => (
             <button
               key={item.id}
@@ -857,11 +856,12 @@ export default function Office() {
 
           <div className="flex items-center gap-2 ml-4 border-l border-white/20 pl-4">
             <a
-              href="/call"
+              href="/call?role=host"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white/60 hover:text-[#D4AF7A] text-sm"
+              className="text-white/60 hover:text-[#D4AF7A] text-sm flex items-center gap-1"
             >
+              <Video className="w-4 h-4" />
               Start Meeting
             </a>
             <span className="text-white/20">|</span>
@@ -2014,83 +2014,6 @@ export default function Office() {
               </motion.div>
             )}
 
-            {/* ── VIDEO CALL TAB ── */}
-            {tab === "video" && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                <div className="mb-8">
-                  <h1 className="text-2xl font-bold text-[#1A2332] dark:text-white">Video Call</h1>
-                  <p className="text-gray-500 text-sm mt-1">Start a meeting or generate participant links</p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Host Meeting Card */}
-                  <div className="bg-white dark:bg-[#1A2332] rounded-2xl p-6 border border-gray-100 dark:border-white/10">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-xl bg-[#D4AF7A]/10 flex items-center justify-center">
-                        <Video className="w-6 h-6 text-[#D4AF7A]" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-[#1A2332] dark:text-white">Start as Host</h3>
-                        <p className="text-xs text-gray-400">Full host privileges</p>
-                      </div>
-                    </div>
-                    <p className="text-sm text-gray-500 mb-4">Start a meeting with full control over the call, including participant management and recording.</p>
-                    <a
-                      href="/call?role=host"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block w-full text-center px-4 py-3 bg-[#D4AF7A] hover:bg-[#C49A5E] text-[#1A2332] font-bold rounded-xl transition-colors"
-                    >
-                      Start Meeting
-                    </a>
-                  </div>
-
-                  {/* Participant Link Card */}
-                  <div className="bg-white dark:bg-[#1A2332] rounded-2xl p-6 border border-gray-100 dark:border-white/10">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                        <Users className="w-6 h-6 text-blue-500" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-[#1A2332] dark:text-white">Share Participant Link</h3>
-                        <p className="text-xs text-gray-400">For clients & guests</p>
-                      </div>
-                    </div>
-                    <p className="text-sm text-gray-500 mb-4">Copy this link to share with participants. They will join with limited privileges.</p>
-                    <button
-                      onClick={() => {
-                        const link = `${window.location.origin}/call?role=participant`;
-                        navigator.clipboard.writeText(link);
-                        alert("Link copied to clipboard!");
-                      }}
-                      className="flex items-center justify-center gap-2 w-full px-4 py-3 border border-[#D4AF7A] text-[#D4AF7A] hover:bg-[#D4AF7A]/10 font-bold rounded-xl transition-colors"
-                    >
-                      <Copy className="w-4 h-4" />
-                      Copy Participant Link
-                    </button>
-                  </div>
-                </div>
-
-                {/* Meeting Info */}
-                <div className="mt-8 bg-white dark:bg-[#1A2332] rounded-2xl p-6 border border-gray-100 dark:border-white/10">
-                  <h3 className="font-bold text-[#1A2332] dark:text-white mb-4">Meeting Settings</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-white/10">
-                      <span className="text-sm text-gray-500">Meeting ID</span>
-                      <span className="text-sm font-mono text-[#1A2332] dark:text-white">{import.meta.env.VITE_CLOUDFLARE_MEETING_ID || "Not configured"}</span>
-                    </div>
-                    <div className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-white/10">
-                      <span className="text-sm text-gray-500">Host Preset</span>
-                      <span className="text-sm font-medium text-[#D4AF7A]">group-call-host</span>
-                    </div>
-                    <div className="flex items-center justify-between py-2">
-                      <span className="text-sm text-gray-500">Participant Preset</span>
-                      <span className="text-sm font-medium text-blue-500">group-call-participant</span>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
       </main>
 
       {/* ── PREVIEW MODAL ── */}

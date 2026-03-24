@@ -101,17 +101,18 @@ function MeetingUI({ isHost, meetingTime }) {
   }
 
   return (
-    <div className="w-full h-screen bg-[#0D1117]">
+    <div className="w-full h-[calc(100vh-64px)] bg-[#0D1117] relative">
       <MeetingInfoBar meetingTime={meetingTime} participantCount={participantCount} />
-      <RtkMeeting
-        mode="fixed"
-        size="xl"
-        meeting={meeting}
-        showSetupScreen={true}
-        gridLayout={viewMode === "spotlight" ? "column" : "row"}
-      />
+      <div className="w-full h-full">
+        <RtkMeeting
+          mode="fill"
+          meeting={meeting}
+          showSetupScreen={true}
+          gridLayout={viewMode === "spotlight" ? "column" : "row"}
+        />
+      </div>
       {isHost && (
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 z-50">
+        <div className="absolute top-4 right-4 flex items-center gap-4 z-50">
           <div className="flex gap-2">
             <button
               onClick={() => setViewMode("grid")}
@@ -239,11 +240,9 @@ export default function Call() {
 
   if (authToken && client) {
     return (
-      <main className="fixed inset-0 bg-white dark:bg-[#0D1117] overflow-hidden">
-        <RealtimeKitProvider value={client}>
-          <MeetingUI isHost={isHost} meetingTime={meetingTime} />
-        </RealtimeKitProvider>
-      </main>
+      <RealtimeKitProvider value={client}>
+        <MeetingUI isHost={isHost} meetingTime={meetingTime} />
+      </RealtimeKitProvider>
     );
   }
 

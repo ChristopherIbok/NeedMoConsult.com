@@ -11,19 +11,43 @@ import { RtkMeeting } from "@cloudflare/realtimekit-react-ui";
 
 const CLOUDFLARE_MEETING_ID = import.meta.env.VITE_CLOUDFLARE_MEETING_ID;
 
-function MeetingUI() {
+function MeetingUI({ isHost }) {
   const { meeting } = useRealtimeKitMeeting();
+  const [viewMode, setViewMode] = useState("grid");
 
   if (!meeting) {
     return null;
   }
 
   return (
-    <RtkMeeting
-      mode="fill"
-      meeting={meeting}
-      showSetupScreen={true}
-    />
+    <div className="relative">
+      <RtkMeeting
+        mode="fill"
+        meeting={meeting}
+        showSetupScreen={true}
+        gridLayout={viewMode === "spotlight" ? "column" : "row"}
+      />
+      {isHost && (
+        <div className="absolute top-4 right-4 flex gap-2 z-50">
+          <button
+            onClick={() => setViewMode("grid")}
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              viewMode === "grid" ? "bg-[#D4AF7A] text-[#1A2332]" : "bg-black/50 text-white hover:bg-black/70"
+            }`}
+          >
+            Gallery
+          </button>
+          <button
+            onClick={() => setViewMode("spotlight")}
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              viewMode === "spotlight" ? "bg-[#D4AF7A] text-[#1A2332]" : "bg-black/50 text-white hover:bg-black/70"
+            }`}
+          >
+            Spotlight
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -97,6 +121,8 @@ export default function Call() {
     }
   }, [authToken, initClient]);
 
+  const isHost = role === "host";
+
   if (!CLOUDFLARE_MEETING_ID) {
     return (
       <main className="min-h-screen bg-white dark:bg-[#0D1117] flex items-center justify-center p-4">
@@ -121,13 +147,11 @@ export default function Call() {
       <main className="fixed inset-0 bg-white dark:bg-[#0D1117] overflow-hidden">
         <SEO title={`${role === 'host' ? 'Host' : 'Video'} Call | NEEDMO CONSULT`} />
         <RealtimeKitProvider value={client}>
-          <MeetingUI />
+          <MeetingUI isHost={isHost} />
         </RealtimeKitProvider>
       </main>
     );
   }
-
-  const isHost = role === "host";
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-white to-gray-50 dark:from-[#0D1117] dark:to-[#161B22] flex items-center justify-center p-4">

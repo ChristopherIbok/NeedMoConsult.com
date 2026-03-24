@@ -280,37 +280,12 @@ export default function Call() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [verified, setVerified] = useState(false);
 
   const [client, initClient] = useRealtimeKitClient();
 
-  const handleVerify = async (e) => {
-    e.preventDefault();
-    if (!email.trim()) return;
-
-    setLoading(true);
-    setError(null);
-
-    try {
-      const data = await request("/public/realtimekit/verify", {
-        method: "POST",
-        body: JSON.stringify({ email: email.trim().toLowerCase() }),
-      });
-      if (data.verified) {
-        setVerified(true);
-        setName(data.name || "");
-      } else {
-        setError("Email not found in our contacts. Please contact us first.");
-      }
-    } catch (err) {
-      setError("Failed to verify email. Please try again.");
-    }
-    setLoading(false);
-  };
-
   const handleJoin = async (e) => {
     e.preventDefault();
-    if (!name.trim() || !CLOUDFLARE_MEETING_ID) return;
+    if (!name.trim() || !email.trim() || !CLOUDFLARE_MEETING_ID) return;
 
     setLoading(true);
     setError(null);
@@ -323,7 +298,7 @@ export default function Call() {
           meetingId: CLOUDFLARE_MEETING_ID,
           role: role,
           meetingName: meetingName.trim() || undefined,
-          email: verified ? email.trim().toLowerCase() : undefined
+          email: email.trim().toLowerCase()
         }),
       });
       setAuthToken(data.authToken);
@@ -399,8 +374,19 @@ export default function Call() {
           </p>
         </div>
 
-        {!isHost && !verified ? (
-          <form onSubmit={handleVerify} className="space-y-4">
+        <form onSubmit={handleJoin} className="space-y-4">
+          {isHost && (
+            <div>
+              <input
+                type="text"
+                value={meetingName}
+                onChange={(e) => setMeetingName(e.target.value)}
+                placeholder="Meeting name (optional)"
+                className="w-full bg-gray-50 dark:bg-[#0D1117] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-[#1A2332] dark:text-white text-center text-lg outline-none focus:border-[#D4AF7A] transition-colors"
+              />
+            </div>
+          )}
+          {!isHost && (
             <div>
               <input
                 type="email"
@@ -409,58 +395,34 @@ export default function Call() {
                 placeholder="Enter your email"
                 className="w-full bg-gray-50 dark:bg-[#0D1117] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-[#1A2332] dark:text-white text-center text-lg outline-none focus:border-[#D4AF7A] transition-colors"
                 autoFocus
+                required
               />
             </div>
+          )}
+          <div>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter your name"
+              className="w-full bg-gray-50 dark:bg-[#0D1117] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-[#1A2332] dark:text-white text-center text-lg outline-none focus:border-[#D4AF7A] transition-colors"
+              autoFocus
+              required
+            />
+          </div>
 
-            {error && (
-              <p className="text-red-500 text-sm text-center">{error}</p>
-            )}
+          {error && (
+            <p className="text-red-500 text-sm text-center">{error}</p>
+          )}
 
-            <button
-              type="submit"
-              disabled={!email.trim() || loading}
-              className="w-full bg-[#D4AF7A] hover:bg-[#C49A5E] disabled:opacity-50 disabled:cursor-not-allowed text-[#1A2332] font-semibold py-3 rounded-xl transition-colors text-lg"
-            >
-              {loading ? "Verifying..." : "Verify Email"}
-            </button>
-          </form>
-        ) : (
-          <form onSubmit={handleJoin} className="space-y-4">
-            {isHost && (
-              <div>
-                <input
-                  type="text"
-                  value={meetingName}
-                  onChange={(e) => setMeetingName(e.target.value)}
-                  placeholder="Meeting name (optional)"
-                  className="w-full bg-gray-50 dark:bg-[#0D1117] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-[#1A2332] dark:text-white text-center text-lg outline-none focus:border-[#D4AF7A] transition-colors"
-                />
-              </div>
-            )}
-            <div>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your name"
-                className="w-full bg-gray-50 dark:bg-[#0D1117] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-[#1A2332] dark:text-white text-center text-lg outline-none focus:border-[#D4AF7A] transition-colors"
-                autoFocus
-              />
-            </div>
-
-            {error && (
-              <p className="text-red-500 text-sm text-center">{error}</p>
-            )}
-
-            <button
-              type="submit"
-              disabled={!name.trim() || loading}
-              className="w-full bg-[#D4AF7A] hover:bg-[#C49A5E] disabled:opacity-50 disabled:cursor-not-allowed text-[#1A2332] font-semibold py-3 rounded-xl transition-colors text-lg"
-            >
-              {loading ? "Connecting..." : isHost ? "Start Meeting" : "Join Meeting"}
-            </button>
-          </form>
-        )}
+          <button
+            type="submit"
+            disabled={!name.trim() || loading}
+            className="w-full bg-[#D4AF7A] hover:bg-[#C49A5E] disabled:opacity-50 disabled:cursor-not-allowed text-[#1A2332] font-semibold py-3 rounded-xl transition-colors text-lg"
+          >
+            {loading ? "Connecting..." : isHost ? "Start Meeting" : "Join Meeting"}
+          </button>
+        </form>
 
         <button
           onClick={() => navigate("/")}

@@ -216,6 +216,7 @@ class RealtimeKitJoinRequest(BaseModel):
     meetingId: str
     role: Optional[str] = "participant"
     meetingName: Optional[str] = None
+    email: Optional[str] = None
 
 PRESET_MAP = {
     "host": "group_call_host",
@@ -223,9 +224,16 @@ PRESET_MAP = {
 }
 
 @router.post("/realtimekit/join")
-async def realtimekit_join(req: RealtimeKitJoinRequest):
+async def realtimekit_join(req: RealtimeKitJoinRequest, db: Session = Depends(get_db)):
     """Join a Cloudflare RealtimeKit meeting."""
     import httpx
+    
+    if req.email:
+        existing = db.query(models.Waitlist).filter(models.Waitlist.email == req.email).first()
+        if not existing:
+            entry = models.Waitlist(email=req.email, name=req.name or "")
+            db.add(entry)
+            db.commit()
     
     account_id = os.getenv("CLOUDFLARE_ACCOUNT_ID")
     app_id = os.getenv("CLOUDFLARE_APP_ID")

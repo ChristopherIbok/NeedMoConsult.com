@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import Header from "@/components/landing/Header";
-import Footer from "@/components/landing/Footer";
 import { adminLogin, getWaitlist, sendNewsletter as apiSendNewsletter, sendWelcomeEmail as apiSendWelcomeEmail, getContacts, markContactRead } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 import {

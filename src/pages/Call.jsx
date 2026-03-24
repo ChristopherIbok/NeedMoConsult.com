@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, lazy, Suspense } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { request } from "@/lib/api";
 import {
@@ -8,8 +8,9 @@ import {
 } from "@cloudflare/realtimekit-react";
 import { RtkMeeting } from "@cloudflare/realtimekit-react-ui";
 import RealtimeKitVideoBackgroundTransformer from "@cloudflare/realtimekit-virtual-background";
-import { VideoSettingsModal } from "@/components/ui/VideoSettingsModal";
-import { Clock, Users, ChevronDown, Settings, Video, MoreVertical } from "lucide-react";
+import { Clock, Users, MoreVertical, Video, ChevronDown } from "lucide-react";
+
+const VideoSettingsModal = lazy(() => import("@/components/ui/VideoSettingsModal").then(m => ({ default: m.VideoSettingsModal })));
 
 const CLOUDFLARE_MEETING_ID = import.meta.env.VITE_CLOUDFLARE_MEETING_ID;
 
@@ -254,14 +255,16 @@ function MeetingUI({ isHost, meetingTime, meetingName, meetingId }) {
           )}
         </div>
       )}
-      <VideoSettingsModal
-        open={settingsOpen}
-        onOpenChange={setSettingsOpen}
-        videoBgRef={videoBgRef}
-        meeting={meeting}
-        currentEffect={currentMiddlewareRef}
-        onEffectChange={setVideoEffect}
-      />
+      <Suspense fallback={null}>
+        <VideoSettingsModal
+          open={settingsOpen}
+          onOpenChange={setSettingsOpen}
+          videoBgRef={videoBgRef}
+          meeting={meeting}
+          currentEffect={currentMiddlewareRef}
+          onEffectChange={setVideoEffect}
+        />
+      </Suspense>
     </div>
   );
 }

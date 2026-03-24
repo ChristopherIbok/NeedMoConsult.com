@@ -256,8 +256,9 @@ async def realtimekit_join(req: RealtimeKitJoinRequest):
             
             if response.status_code in (200, 201):
                 data = response.json()
+                logger.info(f"RealtimeKit response data: {data}")
                 if data.get("success"):
-                    auth_token = data["data"].get("token") or data["data"].get("authToken") or data["result"].get("token") or data["result"].get("authToken")
+                    auth_token = data.get("data", {}).get("token") or data.get("data", {}).get("authToken")
                     if auth_token:
                         return {"authToken": auth_token}
                     raise HTTPException(status_code=500, detail="No auth token in response")

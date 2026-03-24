@@ -7,16 +7,13 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
 
   useEffect(() => {
-    // Check if a token already exists in localStorage on page load
     const token = getToken();
     if (token) {
       setIsAuthenticated(true);
       setUser({ token });
     }
-    setIsLoadingAuth(false);
   }, []);
 
   const login = async (email, password) => {
@@ -37,7 +34,6 @@ export const AuthProvider = ({ children }) => {
       value={{
         user,
         isAuthenticated,
-        isLoadingAuth,
         login,
         logout,
       }}

@@ -248,7 +248,10 @@ async def realtimekit_join(req: RealtimeKitJoinRequest):
             if response.status_code == 200:
                 data = response.json()
                 if data.get("success"):
-                    return {"authToken": data["result"]["authToken"]}
+                    auth_token = data["result"].get("authToken") or data["result"].get("token")
+                    if auth_token:
+                        return {"authToken": auth_token}
+                    raise HTTPException(status_code=500, detail="No auth token in response")
                 raise HTTPException(status_code=500, detail="Failed to create participant")
             else:
                 logger.error(f"RealtimeKit participant creation failed: {response.status_code} {response.text}")

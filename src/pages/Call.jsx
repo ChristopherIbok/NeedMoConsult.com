@@ -7,7 +7,7 @@ import {
   RealtimeKitProvider,
 } from "@cloudflare/realtimekit-react";
 import { RtkMeeting } from "@cloudflare/realtimekit-react-ui";
-import { Clock, Users } from "lucide-react";
+import { Clock, Users, ChevronDown } from "lucide-react";
 
 const CLOUDFLARE_MEETING_ID = import.meta.env.VITE_CLOUDFLARE_MEETING_ID;
 
@@ -60,9 +60,10 @@ function MeetingInfoBar({ meetingTime, participantCount }) {
   );
 }
 
-function MeetingUI({ isHost, meetingTime }) {
+function MeetingUI({ isHost, meetingTime, meetingName }) {
   const { meeting } = useRealtimeKitMeeting();
   const [viewMode, setViewMode] = useState("grid");
+  const [viewDropdownOpen, setViewDropdownOpen] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingState, setRecordingState] = useState("IDLE");
   const [participantCount, setParticipantCount] = useState(0);
@@ -112,24 +113,35 @@ function MeetingUI({ isHost, meetingTime }) {
         />
       </div>
       {isHost && (
-        <div className="absolute top-4 right-4 flex items-center gap-4 z-50">
-          <div className="flex gap-2">
+        <div className="absolute top-20 right-4 flex items-center gap-4 z-50">
+          <div className="relative">
             <button
-              onClick={() => setViewMode("grid")}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                viewMode === "grid" ? "bg-[#D4AF7A] text-[#1A2332]" : "bg-black/50 text-white hover:bg-black/70"
-              }`}
+              onClick={() => setViewDropdownOpen(!viewDropdownOpen)}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-black/50 text-white hover:bg-black/70 transition-colors"
             >
-              Gallery
+              View
+              <ChevronDown className={`w-4 h-4 transition-transform ${viewDropdownOpen ? "rotate-180" : ""}`} />
             </button>
-            <button
-              onClick={() => setViewMode("spotlight")}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                viewMode === "spotlight" ? "bg-[#D4AF7A] text-[#1A2332]" : "bg-black/50 text-white hover:bg-black/70"
-              }`}
-            >
-              Spotlight
-            </button>
+            {viewDropdownOpen && (
+              <div className="absolute right-0 top-full mt-1 bg-black/90 rounded-lg overflow-hidden shadow-xl">
+                <button
+                  onClick={() => { setViewMode("grid"); setViewDropdownOpen(false); }}
+                  className={`block w-full px-4 py-2 text-sm text-left transition-colors ${
+                    viewMode === "grid" ? "bg-[#D4AF7A] text-[#1A2332]" : "text-white hover:bg-white/10"
+                  }`}
+                >
+                  Gallery
+                </button>
+                <button
+                  onClick={() => { setViewMode("spotlight"); setViewDropdownOpen(false); }}
+                  className={`block w-full px-4 py-2 text-sm text-left transition-colors ${
+                    viewMode === "spotlight" ? "bg-[#D4AF7A] text-[#1A2332]" : "text-white hover:bg-white/10"
+                  }`}
+                >
+                  Spotlight
+                </button>
+              </div>
+            )}
           </div>
           {isRecording && (
             <button
@@ -151,6 +163,7 @@ export default function Call() {
   const meetingTime = searchParams.get("time") || null;
   const [authToken, setAuthToken] = useState(null);
   const [name, setName] = useState("");
+  const [meetingName, setMeetingName] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -196,6 +209,7 @@ export default function Call() {
           name: name.trim(), 
           meetingId: CLOUDFLARE_MEETING_ID,
           role: role,
+          meetingName: meetingName.trim() || undefined,
           email: verified ? email.trim().toLowerCase() : undefined
         }),
       });
@@ -239,7 +253,7 @@ export default function Call() {
   if (authToken && client) {
     return (
       <RealtimeKitProvider value={client}>
-        <MeetingUI isHost={isHost} meetingTime={meetingTime} />
+        <MeetingUI isHost={isHost} meetingTime={meetingTime} meetingName={meetingName} />
       </RealtimeKitProvider>
     );
   }
@@ -288,6 +302,17 @@ export default function Call() {
           </form>
         ) : (
           <form onSubmit={handleJoin} className="space-y-4">
+            {isHost && (
+              <div>
+                <input
+                  type="text"
+                  value={meetingName}
+                  onChange={(e) => setMeetingName(e.target.value)}
+                  placeholder="Meeting name (optional)"
+                  className="w-full bg-gray-50 dark:bg-[#0D1117] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-[#1A2332] dark:text-white text-center text-lg outline-none focus:border-[#D4AF7A] transition-colors"
+                />
+              </div>
+            )}
             <div>
               <input
                 type="text"

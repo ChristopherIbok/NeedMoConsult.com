@@ -215,6 +215,7 @@ class RealtimeKitJoinRequest(BaseModel):
     name: str
     meetingId: str
     role: Optional[str] = "participant"
+    meetingName: Optional[str] = None
 
 PRESET_MAP = {
     "host": "group_call_host",

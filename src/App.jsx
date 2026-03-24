@@ -7,10 +7,17 @@ import { pagesConfig } from "./pages.config";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import PageNotFound from "./lib/PageNotFound";
 import { AuthProvider, useAuth } from "@/lib/AuthContext";
+import { Suspense, lazy } from "react";
+
+const PageLoader = () => (
+  <div className="fixed inset-0 flex items-center justify-center">
+    <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+  </div>
+);
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
-const MainPage = mainPageKey ? Pages[mainPageKey] : <></>;
+const MainPage = mainPageKey ? lazy(() => import(`@/pages/${mainPageKey}`)) : null;
 
 const LayoutWrapper = ({ children, currentPageName }) =>
   Layout ? (
@@ -31,29 +38,31 @@ const AppRoutes = () => {
   }
 
   return (
-    <Routes>
-      <Route
-        path="/"
-        element={
-          <LayoutWrapper currentPageName={mainPageKey}>
-            <MainPage />
-          </LayoutWrapper>
-        }
-      />
-      {Object.entries(Pages).map(([path, Page]) => (
+    <Suspense fallback={<PageLoader />}>
+      <Routes>
         <Route
-          key={path}
-          path={`/${path}`}
+          path="/"
           element={
-            <LayoutWrapper currentPageName={path}>
-              <Page />
+            <LayoutWrapper currentPageName={mainPageKey}>
+              {MainPage ? <MainPage /> : null}
             </LayoutWrapper>
           }
         />
-      ))}
-      <Route path="/admin" element={<Navigate to="/Office" replace />} />
-      <Route path="*" element={<PageNotFound />} />
-    </Routes>
+        {Object.entries(Pages).map(([path, Page]) => (
+          <Route
+            key={path}
+            path={`/${path}`}
+            element={
+              <LayoutWrapper currentPageName={path}>
+                <Page />
+              </LayoutWrapper>
+            }
+          />
+        ))}
+        <Route path="/admin" element={<Navigate to="/Office" replace />} />
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
+    </Suspense>
   );
 };
 

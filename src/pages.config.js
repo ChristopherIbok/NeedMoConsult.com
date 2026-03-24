@@ -1,83 +1,36 @@
-/**
- * pages.config.js - Page routing configuration
- *
- * This file is AUTO-GENERATED. Do not add imports or modify PAGES manually.
- * Pages are auto-registered when you create files in the ./pages/ folder.
- *
- * THE ONLY EDITABLE VALUE: mainPage
- * This controls which page is the landing page (shown when users visit the app).
- *
- * Example file structure:
- *
- *   import HomePage from './pages/HomePage';
- *   import Dashboard from './pages/Dashboard';
- *   import Settings from './pages/Settings';
- *
- *   export const PAGES = {
- *       "HomePage": HomePage,
- *       "Dashboard": Dashboard,
- *       "Settings": Settings,
- *   }
- *
- *   export const pagesConfig = {
- *       mainPage: "HomePage",
- *       Pages: PAGES,
- *   };
- *
- * Example with Layout (wraps all pages):
- *
- *   import Home from './pages/Home';
- *   import Settings from './pages/Settings';
- *   import __Layout from './Layout.jsx';
- *
- *   export const PAGES = {
- *       "Home": Home,
- *       "Settings": Settings,
- *   }
- *
- *   export const pagesConfig = {
- *       mainPage: "Home",
- *       Pages: PAGES,
- *       Layout: __Layout,
- *   };
- *
- * To change the main page from HomePage to Dashboard, use find_replace:
- *   Old: mainPage: "HomePage",
- *   New: mainPage: "Dashboard",
- *
- * The mainPage value must match a key in the PAGES object exactly.
- */
-import About from "./pages/About";
-import Office from "./pages/Office";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
-import BrandKit from "./pages/BrandKit";
-import Call from "./pages/Call";
-import CaseStudy from "./pages/CaseStudy";
-import Contact from "./pages/Contact";
-import Home from "./pages/Home";
-import Portfolio from "./pages/Portfolio";
-import Pricing from "./pages/Pricing";
-import Services from "./pages/Services";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import TermsOfUse from "./pages/TermsOfUse";
+import { lazy } from "react";
 import __Layout from "./Layout.jsx";
 
+const About = lazy(() => import("./pages/About"));
+const Office = lazy(() => import("./pages/Office"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
+const BrandKit = lazy(() => import("./pages/BrandKit"));
+const Call = lazy(() => import("./pages/Call"));
+const CaseStudy = lazy(() => import("./pages/CaseStudy"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Home = lazy(() => import("./pages/Home"));
+const Portfolio = lazy(() => import("./pages/Portfolio"));
+const Pricing = lazy(() => import("./pages/Pricing"));
+const Services = lazy(() => import("./pages/Services"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const TermsOfUse = lazy(() => import("./pages/TermsOfUse"));
+
 export const PAGES = {
-  About: About,
-  Office: Office,
-  Blog: Blog,
-  BlogPost: BlogPost,
-  BrandKit: BrandKit,
-  Call: Call,
-  CaseStudy: CaseStudy,
-  Contact: Contact,
-  Home: Home,
-  Portfolio: Portfolio,
-  Pricing: Pricing,
-  Services: Services,
-  PrivacyPolicy: PrivacyPolicy,
-  TermsOfUse: TermsOfUse,
+  About,
+  Office,
+  Blog,
+  BlogPost,
+  BrandKit,
+  Call,
+  CaseStudy,
+  Contact,
+  Home,
+  Portfolio,
+  Pricing,
+  Services,
+  PrivacyPolicy,
+  TermsOfUse,
 };
 
 export const pagesConfig = {

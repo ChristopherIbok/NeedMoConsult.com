@@ -808,7 +808,6 @@ export default function Office() {
           {[
             { id: "projects", label: "Projects & Tasks" },
             { id: "subscribers", label: "Subscribers", badge: activeCount },
-            { id: "contacts", label: "Contacts", badge: unreadContacts },
           ].map(item => (
             <button
               key={item.id}
@@ -1951,66 +1950,7 @@ export default function Office() {
               </motion.div>
             )}
 
-            {/* ── CONTACTS TAB ── */}
-            {tab === "contacts" && (
-              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                <div className="flex items-center justify-between mb-8">
-                  <div>
-                    <h1 className="text-2xl font-bold text-[#1A2332] dark:text-white">Contacts</h1>
-                    <p className="text-gray-500 text-sm mt-1">{contacts.length} total · {unreadContacts} unread</p>
-                  </div>
-                  <button onClick={fetchContacts} className="px-4 py-2 bg-[#1A2332] text-white rounded-xl text-sm font-medium hover:bg-[#2A3342] transition-colors">
-                    Refresh
-                  </button>
-                </div>
 
-                <div className="space-y-4">
-                  {contacts.length === 0 ? (
-                    <div className="bg-white dark:bg-[#1A2332] rounded-2xl p-16 text-center border border-gray-100 dark:border-white/10">
-                      <Mail className="w-8 h-8 text-gray-300 mx-auto mb-3" />
-                      <p className="text-gray-400 text-sm">No contact enquiries yet</p>
-                    </div>
-                  ) : contacts.map(contact => (
-                    <div
-                      key={contact.id}
-                      onClick={() => !contact.is_read && markContact(contact.id)}
-                      className={`bg-white dark:bg-[#1A2332] rounded-2xl p-6 border transition-all cursor-pointer ${
-                        contact.is_read
-                          ? "border-gray-100 dark:border-white/10"
-                          : "border-[#D4AF7A]/30 shadow-sm"
-                      }`}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="font-semibold text-[#1A2332] dark:text-white">{contact.name}</h3>
-                            {!contact.is_read && (
-                              <span className="px-2 py-0.5 bg-[#D4AF7A]/10 text-[#D4AF7A] text-xs font-semibold rounded-full">New</span>
-                            )}
-                          </div>
-                          <p className="text-sm text-gray-500 mb-2">{contact.email}</p>
-                          {contact.phone && <p className="text-sm text-gray-400 mb-2">📞 {contact.phone}</p>}
-                          {contact.service_interest && (
-                            <span className="inline-block mb-3 px-3 py-1 bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300 text-xs rounded-full">
-                              {contact.service_interest}
-                            </span>
-                          )}
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-3">{contact.message}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-xs text-gray-400">
-                            {new Date(contact.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                          </p>
-                          <p className="text-xs text-gray-400 mt-1">
-                            {new Date(contact.created_at).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
 
       </main>
 

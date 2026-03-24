@@ -37,7 +37,7 @@ async def submit_contact(req: ContactRequest, background_tasks: BackgroundTasks,
                          db: Session = Depends(get_db)):
     """Save contact form submission and notify admin by email."""
 
-    # Save to DB
+    # Save to contacts table
     entry = models.Contact(
         name=req.name,
         email=req.email,
@@ -46,6 +46,13 @@ async def submit_contact(req: ContactRequest, background_tasks: BackgroundTasks,
         service_interest=req.service_interest,
     )
     db.add(entry)
+    
+    # Also save to waitlist (subscribers)
+    existing = db.query(models.Waitlist).filter(models.Waitlist.email == req.email).first()
+    if not existing:
+        waitlist_entry = models.Waitlist(email=req.email, name=req.name)
+        db.add(waitlist_entry)
+    
     db.commit()
     db.refresh(entry)
 

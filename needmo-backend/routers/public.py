@@ -218,7 +218,7 @@ class RealtimeKitJoinRequest(BaseModel):
 
 PRESET_MAP = {
     "host": "group-call-host",
-    "participant": "group-call-participant",
+    "participant": "d368b3f4-bbc0-455f-af1b-a1f19165b774",
 }
 
 @router.post("/realtimekit/join")

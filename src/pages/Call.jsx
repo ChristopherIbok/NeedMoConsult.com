@@ -44,12 +44,13 @@ export default function Call() {
     setError(null);
 
     try {
-      const data = await request("/realtimekit/join", {
+      const data = await request("/public/realtimekit/join", {
         method: "POST",
         body: JSON.stringify({ name: name.trim(), meetingId: CLOUDFLARE_MEETING_ID }),
       });
       setAuthToken(data.authToken);
     } catch (err) {
+      console.error("RealtimeKit Join Error:", err);
       setError("Failed to join meeting. Please try again.");
       setLoading(false);
     }

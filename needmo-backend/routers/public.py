@@ -241,6 +241,7 @@ async def realtimekit_join(req: RealtimeKitJoinRequest):
                 json={
                     "name": req.name,
                     "preset_name": "group-call-participant",
+                    "custom_participant_id": req.name,
                 },
                 timeout=15.0,
             )

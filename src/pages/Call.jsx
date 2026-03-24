@@ -11,7 +11,7 @@ import { Clock, Users, ChevronDown } from "lucide-react";
 
 const CLOUDFLARE_MEETING_ID = import.meta.env.VITE_CLOUDFLARE_MEETING_ID;
 
-function MeetingInfoBar({ meetingTime, participantCount }) {
+function MeetingInfoBar({ meetingTime, participantCount, showNames }) {
   const [timeLeft, setTimeLeft] = useState("");
 
   useEffect(() => {
@@ -44,13 +44,17 @@ function MeetingInfoBar({ meetingTime, participantCount }) {
     return () => clearInterval(interval);
   }, [meetingTime]);
 
+  if (!showNames) {
+    return null;
+  }
+
   return (
     <div className="absolute top-4 left-4 flex items-center gap-4 z-50">
       <div className="flex items-center gap-2 bg-black/50 px-4 py-2 rounded-lg">
         <Clock className="w-4 h-4 text-[#D4AF7A]" />
         <span className="text-white text-sm font-medium">{timeLeft || "In progress"}</span>
       </div>
-      {participantCount !== undefined && (
+      {showNames && participantCount !== undefined && (
         <div className="flex items-center gap-2 bg-black/50 px-4 py-2 rounded-lg">
           <Users className="w-4 h-4 text-[#D4AF7A]" />
           <span className="text-white text-sm font-medium">{participantCount} participants</span>
@@ -64,6 +68,7 @@ function MeetingUI({ isHost, meetingTime, meetingName }) {
   const { meeting } = useRealtimeKitMeeting();
   const [viewMode, setViewMode] = useState("grid");
   const [viewDropdownOpen, setViewDropdownOpen] = useState(false);
+  const [showNames, setShowNames] = useState(true);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingState, setRecordingState] = useState("IDLE");
   const [participantCount, setParticipantCount] = useState(0);
@@ -103,7 +108,7 @@ function MeetingUI({ isHost, meetingTime, meetingName }) {
 
   return (
     <div className="w-full h-screen bg-[#0D1117] relative">
-      <MeetingInfoBar meetingTime={meetingTime} participantCount={participantCount} />
+      <MeetingInfoBar meetingTime={meetingTime} participantCount={participantCount} showNames={showNames} />
       <div className="w-full h-full">
         <RtkMeeting
           mode="fill"
@@ -139,6 +144,15 @@ function MeetingUI({ isHost, meetingTime, meetingName }) {
                   }`}
                 >
                   Spotlight
+                </button>
+                <div className="border-t border-white/20" />
+                <button
+                  onClick={() => { setShowNames(!showNames); setViewDropdownOpen(false); }}
+                  className={`block w-full px-4 py-2 text-sm text-left transition-colors ${
+                    showNames ? "bg-[#D4AF7A] text-[#1A2332]" : "text-white hover:bg-white/10"
+                  }`}
+                >
+                  {showNames ? "Hide Names" : "Show Names"}
                 </button>
               </div>
             )}

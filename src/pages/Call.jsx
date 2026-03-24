@@ -51,9 +51,10 @@ function MeetingUI({ isHost }) {
   }
 
   return (
-    <div className="relative">
+    <div className="w-full h-screen bg-[#0D1117]">
       <RtkMeeting
-        mode="fill"
+        mode="fixed"
+        size="xl"
         meeting={meeting}
         showSetupScreen={true}
         gridLayout={viewMode === "spotlight" ? "column" : "row"}
@@ -78,7 +79,6 @@ function MeetingUI({ isHost }) {
               Spotlight
             </button>
           </div>
-          
           <div className="flex items-center justify-center bg-black/50 p-2 rounded-lg">
             {!isRecording ? (
               <button

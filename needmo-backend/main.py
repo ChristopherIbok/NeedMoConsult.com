@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import os
 
 from database import engine, Base
+import models
 from routers import auth, public, admin
 
 load_dotenv()

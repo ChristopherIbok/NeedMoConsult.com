@@ -1,231 +1,142 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SEO from "@/components/ui/SEO";
-import { Video, VideoOff, Mic, MicOff, PhoneOff } from "lucide-react";
+import { request } from "@/lib/api";
+import {
+  useRealtimeKitClient,
+  useRealtimeKitMeeting,
+  RealtimeKitProvider,
+} from "@cloudflare/realtimekit-react";
+import { RtkMeeting } from "@cloudflare/realtimekit-react-ui";
 
-const STATIC_ROOM_URL = "https://needmo.daily.co/NeedMoConsultCall";
+const CLOUDFLARE_MEETING_ID = import.meta.env.VITE_CLOUDFLARE_MEETING_ID;
+
+function MeetingUI() {
+  const { meeting } = useRealtimeKitMeeting();
+
+  if (!meeting) {
+    return null;
+  }
+
+  return (
+    <RtkMeeting
+      mode="fill"
+      meeting={meeting}
+      showSetupScreen={true}
+    />
+  );
+}
 
 export default function Call() {
   const navigate = useNavigate();
-  
-  const callFrameRef = useRef(null);
-  const dailyRef = useRef(null);
-  
-  const [status, setStatus] = useState("idle"); // idle, connecting, connected
+  const [authToken, setAuthToken] = useState(null);
   const [name, setName] = useState("");
   const [error, setError] = useState(null);
-  const [isVideoOn, setIsVideoOn] = useState(true);
-  const [isAudioOn, setIsAudioOn] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  const initCall = async (userName) => {
-    setStatus("connecting");
-    setError(null);
-    
-    try {
-      const DailyIframe = await import("@daily-co/daily-js").then(m => m.default);
-      
-      const daily = DailyIframe.createFrame(callFrameRef.current, {
-        iframeStyle: {
-          position: "absolute",
-          top: "0",
-          left: "0",
-          width: "100%",
-          height: "100%",
-          border: "none",
-          borderRadius: "0",
-        },
-        showLeaveButton: true,
-        showFullscreenButton: true,
-        showParticipantsBar: true,
-        userName: userName,
-      });
-      
-      dailyRef.current = daily;
-      
-      daily.on("joined-meeting", () => {
-        setStatus("connected");
-      });
-      
-      daily.on("error", (e) => {
-        console.error("Daily error:", e);
-        setError("Connection error. Please try again.");
-        setStatus("idle");
-      });
-      
-      daily.on("left-meeting", () => {
-        if (dailyRef.current) {
-          dailyRef.current.destroy();
-          dailyRef.current = null;
-        }
-        navigate("/");
-      });
-      
-      await daily.join({ url: STATIC_ROOM_URL });
-    } catch (err) {
-      setError("Failed to connect. Please check your link and try again.");
-      setStatus("idle");
-    }
-  };
+  const [client, initClient] = useRealtimeKitClient();
 
-  const handleJoin = (e) => {
+  const handleJoin = async (e) => {
     e.preventDefault();
-    if (!name.trim()) return;
-    initCall(name.trim());
+    if (!name.trim() || !CLOUDFLARE_MEETING_ID) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const data = await request("/realtimekit/join", {
+        method: "POST",
+        body: JSON.stringify({ name: name.trim(), meetingId: CLOUDFLARE_MEETING_ID }),
+      });
+      setAuthToken(data.authToken);
+    } catch (err) {
+      setError("Failed to join meeting. Please try again.");
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    return () => {
-      if (dailyRef.current) {
-        dailyRef.current.destroy();
-      }
-    };
-  }, []);
-
-  const toggleVideo = () => {
-    if (dailyRef.current) {
-      dailyRef.current.setLocalVideo(!isVideoOn);
-      setIsVideoOn(!isVideoOn);
+    if (authToken) {
+      initClient({ authToken }).then(() => {
+        setLoading(false);
+      });
     }
-  };
+  }, [authToken, initClient]);
 
-  const toggleAudio = () => {
-    if (dailyRef.current) {
-      dailyRef.current.setLocalAudio(!isAudioOn);
-      setIsAudioOn(!isAudioOn);
-    }
-  };
-
-  const leaveCall = () => {
-    if (dailyRef.current) {
-      dailyRef.current.leave();
-      dailyRef.current.destroy();
-      dailyRef.current = null;
-    }
-    navigate("/");
-  };
-
-  // Error State
-  if (error) {
+  if (!CLOUDFLARE_MEETING_ID) {
     return (
       <main className="min-h-screen bg-white dark:bg-[#0D1117] flex items-center justify-center p-4">
         <div className="bg-white dark:bg-[#161B22] rounded-2xl p-8 max-w-md w-full text-center shadow-lg">
-          <div className="w-16 h-16 rounded-full bg-red-100 dark:bg-red-500/20 flex items-center justify-center mx-auto mb-4">
-            <VideoOff className="w-8 h-8 text-red-600 dark:text-red-400" />
-          </div>
-          <h1 className="text-xl font-bold text-[#1A2332] dark:text-white mb-2">Unable to Join Call</h1>
-          <p className="text-gray-500 dark:text-gray-400 mb-6">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="w-full bg-[#D4AF7A] hover:bg-[#C49A5E] text-[#1A2332] font-semibold py-3 rounded-xl transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
-      </main>
-    );
-  }
-
-  // Connecting
-  if (status === "connecting") {
-    return (
-      <main className="min-h-screen bg-white dark:bg-[#0D1117] flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-[#D4AF7A] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-[#1A2332] dark:text-white text-lg">Joining meeting...</p>
-          <p className="text-gray-500 dark:text-gray-400 text-sm mt-2">Setting up video</p>
-        </div>
-      </main>
-    );
-  }
-
-  // Join Form
-  if (status === "idle") {
-    return (
-      <main className="min-h-screen bg-gradient-to-br from-white to-gray-50 dark:from-[#0D1117] dark:to-[#161B22] flex items-center justify-center p-4">
-        <div className="bg-white dark:bg-[#161B22] rounded-3xl p-8 max-w-md w-full shadow-xl">
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-full bg-[#D4AF7A]/10 dark:bg-[#D4AF7A]/20 flex items-center justify-center mx-auto mb-4">
-              <Video className="w-8 h-8 text-[#D4AF7A]" />
-            </div>
-            <h1 className="text-2xl font-bold text-[#1A2332] dark:text-white mb-2">Join Strategy Call</h1>
-            <p className="text-gray-500 dark:text-gray-400">Enter your name to join the meeting</p>
-          </div>
-
-          <form onSubmit={handleJoin} className="space-y-4">
-            <div>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your name"
-                className="w-full bg-gray-50 dark:bg-[#0D1117] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-[#1A2332] dark:text-white text-center text-lg outline-none focus:border-[#D4AF7A] transition-colors"
-                autoFocus
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={!name.trim()}
-              className="w-full bg-[#D4AF7A] hover:bg-[#C49A5E] disabled:opacity-50 disabled:cursor-not-allowed text-[#1A2332] font-semibold py-3 rounded-xl transition-colors text-lg"
-            >
-              Join Meeting
-            </button>
-          </form>
-
+          <h1 className="text-xl font-bold text-[#1A2332] dark:text-white mb-2">Configuration Error</h1>
+          <p className="text-gray-500 dark:text-gray-400 mb-4">
+            Cloudflare meeting ID not configured. Set VITE_CLOUDFLARE_MEETING_ID in your environment.
+          </p>
           <button
             onClick={() => navigate("/")}
-            className="w-full mt-4 text-gray-500 dark:text-gray-400 hover:text-[#1A2332] dark:hover:text-white py-2 transition-colors"
+            className="w-full bg-[#D4AF7A] hover:bg-[#C49A5E] text-[#1A2332] font-semibold py-3 rounded-xl transition-colors"
           >
-            Cancel
+            Go Home
           </button>
         </div>
       </main>
     );
   }
 
-  // Main Call UI
+  if (authToken && client) {
+    return (
+      <main className="fixed inset-0 bg-white dark:bg-[#0D1117] overflow-hidden">
+        <SEO title="Video Call | NEEDMO CONSULT" />
+        <RealtimeKitProvider value={client}>
+          <MeetingUI />
+        </RealtimeKitProvider>
+      </main>
+    );
+  }
+
   return (
-    <main className="fixed inset-0 bg-white dark:bg-[#0D1117] overflow-hidden">
-      <SEO title="Video Call | NEEDMO CONSULT" robots="noindex" />
-      
-      <div ref={callFrameRef} className="absolute inset-0 w-full h-full" />
+    <main className="min-h-screen bg-gradient-to-br from-white to-gray-50 dark:from-[#0D1117] dark:to-[#161B22] flex items-center justify-center p-4">
+      <div className="bg-white dark:bg-[#161B22] rounded-3xl p-8 max-w-md w-full shadow-xl">
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 rounded-full bg-[#D4AF7A]/10 dark:bg-[#D4AF7A]/20 flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-[#D4AF7A]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-[#1A2332] dark:text-white mb-2">Join Strategy Call</h1>
+          <p className="text-gray-500 dark:text-gray-400">Enter your name to join the meeting</p>
+        </div>
 
-      {/* Controls */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 z-50">
+        <form onSubmit={handleJoin} className="space-y-4">
+          <div>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter your name"
+              className="w-full bg-gray-50 dark:bg-[#0D1117] border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-[#1A2332] dark:text-white text-center text-lg outline-none focus:border-[#D4AF7A] transition-colors"
+              autoFocus
+            />
+          </div>
+
+          {error && (
+            <p className="text-red-500 text-sm text-center">{error}</p>
+          )}
+
+          <button
+            type="submit"
+            disabled={!name.trim() || loading}
+            className="w-full bg-[#D4AF7A] hover:bg-[#C49A5E] disabled:opacity-50 disabled:cursor-not-allowed text-[#1A2332] font-semibold py-3 rounded-xl transition-colors text-lg"
+          >
+            {loading ? "Connecting..." : "Join Meeting"}
+          </button>
+        </form>
+
         <button
-          onClick={toggleAudio}
-          className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${
-            isAudioOn 
-              ? "bg-gray-100 dark:bg-[#161B22] hover:bg-gray-200 dark:hover:bg-[#21262D] text-[#1A2332] dark:text-white" 
-              : "bg-red-500 hover:bg-red-600 text-white"
-          }`}
+          onClick={() => navigate("/")}
+          className="w-full mt-4 text-gray-500 dark:text-gray-400 hover:text-[#1A2332] dark:hover:text-white py-2 transition-colors"
         >
-          {isAudioOn ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
+          Cancel
         </button>
-
-        <button
-          onClick={toggleVideo}
-          className={`w-14 h-14 rounded-full flex items-center justify-center transition-all ${
-            isVideoOn 
-              ? "bg-gray-100 dark:bg-[#161B22] hover:bg-gray-200 dark:hover:bg-[#21262D] text-[#1A2332] dark:text-white" 
-              : "bg-red-500 hover:bg-red-600 text-white"
-          }`}
-        >
-          {isVideoOn ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
-        </button>
-
-        <button
-          onClick={leaveCall}
-          className="w-14 h-14 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center transition-all text-white"
-        >
-          <PhoneOff className="w-5 h-5" />
-        </button>
-      </div>
-
-      {/* Info badge */}
-      <div className="absolute top-6 left-6 bg-white/90 dark:bg-[#161B22]/80 backdrop-blur-sm rounded-xl px-4 py-2 z-50">
-        <p className="text-[#1A2332] dark:text-white font-medium">NEEDMO Strategy Call</p>
-        <p className="text-gray-500 dark:text-gray-400 text-sm">{status === "connected" ? "Connected" : "Connecting..."}</p>
       </div>
     </main>
   );

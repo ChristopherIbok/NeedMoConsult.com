@@ -209,3 +209,52 @@ async def create_room():
     except Exception as e:
         logger.error(f"Room creation error: {e}")
         raise HTTPException(status_code=500, detail="Failed to create meeting room")
+
+
+class RealtimeKitJoinRequest(BaseModel):
+    name: str
+    meetingId: str
+
+@router.post("/realtimekit/join")
+async def realtimekit_join(req: RealtimeKitJoinRequest):
+    """Join a Cloudflare RealtimeKit meeting."""
+    import httpx
+    
+    account_id = os.getenv("CLOUDFLARE_ACCOUNT_ID")
+    app_id = os.getenv("CLOUDFLARE_APP_ID")
+    api_token = os.getenv("CLOUDFLARE_API_TOKEN")
+    
+    if not all([account_id, app_id, api_token]):
+        raise HTTPException(
+            status_code=500,
+            detail="Cloudflare RealtimeKit not configured. Add CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_APP_ID, and CLOUDFLARE_API_TOKEN to backend environment."
+        )
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"https://api.cloudflare.com/client/v4/accounts/{account_id}/realtime/kit/{app_id}/meetings/{req.meetingId}/participants",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {api_token}",
+                },
+                json={
+                    "name": req.name,
+                    "preset_name": "group-call-participant",
+                },
+                timeout=15.0,
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("success"):
+                    return {"authToken": data["result"]["authToken"]}
+                raise HTTPException(status_code=500, detail="Failed to create participant")
+            else:
+                logger.error(f"RealtimeKit participant creation failed: {response.status_code} {response.text}")
+                raise HTTPException(status_code=500, detail="Failed to join meeting")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"RealtimeKit join error: {e}")
+        raise HTTPException(status_code=500, detail="Failed to join meeting")

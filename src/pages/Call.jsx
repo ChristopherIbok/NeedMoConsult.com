@@ -9,7 +9,7 @@ import {
 import { RtkMeeting } from "@cloudflare/realtimekit-react-ui";
 import RealtimeKitVideoBackgroundTransformer from "@cloudflare/realtimekit-virtual-background";
 import { VideoSettingsModal } from "@/components/ui/VideoSettingsModal";
-import { Clock, Users, ChevronDown, Settings } from "lucide-react";
+import { Clock, Users, ChevronDown, Settings, Video, MoreVertical } from "lucide-react";
 
 const CLOUDFLARE_MEETING_ID = import.meta.env.VITE_CLOUDFLARE_MEETING_ID;
 
@@ -85,6 +85,7 @@ function MeetingUI({ isHost, meetingTime, meetingName, meetingId }) {
   const [participantCount, setParticipantCount] = useState(0);
   const [videoEffect, setVideoEffect] = useState("none");
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const videoBgRef = useRef(null);
   const currentMiddlewareRef = useRef(null);
 
@@ -227,16 +228,22 @@ function MeetingUI({ isHost, meetingTime, meetingName, meetingId }) {
           </div>
           <div className="relative">
             <button
-              onClick={() => setSettingsOpen(true)}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                videoEffect !== "none" 
-                  ? "bg-[#D4AF7A] text-[#1A2332]" 
-                  : "bg-black/50 text-white hover:bg-black/70"
-              }`}
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="p-2 rounded-lg bg-black/50 text-white hover:bg-black/70 transition-colors"
             >
-              <Settings className="w-4 h-4" />
-              Settings
+              <MoreVertical className="w-4 h-4" />
             </button>
+            {menuOpen && (
+              <div className="absolute right-0 top-full mt-1 bg-black/90 rounded-lg overflow-hidden shadow-xl min-w-[180px] z-50">
+                <button
+                  onClick={() => { setMenuOpen(false); setSettingsOpen(true); }}
+                  className="flex items-center gap-2 w-full px-4 py-2 text-sm text-left text-white hover:bg-white/10 transition-colors"
+                >
+                  <Video className="w-4 h-4" />
+                  Video Settings
+                </button>
+              </div>
+            )}
           </div>
           {isRecording && (
             <button

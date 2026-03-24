@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { request } from "@/lib/api";
 import {
@@ -7,7 +7,8 @@ import {
   RealtimeKitProvider,
 } from "@cloudflare/realtimekit-react";
 import { RtkMeeting } from "@cloudflare/realtimekit-react-ui";
-import { Clock, Users, ChevronDown } from "lucide-react";
+import RealtimeKitVideoBackgroundTransformer from "@cloudflare/realtimekit-virtual-background";
+import { Clock, Users, ChevronDown, Sparkles, Image as ImageIcon, Ban } from "lucide-react";
 
 const CLOUDFLARE_MEETING_ID = import.meta.env.VITE_CLOUDFLARE_MEETING_ID;
 
@@ -64,7 +65,16 @@ function MeetingInfoBar({ meetingTime, participantCount, showNames }) {
   );
 }
 
-function MeetingUI({ isHost, meetingTime, meetingName }) {
+const BACKGROUND_IMAGES = [
+  "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80",
+  "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1920&q=80",
+  "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920&q=80",
+  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80",
+  "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1920&q=80",
+  "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?w=1920&q=80",
+];
+
+function MeetingUI({ isHost, meetingTime, meetingName, meetingId }) {
   const { meeting } = useRealtimeKitMeeting();
   const [viewMode, setViewMode] = useState("grid");
   const [viewDropdownOpen, setViewDropdownOpen] = useState(false);
@@ -72,6 +82,10 @@ function MeetingUI({ isHost, meetingTime, meetingName }) {
   const [isRecording, setIsRecording] = useState(false);
   const [recordingState, setRecordingState] = useState("IDLE");
   const [participantCount, setParticipantCount] = useState(0);
+  const [videoEffect, setVideoEffect] = useState("none");
+  const [effectsDropdownOpen, setEffectsDropdownOpen] = useState(false);
+  const videoBgRef = useRef(null);
+  const currentMiddlewareRef = useRef(null);
 
   useEffect(() => {
     if (meeting?.recording) {
@@ -83,10 +97,76 @@ function MeetingUI({ isHost, meetingTime, meetingName }) {
     }
   }, [meeting]);
 
-  const startRecording = async () => {
-    if (!meeting?.recording) return;
+  useEffect(() => {
+    const initVideoBackground = async () => {
+      if (!meeting) return;
+      
+      try {
+        await meeting.self.setVideoMiddlewareGlobalConfig({
+          disablePerFrameCanvasRendering: true,
+        });
+
+        videoBgRef.current = await RealtimeKitVideoBackgroundTransformer.init({
+          meeting,
+          segmentationConfig: {
+            pipeline: "webgl2",
+          },
+        });
+      } catch (err) {
+        console.error("Failed to init video background:", err);
+      }
+    };
+
+    initVideoBackground();
+  }, [meeting]);
+
+  const applyVideoEffect = async (effect, value = null) => {
+    if (!meeting || !videoBgRef.current) return;
+
     try {
-      await meeting.recording.start();
+      if (currentMiddlewareRef.current) {
+        meeting.self.removeVideoMiddleware(currentMiddlewareRef.current);
+        currentMiddlewareRef.current = null;
+      }
+
+      if (effect === "blur") {
+        const blurMiddleware = await videoBgRef.current.createBackgroundBlurVideoMiddleware(value || 20);
+        meeting.self.addVideoMiddleware(blurMiddleware);
+        currentMiddlewareRef.current = blurMiddleware;
+      } else if (effect === "image" && value) {
+        const imageMiddleware = await videoBgRef.current.createStaticBackgroundVideoMiddleware(value);
+        meeting.self.addVideoMiddleware(imageMiddleware);
+        currentMiddlewareRef.current = imageMiddleware;
+      }
+
+      setVideoEffect(effect === "none" ? "none" : effect);
+      setEffectsDropdownOpen(false);
+    } catch (err) {
+      console.error("Failed to apply video effect:", err);
+    }
+  };
+
+  const removeVideoEffect = async () => {
+    if (!meeting || !currentMiddlewareRef.current) return;
+    try {
+      meeting.self.removeVideoMiddleware(currentMiddlewareRef.current);
+      currentMiddlewareRef.current = null;
+      setVideoEffect("none");
+      setEffectsDropdownOpen(false);
+    } catch (err) {
+      console.error("Failed to remove video effect:", err);
+    }
+  };
+
+  const startRecording = async () => {
+    if (!meeting?.recording || !meetingId) return;
+    try {
+      await request("/public/realtimekit/start-recording", {
+        method: "POST",
+        body: JSON.stringify({
+          meeting_id: meetingId,
+        }),
+      });
     } catch (err) {
       console.error("Start recording error:", err);
       alert("Failed to start recording");
@@ -154,6 +234,57 @@ function MeetingUI({ isHost, meetingTime, meetingName }) {
                 >
                   {showNames ? "Hide Names" : "Show Names"}
                 </button>
+              </div>
+            )}
+          </div>
+          <div className="relative">
+            <button
+              onClick={() => setEffectsDropdownOpen(!effectsDropdownOpen)}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                videoEffect !== "none" 
+                  ? "bg-[#D4AF7A] text-[#1A2332]" 
+                  : "bg-black/50 text-white hover:bg-black/70"
+              }`}
+            >
+              <Sparkles className="w-4 h-4" />
+              Effects
+              <ChevronDown className={`w-4 h-4 transition-transform ${effectsDropdownOpen ? "rotate-180" : ""}`} />
+            </button>
+            {effectsDropdownOpen && (
+              <div className="absolute right-0 top-full mt-1 bg-black/90 rounded-lg overflow-hidden shadow-xl min-w-[200px]">
+                <button
+                  onClick={removeVideoEffect}
+                  className={`flex items-center gap-2 w-full px-4 py-2 text-sm text-left transition-colors ${
+                    videoEffect === "none" ? "bg-[#D4AF7A] text-[#1A2332]" : "text-white hover:bg-white/10"
+                  }`}
+                >
+                  <Ban className="w-4 h-4" />
+                  No Effect
+                </button>
+                <div className="border-t border-white/20" />
+                <button
+                  onClick={() => applyVideoEffect("blur", 20)}
+                  className={`flex items-center gap-2 w-full px-4 py-2 text-sm text-left transition-colors ${
+                    videoEffect === "blur" ? "bg-[#D4AF7A] text-[#1A2332]" : "text-white hover:bg-white/10"
+                  }`}
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Blur Background
+                </button>
+                <div className="border-t border-white/20" />
+                <div className="px-4 py-2 text-xs text-gray-400 uppercase">Virtual Backgrounds</div>
+                {BACKGROUND_IMAGES.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => applyVideoEffect("image", img)}
+                    className={`flex items-center gap-2 w-full px-4 py-2 text-sm text-left transition-colors ${
+                      videoEffect === "image" ? "bg-[#D4AF7A] text-[#1A2332]" : "text-white hover:bg-white/10"
+                    }`}
+                  >
+                    <ImageIcon className="w-4 h-4" />
+                    Background {idx + 1}
+                  </button>
+                ))}
               </div>
             )}
           </div>
@@ -237,7 +368,18 @@ export default function Call() {
 
   useEffect(() => {
     if (authToken) {
-      initClient({ authToken }).then(() => {
+      initClient({
+        authToken,
+        defaults: {
+          recording: {
+            videoConfig: {
+              width: 1920,
+              height: 1080,
+            },
+            fileNamePrefix: "consultation-{date}",
+          },
+        },
+      }).then(() => {
         setLoading(false);
       });
     }
@@ -267,7 +409,7 @@ export default function Call() {
   if (authToken && client) {
     return (
       <RealtimeKitProvider value={client}>
-        <MeetingUI isHost={isHost} meetingTime={meetingTime} meetingName={meetingName} />
+        <MeetingUI isHost={isHost} meetingTime={meetingTime} meetingName={meetingName} meetingId={CLOUDFLARE_MEETING_ID} />
       </RealtimeKitProvider>
     );
   }

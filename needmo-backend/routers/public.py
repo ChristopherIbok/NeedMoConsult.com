@@ -292,3 +292,81 @@ async def realtimekit_verify(req: RealtimeKitVerifyRequest):
     except Exception as e:
         logger.error(f"RealtimeKit verify error: {e}")
         return {"verified": False}
+
+
+class RealtimeKitStartRecordingRequest(BaseModel):
+    meeting_id: str
+    file_name_prefix: Optional[str] = None
+
+@router.post("/realtimekit/start-recording")
+async def realtimekit_start_recording(req: RealtimeKitStartRecordingRequest):
+    """Start recording with storage config to save to R2 permanently."""
+    import httpx
+    
+    account_id = os.getenv("CLOUDFLARE_ACCOUNT_ID")
+    app_id = os.getenv("CLOUDFLARE_APP_ID")
+    api_token = os.getenv("CLOUDFLARE_API_TOKEN")
+    r2_access_key = os.getenv("CLOUDFLARE_R2_ACCESS_KEY")
+    r2_secret_key = os.getenv("CLOUDFLARE_R2_SECRET_KEY")
+    r2_bucket = os.getenv("CLOUDFLARE_R2_BUCKET")
+    r2_account_id = os.getenv("CLOUDFLARE_R2_ACCOUNT_ID")
+    
+    if not all([account_id, app_id, api_token]):
+        raise HTTPException(
+            status_code=500,
+            detail="Cloudflare RealtimeKit not configured"
+        )
+    
+    if not all([r2_access_key, r2_secret_key, r2_bucket, r2_account_id]):
+        raise HTTPException(
+            status_code=500,
+            detail="R2 storage not configured. Set CLOUDFLARE_R2_* environment variables"
+        )
+    
+    storage_config = {
+        "type": "cloudflare",
+        "access_key": r2_access_key,
+        "secret": r2_secret_key,
+        "bucket": r2_bucket,
+        "path": "/recordings",
+        "account_id": r2_account_id,
+    }
+    
+    payload = {
+        "storage_config": storage_config,
+    }
+    
+    if req.file_name_prefix:
+        payload["file_name_prefix"] = req.file_name_prefix
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                f"https://api.cloudflare.com/client/v4/accounts/{account_id}/realtime/kit/{app_id}/recordings",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {api_token}",
+                },
+                json={
+                    "meeting_id": req.meeting_id,
+                    **payload,
+                },
+                timeout=30.0,
+            )
+            
+            if response.status_code in (200, 201):
+                data = response.json()
+                if data.get("success"):
+                    return {
+                        "recording_id": data.get("data", {}).get("id"),
+                        "status": data.get("data", {}).get("status"),
+                    }
+                raise HTTPException(status_code=500, detail="Failed to start recording")
+            else:
+                logger.error(f"RealtimeKit start recording failed: {response.status_code} {response.text}")
+                raise HTTPException(status_code=500, detail="Failed to start recording")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"RealtimeKit start recording error: {e}")
+        raise HTTPException(status_code=500, detail="Failed to start recording")

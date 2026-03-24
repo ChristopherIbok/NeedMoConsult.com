@@ -21,7 +21,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=os.getenv("ALLOWED_ORIGINS", "*").split(","),
+    allow_origins=["https://needmoconsult.com", "http://localhost:5173"],
     allow_methods=["*"],
     allow_headers=["*"],
 )

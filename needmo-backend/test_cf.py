@@ -25,6 +25,7 @@ async def join():
             json={
                 "customParticipantId": os.urandom(8).hex(),
                 "name": "test",
+                "presetName": "default"
             },
             timeout=15.0,
         )

@@ -217,7 +217,7 @@ class RealtimeKitJoinRequest(BaseModel):
     role: Optional[str] = "participant"
 
 PRESET_MAP = {
-    "host": "group-call-host",
+    "host": "261d9e19-37ee-45db-a3ac-e9d2e1b69378",
     "participant": "d368b3f4-bbc0-455f-af1b-a1f19165b774",
 }
 

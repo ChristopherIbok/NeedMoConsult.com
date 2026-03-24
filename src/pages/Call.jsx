@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import SEO from "@/components/ui/SEO";
 import { request } from "@/lib/api";
 import {
   useRealtimeKitClient,
@@ -206,7 +205,6 @@ export default function Call() {
   if (authToken && client) {
     return (
       <main className="fixed inset-0 bg-white dark:bg-[#0D1117] overflow-hidden">
-        <SEO title={`${role === 'host' ? 'Host' : 'Video'} Call | NEEDMO CONSULT`} />
         <RealtimeKitProvider value={client}>
           <MeetingUI isHost={isHost} />
         </RealtimeKitProvider>

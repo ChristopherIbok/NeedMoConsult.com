@@ -4,19 +4,9 @@ import { request } from "@/lib/api";
 import {
   useRealtimeKitClient,
   useRealtimeKitMeeting,
-  useRealtimeKitSelector,
   RealtimeKitProvider,
 } from "@cloudflare/realtimekit-react";
-import {
-  RtkUiProvider,
-  RtkControlbar,
-  RtkParticipantsAudio,
-  RtkParticipantTile,
-  RtkNameTag,
-  RtkAudioVisualizer,
-  RtkAvatar,
-  RtkSetupScreen,
-} from "@cloudflare/realtimekit-react-ui";
+import { RtkMeeting } from "@cloudflare/realtimekit-react-ui";
 import { Clock, Users, ChevronDown } from "lucide-react";
 
 const CLOUDFLARE_MEETING_ID = import.meta.env.VITE_CLOUDFLARE_MEETING_ID;
@@ -116,96 +106,67 @@ function MeetingUI({ isHost, meetingTime, meetingName }) {
     return null;
   }
 
-  const joinedParticipants = useRealtimeKitSelector((m) => m.participants.joined);
-  const selfParticipant = useRealtimeKitSelector((m) => m.self);
-  const allParticipants = selfParticipant ? [selfParticipant, ...(joinedParticipants?.toArray() || [])] : [];
-
-  const renderParticipant = (participant, index) => (
-    <RtkParticipantTile
-      key={participant.id}
-      participant={participant}
-      meeting={meeting}
-      nameTagPosition="bottom-left"
-    >
-      <RtkNameTag participant={participant} meeting={meeting}>
-        <RtkAudioVisualizer
-          participant={participant}
-          hideMuted={true}
-          size="sm"
-        />
-      </RtkNameTag>
-      <RtkAvatar participant={participant} />
-    </RtkParticipantTile>
-  );
-
-  const gridClass = viewMode === "spotlight" 
-    ? "grid grid-cols-1 gap-2 p-2 h-full"
-    : "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 p-2 h-full";
-
   return (
-    <RtkUiProvider meeting={meeting}>
-      <RtkParticipantsAudio meeting={meeting} preloadedAudioElem={document.createElement("audio")} />
-      <div className="w-full h-screen bg-[#0D1117] relative flex flex-col">
-        <MeetingInfoBar meetingTime={meetingTime} participantCount={participantCount} showNames={showNames} />
-        <div className="flex-1 overflow-auto">
-          <div className={gridClass}>
-            {allParticipants.map(renderParticipant)}
-          </div>
-        </div>
-        <div className="bg-[#1A2332] px-4 py-3">
-          <RtkControlbar meeting={meeting} variant="solid" />
-        </div>
-        {isHost && (
-          <div className="absolute top-20 right-4 flex items-center gap-4 z-50">
-            <div className="relative">
-              <button
-                onClick={() => setViewDropdownOpen(!viewDropdownOpen)}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-black/50 text-white hover:bg-black/70 transition-colors"
-              >
-                View
-                <ChevronDown className={`w-4 h-4 transition-transform ${viewDropdownOpen ? "rotate-180" : ""}`} />
-              </button>
-              {viewDropdownOpen && (
-                <div className="absolute right-0 top-full mt-1 bg-black/90 rounded-lg overflow-hidden shadow-xl">
-                  <button
-                    onClick={() => { setViewMode("grid"); setViewDropdownOpen(false); }}
-                    className={`block w-full px-4 py-2 text-sm text-left transition-colors ${
-                      viewMode === "grid" ? "bg-[#D4AF7A] text-[#1A2332]" : "text-white hover:bg-white/10"
-                    }`}
-                  >
-                    Gallery
-                  </button>
-                  <button
-                    onClick={() => { setViewMode("spotlight"); setViewDropdownOpen(false); }}
-                    className={`block w-full px-4 py-2 text-sm text-left transition-colors ${
-                      viewMode === "spotlight" ? "bg-[#D4AF7A] text-[#1A2332]" : "text-white hover:bg-white/10"
-                    }`}
-                  >
-                    Spotlight
-                  </button>
-                  <div className="border-t border-white/20" />
-                  <button
-                    onClick={() => { setShowNames(!showNames); setViewDropdownOpen(false); }}
-                    className={`block w-full px-4 py-2 text-sm text-left transition-colors ${
-                      showNames ? "bg-[#D4AF7A] text-[#1A2332]" : "text-white hover:bg-white/10"
-                    }`}
-                  >
-                    {showNames ? "Hide Names" : "Show Names"}
-                  </button>
-                </div>
-              )}
-            </div>
-            {isRecording && (
-              <button
-                onClick={stopRecording}
-                className="w-4 h-4 rounded-full bg-red-500 animate-pulse transition-colors"
-                title="Stop Recording"
-              />
+    <div className="w-full h-screen bg-[#0D1117] relative">
+      <MeetingInfoBar meetingTime={meetingTime} participantCount={participantCount} showNames={showNames} />
+      <div className="w-full h-full">
+        <RtkMeeting
+          mode="fill"
+          meeting={meeting}
+          showSetupScreen={true}
+          gridLayout={viewMode === "spotlight" ? "column" : "row"}
+        />
+      </div>
+      {isHost && (
+        <div className="absolute top-20 right-4 flex items-center gap-4 z-50">
+          <div className="relative">
+            <button
+              onClick={() => setViewDropdownOpen(!viewDropdownOpen)}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-black/50 text-white hover:bg-black/70 transition-colors"
+            >
+              View
+              <ChevronDown className={`w-4 h-4 transition-transform ${viewDropdownOpen ? "rotate-180" : ""}`} />
+            </button>
+            {viewDropdownOpen && (
+              <div className="absolute right-0 top-full mt-1 bg-black/90 rounded-lg overflow-hidden shadow-xl">
+                <button
+                  onClick={() => { setViewMode("grid"); setViewDropdownOpen(false); }}
+                  className={`block w-full px-4 py-2 text-sm text-left transition-colors ${
+                    viewMode === "grid" ? "bg-[#D4AF7A] text-[#1A2332]" : "text-white hover:bg-white/10"
+                  }`}
+                >
+                  Gallery
+                </button>
+                <button
+                  onClick={() => { setViewMode("spotlight"); setViewDropdownOpen(false); }}
+                  className={`block w-full px-4 py-2 text-sm text-left transition-colors ${
+                    viewMode === "spotlight" ? "bg-[#D4AF7A] text-[#1A2332]" : "text-white hover:bg-white/10"
+                  }`}
+                >
+                  Spotlight
+                </button>
+                <div className="border-t border-white/20" />
+                <button
+                  onClick={() => { setShowNames(!showNames); setViewDropdownOpen(false); }}
+                  className={`block w-full px-4 py-2 text-sm text-left transition-colors ${
+                    showNames ? "bg-[#D4AF7A] text-[#1A2332]" : "text-white hover:bg-white/10"
+                  }`}
+                >
+                  {showNames ? "Hide Names" : "Show Names"}
+                </button>
+              </div>
             )}
           </div>
-        )}
-      </div>
-    </RtkUiProvider>
+          {isRecording && (
+            <button
+              onClick={stopRecording}
+              className="w-4 h-4 rounded-full bg-red-500 animate-pulse transition-colors"
+              title="Stop Recording"
+            />
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 

@@ -8,7 +8,8 @@ import {
 } from "@cloudflare/realtimekit-react";
 import { RtkMeeting } from "@cloudflare/realtimekit-react-ui";
 import RealtimeKitVideoBackgroundTransformer from "@cloudflare/realtimekit-virtual-background";
-import { Clock, Users, ChevronDown, Sparkles, Image as ImageIcon, Ban } from "lucide-react";
+import { VideoSettingsModal } from "@/components/ui/VideoSettingsModal";
+import { Clock, Users, ChevronDown, Settings } from "lucide-react";
 
 const CLOUDFLARE_MEETING_ID = import.meta.env.VITE_CLOUDFLARE_MEETING_ID;
 
@@ -83,7 +84,7 @@ function MeetingUI({ isHost, meetingTime, meetingName, meetingId }) {
   const [recordingState, setRecordingState] = useState("IDLE");
   const [participantCount, setParticipantCount] = useState(0);
   const [videoEffect, setVideoEffect] = useState("none");
-  const [effectsDropdownOpen, setEffectsDropdownOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const videoBgRef = useRef(null);
   const currentMiddlewareRef = useRef(null);
 
@@ -140,21 +141,8 @@ function MeetingUI({ isHost, meetingTime, meetingName, meetingId }) {
       }
 
       setVideoEffect(effect === "none" ? "none" : effect);
-      setEffectsDropdownOpen(false);
     } catch (err) {
       console.error("Failed to apply video effect:", err);
-    }
-  };
-
-  const removeVideoEffect = async () => {
-    if (!meeting || !currentMiddlewareRef.current) return;
-    try {
-      meeting.self.removeVideoMiddleware(currentMiddlewareRef.current);
-      currentMiddlewareRef.current = null;
-      setVideoEffect("none");
-      setEffectsDropdownOpen(false);
-    } catch (err) {
-      console.error("Failed to remove video effect:", err);
     }
   };
 
@@ -239,54 +227,16 @@ function MeetingUI({ isHost, meetingTime, meetingName, meetingId }) {
           </div>
           <div className="relative">
             <button
-              onClick={() => setEffectsDropdownOpen(!effectsDropdownOpen)}
+              onClick={() => setSettingsOpen(true)}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                 videoEffect !== "none" 
                   ? "bg-[#D4AF7A] text-[#1A2332]" 
                   : "bg-black/50 text-white hover:bg-black/70"
               }`}
             >
-              <Sparkles className="w-4 h-4" />
-              Effects
-              <ChevronDown className={`w-4 h-4 transition-transform ${effectsDropdownOpen ? "rotate-180" : ""}`} />
+              <Settings className="w-4 h-4" />
+              Settings
             </button>
-            {effectsDropdownOpen && (
-              <div className="absolute right-0 top-full mt-1 bg-black/90 rounded-lg overflow-hidden shadow-xl min-w-[200px]">
-                <button
-                  onClick={removeVideoEffect}
-                  className={`flex items-center gap-2 w-full px-4 py-2 text-sm text-left transition-colors ${
-                    videoEffect === "none" ? "bg-[#D4AF7A] text-[#1A2332]" : "text-white hover:bg-white/10"
-                  }`}
-                >
-                  <Ban className="w-4 h-4" />
-                  No Effect
-                </button>
-                <div className="border-t border-white/20" />
-                <button
-                  onClick={() => applyVideoEffect("blur", 20)}
-                  className={`flex items-center gap-2 w-full px-4 py-2 text-sm text-left transition-colors ${
-                    videoEffect === "blur" ? "bg-[#D4AF7A] text-[#1A2332]" : "text-white hover:bg-white/10"
-                  }`}
-                >
-                  <Sparkles className="w-4 h-4" />
-                  Blur Background
-                </button>
-                <div className="border-t border-white/20" />
-                <div className="px-4 py-2 text-xs text-gray-400 uppercase">Virtual Backgrounds</div>
-                {BACKGROUND_IMAGES.map((img, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => applyVideoEffect("image", img)}
-                    className={`flex items-center gap-2 w-full px-4 py-2 text-sm text-left transition-colors ${
-                      videoEffect === "image" ? "bg-[#D4AF7A] text-[#1A2332]" : "text-white hover:bg-white/10"
-                    }`}
-                  >
-                    <ImageIcon className="w-4 h-4" />
-                    Background {idx + 1}
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
           {isRecording && (
             <button
@@ -297,6 +247,14 @@ function MeetingUI({ isHost, meetingTime, meetingName, meetingId }) {
           )}
         </div>
       )}
+      <VideoSettingsModal
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
+        videoBgRef={videoBgRef}
+        meeting={meeting}
+        currentEffect={currentMiddlewareRef}
+        onEffectChange={setVideoEffect}
+      />
     </div>
   );
 }

@@ -17,7 +17,7 @@ const PageLoader = () => (
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
-const MainPage = mainPageKey ? lazy(() => import(`./pages/${mainPageKey}`)) : null;
+const MainPage = mainPageKey ? lazy(() => import(`./pages/${mainPageKey}.jsx`)) : null;
 
 const LayoutWrapper = ({ children, currentPageName }) => {
   if (currentPageName === "Call") {

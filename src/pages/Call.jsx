@@ -8,12 +8,44 @@ import {
   RealtimeKitProvider,
 } from "@cloudflare/realtimekit-react";
 import { RtkMeeting } from "@cloudflare/realtimekit-react-ui";
+import { Square, Circle } from "lucide-react";
 
 const CLOUDFLARE_MEETING_ID = import.meta.env.VITE_CLOUDFLARE_MEETING_ID;
 
 function MeetingUI({ isHost }) {
   const { meeting } = useRealtimeKitMeeting();
   const [viewMode, setViewMode] = useState("grid");
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingState, setRecordingState] = useState("IDLE");
+
+  useEffect(() => {
+    if (meeting?.recording) {
+      const checkRecording = setInterval(() => {
+        setRecordingState(meeting.recording.recordingState);
+        setIsRecording(meeting.recording.recordingState === "RECORDING");
+      }, 1000);
+      return () => clearInterval(checkRecording);
+    }
+  }, [meeting]);
+
+  const startRecording = async () => {
+    if (!meeting?.recording) return;
+    try {
+      await meeting.recording.start();
+    } catch (err) {
+      console.error("Start recording error:", err);
+      alert("Failed to start recording");
+    }
+  };
+
+  const stopRecording = async () => {
+    if (!meeting?.recording) return;
+    try {
+      await meeting.recording.stop();
+    } catch (err) {
+      console.error("Stop recording error:", err);
+    }
+  };
 
   if (!meeting) {
     return null;
@@ -28,23 +60,52 @@ function MeetingUI({ isHost }) {
         gridLayout={viewMode === "spotlight" ? "column" : "row"}
       />
       {isHost && (
-        <div className="absolute top-4 right-4 flex gap-2 z-50">
-          <button
-            onClick={() => setViewMode("grid")}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-              viewMode === "grid" ? "bg-[#D4AF7A] text-[#1A2332]" : "bg-black/50 text-white hover:bg-black/70"
-            }`}
-          >
-            Gallery
-          </button>
-          <button
-            onClick={() => setViewMode("spotlight")}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-              viewMode === "spotlight" ? "bg-[#D4AF7A] text-[#1A2332]" : "bg-black/50 text-white hover:bg-black/70"
-            }`}
-          >
-            Spotlight
-          </button>
+        <div className="absolute top-4 right-4 flex flex-col gap-2 z-50">
+          <div className="flex gap-2">
+            <button
+              onClick={() => setViewMode("grid")}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                viewMode === "grid" ? "bg-[#D4AF7A] text-[#1A2332]" : "bg-black/50 text-white hover:bg-black/70"
+              }`}
+            >
+              Gallery
+            </button>
+            <button
+              onClick={() => setViewMode("spotlight")}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                viewMode === "spotlight" ? "bg-[#D4AF7A] text-[#1A2332]" : "bg-black/50 text-white hover:bg-black/70"
+              }`}
+            >
+              Spotlight
+            </button>
+          </div>
+          
+          <div className="flex items-center justify-center bg-black/50 p-2 rounded-lg">
+            {!isRecording ? (
+              <button
+                onClick={startRecording}
+                className="flex items-center gap-2 px-3 py-1.5 bg-red-500 hover:bg-red-600 rounded text-white text-sm font-medium"
+                title="Start Recording"
+              >
+                <Circle className="w-4 h-4 fill-current" />
+                Record
+              </button>
+            ) : (
+              <button
+                onClick={stopRecording}
+                className="flex items-center gap-2 px-3 py-1.5 bg-red-600 hover:bg-red-700 rounded text-white text-sm font-medium animate-pulse"
+                title="Stop Recording"
+              >
+                <Square className="w-4 h-4" />
+                Stop
+              </button>
+            )}
+          </div>
+          {isRecording && (
+            <span className="text-red-500 text-xs font-medium text-center bg-black/50 py-1 rounded">
+              REC
+            </span>
+          )}
         </div>
       )}
     </div>

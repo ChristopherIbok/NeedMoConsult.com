@@ -287,7 +287,8 @@ export default function Call() {
 
   const handleJoin = async (e) => {
     e.preventDefault();
-    if (!name.trim() || !email.trim() || !CLOUDFLARE_MEETING_ID) return;
+    if (!name.trim() || !CLOUDFLARE_MEETING_ID) return;
+    if (!isHost && !email.trim()) return;
 
     setLoading(true);
     setError(null);

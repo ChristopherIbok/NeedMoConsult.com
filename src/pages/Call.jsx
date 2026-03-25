@@ -8,7 +8,7 @@ import {
 } from "@cloudflare/realtimekit-react";
 import { RtkMeeting } from "@cloudflare/realtimekit-react-ui";
 import RealtimeKitVideoBackgroundTransformer from "@cloudflare/realtimekit-virtual-background";
-import { Clock, Users, MoreVertical, Video, ChevronDown } from "lucide-react";
+import { Clock, Users, MoreVertical, Video, ChevronDown, Circle } from "lucide-react";
 
 const VideoSettingsModal = lazy(() => import("@/components/ui/VideoSettingsModal").then(m => ({ default: m.VideoSettingsModal })));
 
@@ -236,6 +236,15 @@ function MeetingUI({ isHost, meetingTime, meetingName, meetingId }) {
             </button>
             {menuOpen && (
               <div className="absolute right-0 top-full mt-1 bg-black/90 rounded-lg overflow-hidden shadow-xl min-w-[180px] z-50">
+                {isHost && (
+                  <button
+                    onClick={() => { setMenuOpen(false); startRecording(); }}
+                    className="flex items-center gap-2 w-full px-4 py-2 text-sm text-left text-white hover:bg-white/10 transition-colors"
+                  >
+                    <Circle className="w-4 h-4 fill-red-500 text-red-500" />
+                    {isRecording ? "Stop Recording" : "Start Recording"}
+                  </button>
+                )}
                 <button
                   onClick={() => { setMenuOpen(false); setSettingsOpen(true); }}
                   className="flex items-center gap-2 w-full px-4 py-2 text-sm text-left text-white hover:bg-white/10 transition-colors"
@@ -246,13 +255,6 @@ function MeetingUI({ isHost, meetingTime, meetingName, meetingId }) {
               </div>
             )}
           </div>
-          {isRecording && (
-            <button
-              onClick={stopRecording}
-              className="w-4 h-4 rounded-full bg-red-500 animate-pulse transition-colors"
-              title="Stop Recording"
-            />
-          )}
         </div>
       )}
       <Suspense fallback={null}>
@@ -322,9 +324,15 @@ export default function Call() {
             fileNamePrefix: "consultation-{date}",
           },
         },
-      }).then(() => {
-        setLoading(false);
-      });
+      })
+        .then(() => {
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error("Init client error:", err);
+          setError("Failed to connect to meeting. Please refresh and try again.");
+          setLoading(false);
+        });
     }
   }, [authToken, initClient]);
 

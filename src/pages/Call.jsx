@@ -8,13 +8,13 @@ import {
 } from "@cloudflare/realtimekit-react";
 import { RtkMeeting } from "@cloudflare/realtimekit-react-ui";
 import RealtimeKitVideoBackgroundTransformer from "@cloudflare/realtimekit-virtual-background";
-import { Clock, Users, MoreVertical, Video, ChevronDown, Circle } from "lucide-react";
+import { Clock, Users, MoreVertical, Video, Circle, CircleDot } from "lucide-react";
 
 const VideoSettingsModal = lazy(() => import("@/components/ui/VideoSettingsModal").then(m => ({ default: m.VideoSettingsModal })));
 
 const CLOUDFLARE_MEETING_ID = import.meta.env.VITE_CLOUDFLARE_MEETING_ID;
 
-function MeetingInfoBar({ meetingTime, participantCount, showNames }) {
+function MeetingInfoBar({ meetingTime, participantCount }) {
   const [timeLeft, setTimeLeft] = useState("");
 
   useEffect(() => {
@@ -47,17 +47,13 @@ function MeetingInfoBar({ meetingTime, participantCount, showNames }) {
     return () => clearInterval(interval);
   }, [meetingTime]);
 
-  if (!showNames) {
-    return null;
-  }
-
   return (
     <div className="absolute top-4 left-4 flex items-center gap-4 z-50">
       <div className="flex items-center gap-2 bg-black/50 px-4 py-2 rounded-lg">
         <Clock className="w-4 h-4 text-[#D4AF7A]" />
         <span className="text-white text-sm font-medium">{timeLeft || "In progress"}</span>
       </div>
-      {showNames && participantCount !== undefined && (
+      {participantCount !== undefined && (
         <div className="flex items-center gap-2 bg-black/50 px-4 py-2 rounded-lg">
           <Users className="w-4 h-4 text-[#D4AF7A]" />
           <span className="text-white text-sm font-medium">{participantCount} participants</span>
@@ -78,9 +74,6 @@ const BACKGROUND_IMAGES = [
 
 function MeetingUI({ isHost, meetingTime, meetingName, meetingId }) {
   const { meeting } = useRealtimeKitMeeting();
-  const [viewMode, setViewMode] = useState("grid");
-  const [viewDropdownOpen, setViewDropdownOpen] = useState(false);
-  const [showNames, setShowNames] = useState(true);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingState, setRecordingState] = useState("IDLE");
   const [participantCount, setParticipantCount] = useState(0);
@@ -182,55 +175,33 @@ function MeetingUI({ isHost, meetingTime, meetingName, meetingId }) {
 
   return (
     <div className="w-full h-screen bg-[#0D1117] relative">
-      <MeetingInfoBar meetingTime={meetingTime} participantCount={participantCount} showNames={showNames} />
+      <MeetingInfoBar meetingTime={meetingTime} participantCount={participantCount} />
       <div className="w-full h-full">
         <RtkMeeting
           mode="fill"
           meeting={meeting}
           showSetupScreen={true}
-          gridLayout={viewMode === "spotlight" ? "column" : "row"}
         />
       </div>
       {isHost && (
         <div className="absolute top-20 right-4 flex items-center gap-4 z-50">
-          <div className="relative">
+          {isRecording ? (
             <button
-              onClick={() => setViewDropdownOpen(!viewDropdownOpen)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-black/50 text-white hover:bg-black/70 transition-colors"
+              onClick={stopRecording}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-red-600 text-white hover:bg-red-700 transition-colors"
             >
-              View
-              <ChevronDown className={`w-4 h-4 transition-transform ${viewDropdownOpen ? "rotate-180" : ""}`} />
+              <CircleDot className="w-4 h-4 animate-pulse" />
+              Stop Recording
             </button>
-            {viewDropdownOpen && (
-              <div className="absolute right-0 top-full mt-1 bg-black/90 rounded-lg overflow-hidden shadow-xl">
-                <button
-                  onClick={() => { setViewMode("grid"); setViewDropdownOpen(false); }}
-                  className={`block w-full px-4 py-2 text-sm text-left transition-colors ${
-                    viewMode === "grid" ? "bg-[#D4AF7A] text-[#1A2332]" : "text-white hover:bg-white/10"
-                  }`}
-                >
-                  Gallery
-                </button>
-                <button
-                  onClick={() => { setViewMode("spotlight"); setViewDropdownOpen(false); }}
-                  className={`block w-full px-4 py-2 text-sm text-left transition-colors ${
-                    viewMode === "spotlight" ? "bg-[#D4AF7A] text-[#1A2332]" : "text-white hover:bg-white/10"
-                  }`}
-                >
-                  Spotlight
-                </button>
-                <div className="border-t border-white/20" />
-                <button
-                  onClick={() => { setShowNames(!showNames); setViewDropdownOpen(false); }}
-                  className={`block w-full px-4 py-2 text-sm text-left transition-colors ${
-                    showNames ? "bg-[#D4AF7A] text-[#1A2332]" : "text-white hover:bg-white/10"
-                  }`}
-                >
-                  {showNames ? "Hide Names" : "Show Names"}
-                </button>
-              </div>
-            )}
-          </div>
+          ) : (
+            <button
+              onClick={startRecording}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-red-600/80 text-white hover:bg-red-600 transition-colors"
+            >
+              <Circle className="w-4 h-4" />
+              Record
+            </button>
+          )}
           <div className="relative">
             <button
               onClick={() => setMenuOpen(!menuOpen)}
@@ -240,15 +211,6 @@ function MeetingUI({ isHost, meetingTime, meetingName, meetingId }) {
             </button>
             {menuOpen && (
               <div className="absolute right-0 top-full mt-1 bg-black/90 rounded-lg overflow-hidden shadow-xl min-w-[180px] z-50">
-                {isHost && (
-                  <button
-                    onClick={() => { setMenuOpen(false); startRecording(); }}
-                    className="flex items-center gap-2 w-full px-4 py-2 text-sm text-left text-white hover:bg-white/10 transition-colors"
-                  >
-                    <Circle className="w-4 h-4 fill-red-500 text-red-500" />
-                    {isRecording ? "Stop Recording" : "Start Recording"}
-                  </button>
-                )}
                 <button
                   onClick={() => { setMenuOpen(false); setSettingsOpen(true); }}
                   className="flex items-center gap-2 w-full px-4 py-2 text-sm text-left text-white hover:bg-white/10 transition-colors"

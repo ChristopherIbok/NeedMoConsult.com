@@ -149,17 +149,21 @@ function MeetingUI({ isHost, meetingTime, meetingName, meetingId }) {
   };
 
   const startRecording = async () => {
-    if (!meeting?.recording || !meetingId) return;
+    if (!meetingId) {
+      console.error("No meeting ID");
+      return;
+    }
     try {
-      await request("/public/realtimekit/start-recording", {
+      const result = await request("/public/realtimekit/start-recording", {
         method: "POST",
         body: JSON.stringify({
           meeting_id: meetingId,
         }),
       });
+      console.log("Recording started:", result);
     } catch (err) {
       console.error("Start recording error:", err);
-      alert("Failed to start recording");
+      alert("Failed to start recording: " + (err.message || "Unknown error"));
     }
   };
 

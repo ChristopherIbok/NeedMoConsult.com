@@ -323,6 +323,10 @@ export default function MeetingUI({ isHost, meetingTime, meetingName, meetingId 
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState("");
   const [screenShareActive, setScreenShareActive] = useState(false);
+  const [selectedVideoDevice, setSelectedVideoDevice] = useState("");
+  const [selectedAudioDevice, setSelectedAudioDevice] = useState("");
+  const [videoDevices, setVideoDevices] = useState([]);
+  const [audioDevices, setAudioDevices] = useState([]);
 
   const videoBgRef = useRef(null);
   const currentMiddlewareRef = useRef(null);
@@ -411,6 +415,23 @@ export default function MeetingUI({ isHost, meetingTime, meetingName, meetingId 
       }
     };
   }, [isVideoOff]);
+
+  useEffect(() => {
+    const getDevices = async () => {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        setVideoDevices(devices.filter(d => d.kind === "videoinput"));
+        setAudioDevices(devices.filter(d => d.kind === "audioinput"));
+        const video = devices.find(d => d.kind === "videoinput");
+        const audio = devices.find(d => d.kind === "audioinput");
+        if (video) setSelectedVideoDevice(video.deviceId);
+        if (audio) setSelectedAudioDevice(audio.deviceId);
+      } catch (err) {
+        console.error("Failed to enumerate devices:", err);
+      }
+    };
+    getDevices();
+  }, []);
 
   const handleScreenShare = async () => {
     if (screenShareActive) {
@@ -631,6 +652,152 @@ export default function MeetingUI({ isHost, meetingTime, meetingName, meetingId 
         currentEffect={currentMiddlewareRef}
         onEffectChange={() => { }}
       />
+
+      {micSettingsOpen && (
+        <div className="absolute bottom-24 left-4 z-50 bg-[#1A2332] border border-white/10 rounded-xl shadow-2xl p-4 w-64">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-white font-semibold text-sm">Microphone</span>
+            <button onClick={() => setMicSettingsOpen(false)} className="text-white/50 hover:text-white">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+          <select
+            value={selectedAudioDevice}
+            onChange={async (e) => {
+              setSelectedAudioDevice(e.target.value);
+              try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                  audio: { deviceId: { exact: e.target.value } } 
+                });
+                if (videoStreamRef.current) {
+                  const audioTrack = stream.getAudioTracks()[0];
+                  if (audioTrack) {
+                    videoStreamRef.current.addTrack(audioTrack);
+                  }
+                }
+              } catch (err) {
+                console.error("Failed to switch audio device:", err);
+              }
+            }}
+            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none"
+          >
+            {audioDevices.map((device) => (
+              <option key={device.deviceId} value={device.deviceId} className="bg-[#1A2332]">
+                {device.label || `Microphone ${device.deviceId.slice(0, 8)}`}
+              </option>
+            ))}
+          </select>
+          <div className="mt-3 pt-3 border-t border-white/10">
+            <label className="flex items-center gap-2 text-white/70 text-xs cursor-pointer">
+              <input type="checkbox" defaultChecked className="rounded" />
+              Noise Suppression
+            </label>
+            <label className="flex items-center gap-2 text-white/70 text-xs cursor-pointer mt-2">
+              <input type="checkbox" defaultChecked className="rounded" />
+              Echo Cancellation
+            </label>
+          </div>
+        </div>
+      )}
+
+      {videoSettingsOpen && (
+        <div className="absolute bottom-24 left-4 z-50 bg-[#1A2332] border border-white/10 rounded-xl shadow-2xl p-4 w-64">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-white font-semibold text-sm">Camera</span>
+            <button onClick={() => setVideoSettingsOpen(false)} className="text-white/50 hover:text-white">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+          <select
+            value={selectedVideoDevice}
+            onChange={async (e) => {
+              setSelectedVideoDevice(e.target.value);
+              try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                  video: { deviceId: { exact: e.target.value } } 
+                });
+                if (videoStreamRef.current) {
+                  videoStreamRef.current.getVideoTracks().forEach(t => t.stop());
+                  const newVideoTrack = stream.getVideoTracks()[0];
+                  if (videoRef.current) {
+                    videoRef.current.srcObject = stream;
+                  }
+                  if (videoStreamRef.current) {
+                    videoStreamRef.current = stream;
+                  }
+                }
+              } catch (err) {
+                console.error("Failed to switch video device:", err);
+              }
+            }}
+            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none"
+          >
+            {videoDevices.map((device) => (
+              <option key={device.deviceId} value={device.deviceId} className="bg-[#1A2332]">
+                {device.label || `Camera ${device.deviceId.slice(0, 8)}`}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {securityOpen && isHost && (
+        <div className="absolute bottom-24 left-4 z-50 bg-[#1A2332] border border-white/10 rounded-xl shadow-2xl p-4 w-64">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-white font-semibold text-sm">Security</span>
+            <button onClick={() => setSecurityOpen(false)} className="text-white/50 hover:text-white">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="space-y-2">
+            <button
+              onClick={() => {
+                meeting?.participants?.waitlisted?.enable();
+                setSecurityOpen(false);
+              }}
+              className="w-full text-left px-3 py-2 rounded-lg text-white/70 hover:bg-white/5 hover:text-white text-sm transition-colors"
+            >
+              Enable Waiting Room
+            </button>
+            <button
+              onClick={() => {
+                meeting?.participants?.waitlisted?.disable();
+                setSecurityOpen(false);
+              }}
+              className="w-full text-left px-3 py-2 rounded-lg text-white/70 hover:bg-white/5 hover:text-white text-sm transition-colors"
+            >
+              Disable Waiting Room
+            </button>
+            <button
+              onClick={() => {
+                meeting?.muteAll?.();
+                setSecurityOpen(false);
+              }}
+              className="w-full text-left px-3 py-2 rounded-lg text-white/70 hover:bg-white/5 hover:text-white text-sm transition-colors"
+            >
+              Mute All Participants
+            </button>
+            <button
+              onClick={() => {
+                meeting?.recording?.start?.();
+                setSecurityOpen(false);
+              }}
+              className="w-full text-left px-3 py-2 rounded-lg text-white/70 hover:bg-white/5 hover:text-white text-sm transition-colors"
+            >
+              Start Recording
+            </button>
+            <button
+              onClick={() => {
+                meeting?.recording?.stop?.();
+                setSecurityOpen(false);
+              }}
+              className="w-full text-left px-3 py-2 rounded-lg text-white/70 hover:bg-white/5 hover:text-white text-sm transition-colors"
+            >
+              Stop Recording
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }

@@ -149,10 +149,11 @@ function BottomToolbar({
 }) {
   return (
     <div className="absolute bottom-0 left-0 right-0 z-40">
-      <div className="h-28 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
+      <div className="h-20 sm:h-28 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
 
-      <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-4 pb-4">
-        <div className="flex items-center gap-0.5">
+      <div className="absolute bottom-0 left-0 right-0 flex flex-wrap items-center justify-center gap-2 sm:gap-0.5 px-2 sm:px-4 pb-3 sm:pb-4">
+        {/* Left Group - Controls */}
+        <div className="flex items-center gap-0.5 order-1">
           <ToolbarBtn
             icon={isMuted ? MicOff : Mic}
             label={isMuted ? "Unmute" : "Mute"}
@@ -179,7 +180,8 @@ function BottomToolbar({
           )}
         </div>
 
-        <div className="flex items-center gap-0.5">
+        {/* Center Group - Meeting */}
+        <div className="flex items-center gap-0.5 order-3 sm:order-2">
           <ToolbarBtn
             icon={Users}
             label="Participants"
@@ -223,15 +225,16 @@ function BottomToolbar({
           />
         </div>
 
-        <div className="flex items-center">
+        {/* Right Group - Leave */}
+        <div className="flex items-center order-2 sm:order-3 ml-auto sm:ml-0">
           <button
             onClick={onLeave}
             className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white
-                       px-5 py-2.5 rounded-xl font-semibold text-sm transition-all duration-150
+                       px-4 sm:px-5 py-2 sm:py-2.5 rounded-xl font-semibold text-sm transition-all duration-150
                        shadow-lg shadow-red-500/30"
           >
             <PhoneOff className="w-4 h-4" />
-            Leave
+            <span className="hidden sm:inline">Leave</span>
           </button>
         </div>
       </div>

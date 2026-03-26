@@ -312,6 +312,8 @@ export default function MeetingUI({ isHost, meetingTime, meetingName, meetingId 
 
   const videoBgRef = useRef(null);
   const currentMiddlewareRef = useRef(null);
+  const videoRef = useRef(null);
+  const videoStreamRef = useRef(null);
   const elapsed = useElapsedTime(meetingTime);
 
   useEffect(() => {
@@ -352,6 +354,33 @@ export default function MeetingUI({ isHost, meetingTime, meetingName, meetingId 
     };
     init();
   }, [meeting]);
+
+  useEffect(() => {
+    const startVideo = async () => {
+      if (isVideoOff) {
+        if (videoStreamRef.current) {
+          videoStreamRef.current.getTracks().forEach(t => t.stop());
+          videoStreamRef.current = null;
+        }
+        return;
+      }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        videoStreamRef.current = stream;
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      } catch (err) {
+        console.error("Failed to start video:", err);
+      }
+    };
+    startVideo();
+    return () => {
+      if (videoStreamRef.current) {
+        videoStreamRef.current.getTracks().forEach(t => t.stop());
+      }
+    };
+  }, [isVideoOff]);
 
   const applyVideoEffect = async (effect, value = null) => {
     if (!meeting || !videoBgRef.current) return;
@@ -432,15 +461,25 @@ export default function MeetingUI({ isHost, meetingTime, meetingName, meetingId 
 
           <div className="w-full h-full flex items-center justify-center bg-black">
             <div className="relative w-full h-full max-w-4xl mx-auto bg-[#1A2332] rounded-xl overflow-hidden">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-20 h-20 rounded-full bg-[#D4AF7A]/20 flex items-center justify-center mx-auto mb-4">
-                    <span className="text-3xl font-bold text-[#D4AF7A]">Y</span>
+              {isVideoOff ? (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="w-20 h-20 rounded-full bg-[#D4AF7A]/20 flex items-center justify-center mx-auto mb-4">
+                      <span className="text-3xl font-bold text-[#D4AF7A]">Y</span>
+                    </div>
+                    <p className="text-white/60 text-sm">Camera Off</p>
+                    <p className="text-white/40 text-xs mt-1">Click "Start Video" to enable</p>
                   </div>
-                  <p className="text-white/60 text-sm">You</p>
-                  <p className="text-white/40 text-xs mt-1">Connected</p>
                 </div>
-              </div>
+              ) : (
+                <video 
+                  ref={videoRef} 
+                  muted 
+                  autoPlay 
+                  playsInline 
+                  className="w-full h-full object-cover scale-x-[-1]"
+                />
+              )}
             </div>
           </div>
 

@@ -5,9 +5,8 @@ import {
   useRealtimeKitClient,
   RealtimeKitProvider,
 } from "@cloudflare/realtimekit-react";
+import { RtkMeeting } from "@cloudflare/realtimekit-react-ui";
 import { AlertCircle } from "lucide-react";
-import MeetingUI from "./CallMeeting";
-import PreJoinScreen from "./CallPreJoin";
 
 const CLOUDFLARE_MEETING_ID = import.meta.env.VITE_CLOUDFLARE_MEETING_ID;
 
@@ -76,6 +75,8 @@ export default function Call() {
       });
   }, [authToken, initClient]);
 
+  const PreJoinScreen = React.lazy(() => import("./CallPreJoin"));
+
   if (!CLOUDFLARE_MEETING_ID) {
     return (
       <main className="min-h-screen bg-[#0D1117] flex items-center justify-center p-4">
@@ -104,22 +105,23 @@ export default function Call() {
   if (authToken && client) {
     return (
       <RealtimeKitProvider value={client}>
-        <MeetingUI
-          isHost={isHost}
-          meetingTime={meetingTime}
-          meetingName={joinData?.meetingName}
-          meetingId={CLOUDFLARE_MEETING_ID}
-        />
+        <RtkMeeting mode="fill" showSetupScreen={false} />
       </RealtimeKitProvider>
     );
   }
 
   return (
-    <PreJoinScreen
-      isHost={isHost}
-      onJoin={handleJoin}
-      loading={loading}
-      error={error}
-    />
+    <React.Suspense fallback={
+      <div className="min-h-screen bg-[#0D1117] flex items-center justify-center">
+        <div className="text-white/40">Loading...</div>
+      </div>
+    }>
+      <PreJoinScreen
+        isHost={isHost}
+        onJoin={handleJoin}
+        loading={loading}
+        error={error}
+      />
+    </React.Suspense>
   );
 }

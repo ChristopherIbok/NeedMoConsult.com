@@ -8,7 +8,7 @@ import {
 } from "@cloudflare/realtimekit-react";
 import { RtkMeeting } from "@cloudflare/realtimekit-react-ui";
 import RealtimeKitVideoBackgroundTransformer from "@cloudflare/realtimekit-virtual-background";
-import { Clock, Users, MoreVertical, Video } from "lucide-react";
+import { Clock, Users, MoreVertical, Video, Circle } from "lucide-react";
 
 const VideoSettingsModal = lazy(() => import("@/components/ui/VideoSettingsModal").then(m => ({ default: m.VideoSettingsModal })));
 
@@ -154,6 +154,7 @@ function MeetingUI({ isHost, meetingTime, meetingName, meetingId }) {
         }),
       });
       console.log("Recording started:", result);
+      alert("Recording started!");
     } catch (err) {
       console.error("Start recording error:", err);
       alert("Failed to start recording: " + (err.message || "Unknown error"));
@@ -194,6 +195,15 @@ function MeetingUI({ isHost, meetingTime, meetingName, meetingId }) {
             </button>
             {menuOpen && (
               <div className="absolute right-0 top-full mt-1 bg-black/90 rounded-lg overflow-hidden shadow-xl min-w-[180px] z-50">
+                {isHost && (
+                  <button
+                    onClick={() => { setMenuOpen(false); startRecording(); }}
+                    className="flex items-center gap-2 w-full px-4 py-2 text-sm text-left text-white hover:bg-white/10 transition-colors"
+                  >
+                    <Circle className="w-4 h-4" />
+                    {isRecording ? "Stop Recording" : "Start Recording"}
+                  </button>
+                )}
                 <button
                   onClick={() => { setMenuOpen(false); setSettingsOpen(true); }}
                   className="flex items-center gap-2 w-full px-4 py-2 text-sm text-left text-white hover:bg-white/10 transition-colors"

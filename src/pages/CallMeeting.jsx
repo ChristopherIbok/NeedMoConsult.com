@@ -106,9 +106,9 @@ function RecordingBadge() {
   );
 }
 
-function TopBar({ meetingName, elapsed, participantCount, isRecording, isHost }) {
+function TopBar({ meetingName, elapsed, participantCount, isRecording }) {
   return (
-    <div className="absolute top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3
+    <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-4 py-3
                     bg-gradient-to-b from-black/70 to-transparent pointer-events-none">
       <div className="flex items-center gap-3 pointer-events-auto">
         <div className="flex flex-col">
@@ -144,8 +144,8 @@ function BottomToolbar({
   isMuted, isVideoOff, isRecording, isHost,
   onMute, onVideo, onShare, onChat, onParticipants,
   onReactions, onRecord, onMore, onLeave,
-  onMicSettings, onVideoSettings,
-  chatOpen, participantsOpen,
+  onMicSettings, onVideoSettings, onSecurity,
+  chatOpen, participantsOpen, screenShareActive,
 }) {
   return (
     <div className="absolute bottom-0 left-0 right-0 z-40">
@@ -154,29 +154,35 @@ function BottomToolbar({
       <div className="absolute bottom-0 left-0 right-0 flex flex-wrap items-center justify-center gap-2 sm:gap-0.5 px-2 sm:px-4 pb-3 sm:pb-4">
         {/* Left Group - Controls */}
         <div className="flex items-center gap-0.5 order-1">
-          <ToolbarBtn
-            icon={isMuted ? MicOff : Mic}
-            label={isMuted ? "Unmute" : "Mute"}
-            active={false}
-            redDot={isMuted}
-            onClick={onMute}
-            hasChevron
-            chevronAction={onMicSettings}
-          />
-          <ToolbarBtn
-            icon={isVideoOff ? VideoOff : Video}
-            label={isVideoOff ? "Start Video" : "Stop Video"}
-            active={false}
-            onClick={onVideo}
-            hasChevron
-            chevronAction={onVideoSettings}
-          />
-          {isHost && (
+          <div className="relative">
             <ToolbarBtn
-              icon={Shield}
-              label="Security"
-              onClick={onMore}
+              icon={isMuted ? MicOff : Mic}
+              label={isMuted ? "Unmute" : "Mute"}
+              active={false}
+              redDot={isMuted}
+              onClick={onMute}
+              hasChevron
+              chevronAction={onMicSettings}
             />
+          </div>
+          <div className="relative">
+            <ToolbarBtn
+              icon={isVideoOff ? VideoOff : Video}
+              label={isVideoOff ? "Start Video" : "Stop Video"}
+              active={false}
+              onClick={onVideo}
+              hasChevron
+              chevronAction={onVideoSettings}
+            />
+          </div>
+          {isHost && (
+            <div className="relative">
+              <ToolbarBtn
+                icon={Shield}
+                label="Security"
+                onClick={onSecurity}
+              />
+            </div>
           )}
         </div>
 
@@ -196,7 +202,8 @@ function BottomToolbar({
           />
           <ToolbarBtn
             icon={Monitor}
-            label="Share Screen"
+            label={screenShareActive ? "Stop Share" : "Share Screen"}
+            active={screenShareActive}
             onClick={onShare}
           />
           {isHost && (
@@ -310,13 +317,18 @@ export default function MeetingUI({ isHost, meetingTime, meetingName, meetingId 
   const [reactionsOpen, setReactionsOpen] = useState(false);
   const [reactions, setReactions] = useState([]);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [videoSettingsOpen, setVideoSettingsOpen] = useState(false);
+  const [micSettingsOpen, setMicSettingsOpen] = useState(false);
+  const [securityOpen, setSecurityOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState([]);
   const [chatInput, setChatInput] = useState("");
+  const [screenShareActive, setScreenShareActive] = useState(false);
 
   const videoBgRef = useRef(null);
   const currentMiddlewareRef = useRef(null);
   const videoRef = useRef(null);
   const videoStreamRef = useRef(null);
+  const screenStreamRef = useRef(null);
   const elapsed = useElapsedTime(meetingTime);
 
   useEffect(() => {
@@ -368,13 +380,28 @@ export default function MeetingUI({ isHost, meetingTime, meetingName, meetingId 
         return;
       }
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { width: 1920, height: 1080, facingMode: "user" }, 
+          audio: true 
+        });
         videoStreamRef.current = stream;
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
         }
       } catch (err) {
         console.error("Failed to start video:", err);
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ 
+            video: true, 
+            audio: true 
+          });
+          videoStreamRef.current = stream;
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+          }
+        } catch (fallbackErr) {
+          console.error("Fallback video also failed:", fallbackErr);
+        }
       }
     };
     startVideo();
@@ -384,6 +411,31 @@ export default function MeetingUI({ isHost, meetingTime, meetingName, meetingId 
       }
     };
   }, [isVideoOff]);
+
+  const handleScreenShare = async () => {
+    if (screenShareActive) {
+      if (screenStreamRef.current) {
+        screenStreamRef.current.getTracks().forEach(t => t.stop());
+        screenStreamRef.current = null;
+      }
+      setScreenShareActive(false);
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getDisplayMedia({ 
+        video: { width: 1920, height: 1080 },
+        audio: false 
+      });
+      screenStreamRef.current = stream;
+      setScreenShareActive(true);
+      stream.getVideoTracks()[0].onended = () => {
+        setScreenShareActive(false);
+        screenStreamRef.current = null;
+      };
+    } catch (err) {
+      console.error("Screen share error:", err);
+    }
+  };
 
   const applyVideoEffect = async (effect, value = null) => {
     if (!meeting || !videoBgRef.current) return;
@@ -459,7 +511,6 @@ export default function MeetingUI({ isHost, meetingTime, meetingName, meetingId 
             elapsed={elapsed}
             participantCount={participantCount}
             isRecording={isRecording}
-            isHost={isHost}
           />
 
           <div className="w-full h-full flex items-center justify-center bg-black">
@@ -499,17 +550,19 @@ export default function MeetingUI({ isHost, meetingTime, meetingName, meetingId 
             isHost={isHost}
             onMute={() => setIsMuted((v) => !v)}
             onVideo={() => setIsVideoOff((v) => !v)}
-            onShare={() => { }}
+            onShare={handleScreenShare}
             onChat={() => { setChatOpen((v) => !v); setParticipantsOpen(false); }}
             onParticipants={() => { setParticipantsOpen((v) => !v); setChatOpen(false); }}
             onReactions={() => setReactionsOpen((v) => !v)}
             onRecord={handleRecord}
             onMore={() => setSettingsOpen(true)}
             onLeave={() => { meeting.leaveRoom?.(); navigate("/"); }}
-            onMicSettings={() => { }}
-            onVideoSettings={() => setSettingsOpen(true)}
+            onMicSettings={() => setMicSettingsOpen(true)}
+            onVideoSettings={() => setVideoSettingsOpen(true)}
+            onSecurity={() => setSecurityOpen(true)}
             chatOpen={chatOpen}
             participantsOpen={participantsOpen}
+            screenShareActive={screenShareActive}
           />
         </div>
 

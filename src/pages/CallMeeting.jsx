@@ -514,7 +514,7 @@ export default function MeetingUI({ isHost, meetingTime, meetingName, meetingId 
           />
 
           <div className="w-full h-full flex items-center justify-center bg-black">
-            <div className="relative w-full h-full max-w-4xl mx-auto bg-[#1A2332] rounded-xl overflow-hidden">
+            <div className="relative w-full h-full bg-[#1A2332]">
               {isVideoOff ? (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center">

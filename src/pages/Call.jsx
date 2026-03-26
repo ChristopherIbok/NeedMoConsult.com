@@ -8,7 +8,7 @@ import {
 } from "@cloudflare/realtimekit-react";
 import { RtkMeeting } from "@cloudflare/realtimekit-react-ui";
 import RealtimeKitVideoBackgroundTransformer from "@cloudflare/realtimekit-virtual-background";
-import { Clock, Users, MoreVertical, Video, Circle, CircleDot } from "lucide-react";
+import { Clock, Users, MoreVertical, Video } from "lucide-react";
 
 const VideoSettingsModal = lazy(() => import("@/components/ui/VideoSettingsModal").then(m => ({ default: m.VideoSettingsModal })));
 
@@ -185,23 +185,6 @@ function MeetingUI({ isHost, meetingTime, meetingName, meetingId }) {
       </div>
       {isHost && (
         <div className="absolute top-20 right-4 flex items-center gap-4 z-50">
-          {isRecording ? (
-            <button
-              onClick={stopRecording}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-red-600 text-white hover:bg-red-700 transition-colors"
-            >
-              <CircleDot className="w-4 h-4 animate-pulse" />
-              Stop Recording
-            </button>
-          ) : (
-            <button
-              onClick={startRecording}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium bg-red-600/80 text-white hover:bg-red-600 transition-colors"
-            >
-              <Circle className="w-4 h-4" />
-              Record
-            </button>
-          )}
           <div className="relative">
             <button
               onClick={() => setMenuOpen(!menuOpen)}

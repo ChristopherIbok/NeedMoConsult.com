@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useCallback, lazy, Suspense } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { adminLogin, getWaitlist, sendNewsletter as apiSendNewsletter, sendWelcomeEmail as apiSendWelcomeEmail, getContacts, markContactRead } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
-
-const AuthGate = lazy(() => import("@/components/AuthGate"));
+import AuthGate from "@/components/AuthGate";
 import {
   Send, Users, Mail, Plus, Trash2, Eye, CheckCircle, XCircle, Loader2, Lock, Video, MailOpen,
   Briefcase, CheckSquare, Square, Clock, AlertCircle, ChevronRight, FolderKanban, Calendar,

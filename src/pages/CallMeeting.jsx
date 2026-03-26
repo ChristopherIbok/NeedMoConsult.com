@@ -251,7 +251,7 @@ function BottomToolbar({
 
 function SidePanel({ title, onClose, children }) {
   return (
-    <div className="absolute right-0 top-0 bottom-0 w-[320px] z-30
+    <div className="absolute right-0 top-0 bottom-0 w-[320px] z-50 pointer-events-auto
                     bg-[#1A2332]/95 backdrop-blur-md border-l border-white/10
                     flex flex-col shadow-2xl">
       <div className="flex items-center justify-between px-4 py-4 border-b border-white/10">
@@ -581,14 +581,15 @@ export default function MeetingUI({ isHost, meetingTime, meetingName, meetingId 
                   ))
                 )}
               </div>
-              <form onSubmit={handleSendChat} className="px-3 pb-4 pt-2 border-t border-white/10">
+              <form onSubmit={handleSendChat} className="px-3 pb-4 pt-2 border-t border-white/10 shrink-0">
                 <div className="flex gap-2">
                   <input
+                    type="text"
                     value={chatInput}
                     onChange={(e) => setChatInput(e.target.value)}
                     placeholder="Type a message..."
-                    className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2
-                               text-white text-xs outline-none focus:border-[#D4AF7A]/50 transition-colors"
+                    className="flex-1 bg-white/10 border border-white/10 rounded-lg px-3 py-2
+                               text-white text-sm outline-none focus:border-[#D4AF7A]/50 transition-colors w-full"
                   />
                   <button
                     type="submit"

@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { request } from "@/lib/api";
 import { useRealtimeKitMeeting } from "@cloudflare/realtimekit-react";
-import { RtkMeeting } from "@cloudflare/realtimekit-react-ui";
 import RealtimeKitVideoBackgroundTransformer from "@cloudflare/realtimekit-virtual-background";
 import { VideoSettingsModal } from "@/components/ui/VideoSettingsModal";
 import {
@@ -431,8 +430,18 @@ export default function MeetingUI({ isHost, meetingTime, meetingName, meetingId 
             isHost={isHost}
           />
 
-          <div className="w-full h-full">
-            <RtkMeeting mode="fill" meeting={meeting} showSetupScreen={false} />
+          <div className="w-full h-full flex items-center justify-center bg-black">
+            <div className="relative w-full h-full max-w-4xl mx-auto bg-[#1A2332] rounded-xl overflow-hidden">
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="w-20 h-20 rounded-full bg-[#D4AF7A]/20 flex items-center justify-center mx-auto mb-4">
+                    <span className="text-3xl font-bold text-[#D4AF7A]">Y</span>
+                  </div>
+                  <p className="text-white/60 text-sm">You</p>
+                  <p className="text-white/40 text-xs mt-1">Connected</p>
+                </div>
+              </div>
+            </div>
           </div>
 
           <FloatingReactions reactions={reactions} />

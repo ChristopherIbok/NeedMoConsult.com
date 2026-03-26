@@ -54,6 +54,14 @@ export default function Call() {
     initClient({
       authToken,
       defaults: {
+        video: true,
+        audio: true,
+        mediaConfiguration: {
+          video: {
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
+          },
+        },
         recording: {
           videoConfig: { width: 1920, height: 1080 },
           fileNamePrefix: "consultation-{date}",

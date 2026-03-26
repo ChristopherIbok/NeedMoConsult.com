@@ -5,6 +5,14 @@ import { useRealtimeKitMeeting } from "@cloudflare/realtimekit-react";
 import RealtimeKitVideoBackgroundTransformer from "@cloudflare/realtimekit-virtual-background";
 import { VideoSettingsModal } from "@/components/ui/VideoSettingsModal";
 import {
+  ZoomDropdown,
+  DropdownMenu,
+  DropdownItem,
+  DropdownDivider,
+  DropdownToggle,
+  DropdownLabel,
+} from "@/components/ui/ZoomDropdown";
+import {
   Mic,
   MicOff,
   Video,
@@ -246,6 +254,100 @@ function BottomToolbar({
         </div>
       </div>
     </div>
+  );
+}
+
+function MicDropdownContent({ 
+  isMuted, 
+  audioDevices, 
+  selectedAudioDevice, 
+  onDeviceChange,
+  onToggleMute 
+}) {
+  const [noiseSuppression, setNoiseSuppression] = useState(true);
+  const [echoCancellation, setEchoCancellation] = useState(true);
+
+  return (
+    <DropdownMenu>
+      <DropdownItem onClick={onToggleMute} icon={isMuted ? MicOff : Mic}>
+        {isMuted ? "Unmute" : "Mute"}
+      </DropdownItem>
+      <DropdownDivider />
+      <DropdownLabel>Select a Microphone</DropdownLabel>
+      {audioDevices.map((device) => (
+        <DropdownItem
+          key={device.deviceId}
+          onClick={() => onDeviceChange(device.deviceId)}
+          active={selectedAudioDevice === device.deviceId}
+        >
+          {device.label || `Microphone ${device.deviceId.slice(0, 8)}`}
+        </DropdownItem>
+      ))}
+      <DropdownDivider />
+      <DropdownToggle
+        checked={noiseSuppression}
+        onChange={setNoiseSuppression}
+        label="Noise Suppression"
+      />
+      <DropdownToggle
+        checked={echoCancellation}
+        onChange={setEchoCancellation}
+        label="Echo Cancellation"
+      />
+    </DropdownMenu>
+  );
+}
+
+function VideoDropdownContent({ 
+  isVideoOff, 
+  videoDevices, 
+  selectedVideoDevice, 
+  onDeviceChange,
+  onToggleVideo 
+}) {
+  return (
+    <DropdownMenu>
+      <DropdownItem onClick={onToggleVideo} icon={isVideoOff ? VideoOff : Video}>
+        {isVideoOff ? "Start Video" : "Stop Video"}
+      </DropdownItem>
+      <DropdownDivider />
+      <DropdownLabel>Select a Camera</DropdownLabel>
+      {videoDevices.map((device) => (
+        <DropdownItem
+          key={device.deviceId}
+          onClick={() => onDeviceChange(device.deviceId)}
+          active={selectedVideoDevice === device.deviceId}
+        >
+          {device.label || `Camera ${device.deviceId.slice(0, 8)}`}
+        </DropdownItem>
+      ))}
+    </DropdownMenu>
+  );
+}
+
+function SecurityDropdownContent({ isRecording, onStartRecording, onStopRecording }) {
+  return (
+    <DropdownMenu>
+      <DropdownItem onClick={onStartRecording} disabled={isRecording} icon={Circle}>
+        Start Recording
+      </DropdownItem>
+      <DropdownItem onClick={onStopRecording} disabled={!isRecording} icon={Circle}>
+        Stop Recording
+      </DropdownItem>
+    </DropdownMenu>
+  );
+}
+
+function ShareDropdownContent({ screenShareActive, onShare, onShareEnd }) {
+  return (
+    <DropdownMenu>
+      <DropdownItem onClick={onShare} disabled={screenShareActive} icon={Monitor}>
+        Share Screen
+      </DropdownItem>
+      <DropdownItem onClick={onShareEnd} disabled={!screenShareActive} danger icon={Monitor}>
+        Stop Sharing
+      </DropdownItem>
+    </DropdownMenu>
   );
 }
 

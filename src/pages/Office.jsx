@@ -378,6 +378,7 @@ export default function Office() {
 
   // Email menu state
   const [emailMenuOpen, setEmailMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Newsletter form
   const [form, setForm] = useState({
@@ -702,15 +703,25 @@ export default function Office() {
   return (
     <div className="min-h-screen bg-[#F2F2F0] dark:bg-[#0F1419]">
       {/* Header Nav */}
-      <header className="bg-[#1A2332] border-b border-white/10 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#D4AF7A] to-[#C49A5E] flex items-center justify-center">
-            <Briefcase className="w-4 h-4 text-[#1A2332]" />
+      <header className="bg-[#1A2332] border-b border-white/10 px-4 md:px-6 py-3 md:py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#D4AF7A] to-[#C49A5E] flex items-center justify-center">
+              <Briefcase className="w-4 h-4 text-[#1A2332]" />
+            </div>
+            <span className="text-white font-bold text-lg hidden sm:block">NEEDMO Office</span>
           </div>
-          <span className="text-white font-bold text-lg">NEEDMO Office</span>
-        </div>
-        
-        <nav className="flex items-center gap-2">
+          
+          {/* Mobile Menu Button */}
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 text-white/60 hover:text-white"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center gap-2">
           {[
             { id: "projects", label: "Projects & Tasks" },
             { id: "subscribers", label: "Subscribers", badge: activeCount },
@@ -779,21 +790,84 @@ export default function Office() {
           <button onClick={() => { setAuthed(false); setCurrentUser(null); }} className="text-white/40 hover:text-white text-sm ml-4">
             Sign Out
           </button>
-        </nav>
+          </nav>
+        </div>
       </header>
 
+      {/* Mobile Menu Dropdown */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-[#1A2332] border-b border-white/10 px-4 py-4 space-y-2">
+          <div className="flex flex-col gap-2">
+            {[
+              { id: "projects", label: "Projects & Tasks" },
+              { id: "subscribers", label: "Subscribers", badge: activeCount },
+            ].map(item => (
+              <button
+                key={item.id}
+                onClick={() => { setTab(item.id); setMobileMenuOpen(false); }}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all text-left ${
+                  tab === item.id
+                    ? "bg-[#D4AF7A] text-[#1A2332]"
+                    : "text-white/60 hover:text-white hover:bg-white/10"
+                }`}
+              >
+                {item.label}
+                {item.badge > 0 && <span className="ml-1 text-xs">({item.badge})</span>}
+              </button>
+            ))}
+            <button
+              onClick={() => { setTab("compose"); setMobileMenuOpen(false); }}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all text-left ${
+                tab === "compose" ? "bg-[#D4AF7A] text-[#1A2332]" : "text-white/60 hover:text-white hover:bg-white/10"
+              }`}
+            >
+              Newsletter
+            </button>
+            <button
+              onClick={() => { setTab("welcome"); setMobileMenuOpen(false); }}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all text-left ${
+                tab === "welcome" ? "bg-[#D4AF7A] text-[#1A2332]" : "text-white/60 hover:text-white hover:bg-white/10"
+              }`}
+            >
+              Welcome Email
+            </button>
+          </div>
+          <div className="flex flex-col gap-2 pt-2 border-t border-white/10">
+            <a
+              href="/call?role=host"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white/60 hover:text-[#D4AF7A] text-sm flex items-center gap-2 px-4 py-2"
+            >
+              <Video className="w-4 h-4" />
+              Start Meeting
+            </a>
+            <a
+              href="/"
+              target="_blank"
+              className="text-white/40 hover:text-white text-sm px-4 py-2"
+            >
+              View Website
+            </a>
+            <button onClick={() => { setAuthed(false); setCurrentUser(null); }} className="text-white/40 hover:text-white text-sm text-left px-4 py-2">
+              Sign Out
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Main Content */}
-      <main className="p-8">
+      <main className="p-4 md:p-8">
 
             {/* ── PROJECTS TAB ── */}
             {tab === "projects" && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-                <div className="flex items-center justify-between mb-8">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                   <div>
-                    <h1 className="text-2xl font-bold text-[#1A2332] dark:text-white">Projects & Tasks</h1>
+                    <h1 className="text-xl sm:text-2xl font-bold text-[#1A2332] dark:text-white">Projects & Tasks</h1>
                     <p className="text-gray-500 text-sm mt-1">{projects.length} projects · {tasks.filter(t => t.status !== "done").length} active tasks</p>
                   </div>
-                  <div className="flex gap-3">
+                  <div className="flex gap-2 sm:gap-3">
                     <button
                       onClick={() => {
                         if (projects.length === 0) {

@@ -50,13 +50,57 @@ export const adminLogout = () => clearToken();
 // ── Public ────────────────────────────────────────────────────────────────────
 export const submitContact = (payload) =>
   request("/public/contact", { method: "POST", body: JSON.stringify(payload) });
-//  payload: { name, email, phone?, message, service_interest? }
 
 export const joinWaitlist = (email, name = "") =>
   request("/public/waitlist", { method: "POST", body: JSON.stringify({ email, name }) });
 
 export const unsubscribe = (email) =>
   request(`/public/unsubscribe?email=${encodeURIComponent(email)}`);
+
+
+// ── RealtimeKit Call API ─────────────────────────────────────────────────────
+export const joinCall = async ({ name, email, mode, role, roomName }) => {
+  const payload = {
+    name,
+    role,
+    mode,
+  };
+  
+  if (email) payload.email = email;
+  if (roomName) payload.roomName = roomName;
+  
+  return request("/public/realtimekit/join", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+};
+
+export const getCallAuthToken = async ({ mode, name, email, role, roomName }) => {
+  const payload = {
+    name,
+    mode,
+    role,
+  };
+  
+  if (email) payload.email = email;
+  if (roomName) payload.roomName = roomName;
+  
+  return request("/public/realtimekit/token", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+};
+
+export const endCall = async (meetingId) => {
+  return request(`/public/realtimekit/end`, {
+    method: "POST",
+    body: JSON.stringify({ meetingId }),
+  });
+};
+
+export const getCallDetails = async (meetingId) => {
+  return request(`/public/realtimekit/meeting/${meetingId}`);
+};
 
 
 // ── Admin (all require login) ──────────────────────────────────────────────────
@@ -70,48 +114,18 @@ export const getNewsletters     = () => request("/admin/newsletters");
 
 export const sendNewsletter = (payload) =>
   request("/admin/newsletter/send", { method: "POST", body: JSON.stringify(payload) });
-//  payload: { subject, headline, body_html, cta_text?, cta_url? }
 
 export const sendWelcomeEmail = (payload) =>
   request("/admin/welcome-email", { method: "POST", body: JSON.stringify(payload) });
-//  payload: { email, name?, headline?, intro?, cta_text?, cta_url? }
 
 export const createMeetingRoom = () =>
   request("/admin/room/create", { method: "POST" });
-//  Returns: { url, name }
 
-
-// ── Usage Examples ─────────────────────────────────────────────────────────────
-/*
-  // Contact form submit:
-  await submitContact({
-    name: "Ada Obi",
-    email: "ada@example.com",
-    message: "I need brand consulting.",
-    service_interest: "Brand Strategy",
-  });
-
-  // Waitlist signup:
-  await joinWaitlist("ada@example.com", "Ada");
-
-  // Admin login:
-  await adminLogin("hello@needmoconsult.com", "yourpassword");
-
-  // Send newsletter (admin only):
-  await sendNewsletter({
-    subject: "NEEDMO April Update",
-    headline: "Growing your brand in Q2",
-    body_html: "<p>Here's what we've been working on...</p>",
-    cta_text: "Read More",
-    cta_url: "https://needmoconsult.com/blog",
-  });
-*/
 
 export const getBlogPosts = () => request("/public/blog");
 export const getBlogPost = (id) => request(`/public/blog/${id}`);
 export const createBooking = (payload) =>
   request("/public/booking", { method: "POST", body: JSON.stringify(payload) });
-// Returns: { message, id, call_url? }
 
 // ── Projects ──────────────────────────────────────────────────────────────────
 export const getProjects = () => request("/admin/projects");

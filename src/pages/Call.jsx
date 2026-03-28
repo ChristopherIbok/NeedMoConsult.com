@@ -1,218 +1,79 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { request } from "@/lib/api";
-import {
-  useRealtimeKitClient,
-  RealtimeKitProvider,
-} from "@cloudflare/realtimekit-react";
-import { RtkMeeting } from "@cloudflare/realtimekit-react-ui";
-import { AlertCircle, Video, Mic, MicOff, VideoOff, Settings, Check } from "lucide-react";
+import { AlertCircle } from "lucide-react";
+import { useRealtimeKitClient, RealtimeKitProvider } from "@cloudflare/realtimekit-react";
+import { joinCall } from "@/lib/api";
+import PreJoinScreen from "@/components/PreJoinScreen";
+import MeetingRoom from "@/components/MeetingRoom";
+import WebinarRoom from "@/components/WebinarRoom";
+import LivestreamRoom from "@/components/LivestreamRoom";
 
 const CLOUDFLARE_MEETING_ID = import.meta.env.VITE_CLOUDFLARE_MEETING_ID;
 
-function PreJoinScreen({ isHost, onJoin, loading, error }) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [meetingName, setMeetingName] = useState("");
-  const [micOn, setMicOn] = useState(true);
-  const [camOn, setCamOn] = useState(true);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!name.trim()) return;
-    if (!isHost && !email.trim()) return;
-    onJoin({ name: name.trim(), email: email.trim(), meetingName: meetingName.trim() });
-  };
-
-  return (
-    <main className="min-h-screen bg-[#0D1117] flex items-center justify-center p-4">
-      <div
-        className="absolute inset-0 opacity-[0.04]"
-        style={{
-          backgroundImage: "linear-gradient(#D4AF7A 1px, transparent 1px), linear-gradient(90deg, #D4AF7A 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
-      />
-
-      <div className="relative z-10 flex flex-col lg:flex-row gap-8 w-full max-w-4xl items-center">
-        <div className="flex-1 w-full max-w-lg">
-          <div className="relative aspect-video bg-[#1A2332] rounded-2xl overflow-hidden shadow-2xl border border-white/5">
-            <div className="w-full h-full flex flex-col items-center justify-center gap-3">
-              <div className="w-16 h-16 rounded-full bg-[#D4AF7A]/10 flex items-center justify-center">
-                <VideoOff className="w-7 h-7 text-[#D4AF7A]/60" />
-              </div>
-              <span className="text-white/40 text-sm">Camera preview</span>
-            </div>
-
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setMicOn((v) => !v)}
-                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all
-                  ${micOn ? "bg-white/20 hover:bg-white/30 text-white" : "bg-red-500 hover:bg-red-600 text-white"}`}
-              >
-                {micOn ? <Mic className="w-4 h-4" /> : <MicOff className="w-4 h-4" />}
-              </button>
-              <button
-                type="button"
-                onClick={() => setCamOn((v) => !v)}
-                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all
-                  ${camOn ? "bg-white/20 hover:bg-white/30 text-white" : "bg-red-500 hover:bg-red-600 text-white"}`}
-              >
-                {camOn ? <Video className="w-4 h-4" /> : <VideoOff className="w-4 h-4" />}
-              </button>
-              <button type="button" className="w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-all">
-                <Settings className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="w-full max-w-sm">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-[#D4AF7A]/10 border border-[#D4AF7A]/20 flex items-center justify-center">
-              <Video className="w-5 h-5 text-[#D4AF7A]" />
-            </div>
-            <div>
-              <h1 className="text-white font-bold text-lg leading-none">
-                {isHost ? "Start Meeting" : "Join Meeting"}
-              </h1>
-              <p className="text-white/40 text-xs mt-0.5">
-                {isHost ? "You are the host" : "Enter your details to join"}
-              </p>
-            </div>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-3">
-            {isHost && (
-              <div>
-                <label className="text-white/50 text-xs font-medium mb-1.5 block">Meeting Name</label>
-                <input
-                  type="text"
-                  value={meetingName}
-                  onChange={(e) => setMeetingName(e.target.value)}
-                  placeholder="e.g. Strategy Call Q2"
-                  className="w-full bg-[#1A2332] border border-white/10 rounded-xl px-4 py-3
-                             text-white text-sm outline-none focus:border-[#D4AF7A]/60
-                             placeholder:text-white/20 transition-colors"
-                />
-              </div>
-            )}
-
-            {!isHost && (
-              <div>
-                <label className="text-white/50 text-xs font-medium mb-1.5 block">Email Address</label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  required
-                  className="w-full bg-[#1A2332] border border-white/10 rounded-xl px-4 py-3
-                             text-white text-sm outline-none focus:border-[#D4AF7A]/60
-                             placeholder:text-white/20 transition-colors"
-                  autoFocus
-                />
-              </div>
-            )}
-
-            <div>
-              <label className="text-white/50 text-xs font-medium mb-1.5 block">Display Name</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Your name"
-                required
-                className="w-full bg-[#1A2332] border border-white/10 rounded-xl px-4 py-3
-                           text-white text-sm outline-none focus:border-[#D4AF7A]/60
-                           placeholder:text-white/20 transition-colors"
-                autoFocus={isHost}
-              />
-            </div>
-
-            {error && (
-              <div className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3">
-                <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
-                <p className="text-red-400 text-xs">{error}</p>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={!name.trim() || (!isHost && !email.trim()) || loading}
-              className="w-full bg-[#D4AF7A] hover:bg-[#C49A5E] disabled:opacity-40 disabled:cursor-not-allowed
-                         text-[#1A2332] font-bold py-3.5 rounded-xl transition-all duration-150
-                         text-sm shadow-lg shadow-[#D4AF7A]/20 mt-1"
-            >
-              {loading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <span className="w-4 h-4 border-2 border-[#1A2332]/30 border-t-[#1A2332] rounded-full animate-spin" />
-                  Connecting…
-                </span>
-              ) : (
-                <span className="flex items-center justify-center gap-2">
-                  <Check className="w-4 h-4" />
-                  {isHost ? "Start Meeting" : "Join Meeting"}
-                </span>
-              )}
-            </button>
-          </form>
-
-          <div className="flex items-center gap-3 mt-5 pt-4 border-t border-white/5">
-            <div className={`flex items-center gap-1.5 text-xs ${micOn ? "text-white/40" : "text-red-400"}`}>
-              {micOn ? <Mic className="w-3.5 h-3.5" /> : <MicOff className="w-3.5 h-3.5" />}
-              <span>{micOn ? "Mic on" : "Muted"}</span>
-            </div>
-            <div className="w-px h-3 bg-white/10" />
-            <div className={`flex items-center gap-1.5 text-xs ${camOn ? "text-white/40" : "text-red-400"}`}>
-              {camOn ? <Video className="w-3.5 h-3.5" /> : <VideoOff className="w-3.5 h-3.5" />}
-              <span>{camOn ? "Camera on" : "Camera off"}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-  );
-}
-
-export default function Call() {
+function Call() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const role = searchParams.get("role") || "participant";
+
+  const modeParam = searchParams.get("mode") || "conference";
+  const roleParam = searchParams.get("role") || "participant";
+  const roomParam = searchParams.get("room") || "";
+
+  const [mode, setMode] = useState(modeParam);
+  const [role, setRole] = useState(roleParam);
+  const [roomName, setRoomName] = useState(roomParam);
 
   const [authToken, setAuthToken] = useState(null);
+  const [meetingData, setMeetingData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [hasJoined, setHasJoined] = useState(false);
 
   const [client, initClient] = useRealtimeKitClient();
+
   const isHost = role === "host";
 
-  const handleJoin = async ({ name, email, meetingName }) => {
-    if (!CLOUDFLARE_MEETING_ID) return;
+  const handleJoin = useCallback(async ({ name, email, mode: joinMode, role: joinRole, roomName: joinRoomName, micEnabled, camEnabled }) => {
+    if (!CLOUDFLARE_MEETING_ID) {
+      setError("Meeting ID not configured");
+      return;
+    }
+
     setLoading(true);
     setError(null);
+
     try {
-      const data = await request("/public/realtimekit/join", {
-        method: "POST",
-        body: JSON.stringify({
-          name,
-          meetingId: CLOUDFLARE_MEETING_ID,
-          role,
-          meetingName: meetingName || undefined,
-          email: email?.toLowerCase(),
-        }),
+      const data = await joinCall({
+        name,
+        email,
+        mode: joinMode,
+        role: joinRole,
+        roomName: joinRoomName || undefined,
       });
+
+      setMeetingData({
+        ...data,
+        userName: name,
+        userRole: joinRole,
+        mode: joinMode,
+      });
+
+      setMode(joinMode);
+      setRole(joinRole);
+      setRoomName(joinRoomName || "");
+
       setAuthToken(data.authToken);
+
+      setHasJoined(true);
     } catch (err) {
       console.error("Join error:", err);
-      setError("Failed to join meeting. Please try again.");
+      setError(err.message || "Failed to join. Please try again.");
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (!authToken) return;
+
     initClient({
       authToken,
       defaults: {
@@ -227,6 +88,14 @@ export default function Call() {
         setLoading(false);
       });
   }, [authToken, initClient]);
+
+  const handleLeave = useCallback(() => {
+    setHasJoined(false);
+    setAuthToken(null);
+    setMeetingData(null);
+    setMode(modeParam);
+    setRole(roleParam);
+  }, [modeParam, roleParam]);
 
   if (!CLOUDFLARE_MEETING_ID) {
     return (
@@ -253,16 +122,54 @@ export default function Call() {
     );
   }
 
-  if (authToken && client) {
-    return (
-      <RealtimeKitProvider value={client}>
-        <RtkMeeting mode="fill" showSetupScreen={false} />
-      </RealtimeKitProvider>
-    );
+  if (hasJoined && authToken && client) {
+    const renderRoom = () => {
+      switch (mode) {
+        case "webinar":
+          return (
+            <RealtimeKitProvider value={client}>
+              <WebinarRoom
+                client={client}
+                authToken={authToken}
+                role={meetingData?.userRole || role}
+                onLeave={handleLeave}
+                webinarName={roomName || meetingData?.roomName || ""}
+              />
+            </RealtimeKitProvider>
+          );
+        case "livestream":
+          return (
+            <LivestreamRoom
+              client={client}
+              authToken={authToken}
+              role={meetingData?.userRole || role}
+              onLeave={handleLeave}
+              streamName={roomName || meetingData?.roomName || ""}
+            />
+          );
+        case "conference":
+        default:
+          return (
+            <RealtimeKitProvider value={client}>
+              <MeetingRoom
+                client={client}
+                authToken={authToken}
+                isHost={isHost}
+                onLeave={handleLeave}
+                meetingName={roomName || meetingData?.roomName || ""}
+              />
+            </RealtimeKitProvider>
+          );
+      }
+    };
+
+    return renderRoom();
   }
 
   return (
     <PreJoinScreen
+      mode={mode}
+      role={role}
       isHost={isHost}
       onJoin={handleJoin}
       loading={loading}
@@ -270,3 +177,5 @@ export default function Call() {
     />
   );
 }
+
+export default Call;

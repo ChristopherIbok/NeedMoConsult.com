@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AlertCircle } from "lucide-react";
-import { useRealtimeKitClient, RealtimeKitProvider } from "@cloudflare/realtimekit-react";
+import { RtkMeeting } from "@cloudflare/realtimekit-react-ui";
+import { RealtimeKitProvider, useRealtimeKitClient } from "@cloudflare/realtimekit-react";
 import { joinCall } from "@/lib/api";
 import PreJoinScreen from "@/components/PreJoinScreen";
-import MeetingRoom from "@/components/MeetingRoom";
-import WebinarRoom from "@/components/WebinarRoom";
-import LivestreamRoom from "@/components/LivestreamRoom";
 
 const CLOUDFLARE_MEETING_ID = import.meta.env.VITE_CLOUDFLARE_MEETING_ID;
 
@@ -32,7 +30,7 @@ function Call() {
 
   const isHost = role === "host";
 
-  const handleJoin = useCallback(async ({ name, email, mode: joinMode, role: joinRole, roomName: joinRoomName, micEnabled, camEnabled }) => {
+  const handleJoin = useCallback(async ({ name, email, mode: joinMode, role: joinRole, roomName: joinRoomName }) => {
     if (!CLOUDFLARE_MEETING_ID) {
       setError("Meeting ID not configured");
       return;
@@ -62,32 +60,23 @@ function Call() {
       setRoomName(joinRoomName || "");
 
       setAuthToken(data.authToken);
-
       setHasJoined(true);
+
+      await initClient({
+        authToken: data.authToken,
+        defaults: {
+          video: true,
+          audio: true,
+        },
+      });
+      
+      setLoading(false);
     } catch (err) {
       console.error("Join error:", err);
       setError(err.message || "Failed to join. Please try again.");
       setLoading(false);
     }
-  }, []);
-
-  useEffect(() => {
-    if (!authToken) return;
-
-    initClient({
-      authToken,
-      defaults: {
-        video: true,
-        audio: true,
-      },
-    })
-      .then(() => setLoading(false))
-      .catch((err) => {
-        console.error("Init client error:", err);
-        setError("Failed to connect. Please refresh and try again.");
-        setLoading(false);
-      });
-  }, [authToken, initClient]);
+  }, [initClient]);
 
   const handleLeave = useCallback(() => {
     setHasJoined(false);
@@ -123,47 +112,14 @@ function Call() {
   }
 
   if (hasJoined && authToken && client) {
-    const renderRoom = () => {
-      switch (mode) {
-        case "webinar":
-          return (
-            <RealtimeKitProvider value={client}>
-              <WebinarRoom
-                client={client}
-                authToken={authToken}
-                role={meetingData?.userRole || role}
-                onLeave={handleLeave}
-                webinarName={roomName || meetingData?.roomName || ""}
-              />
-            </RealtimeKitProvider>
-          );
-        case "livestream":
-          return (
-            <LivestreamRoom
-              client={client}
-              authToken={authToken}
-              role={meetingData?.userRole || role}
-              onLeave={handleLeave}
-              streamName={roomName || meetingData?.roomName || ""}
-            />
-          );
-        case "conference":
-        default:
-          return (
-            <RealtimeKitProvider value={client}>
-              <MeetingRoom
-                client={client}
-                authToken={authToken}
-                isHost={isHost}
-                onLeave={handleLeave}
-                meetingName={roomName || meetingData?.roomName || ""}
-              />
-            </RealtimeKitProvider>
-          );
-      }
-    };
-
-    return renderRoom();
+    return (
+      <RealtimeKitProvider value={client}>
+        <RtkMeeting
+          mode="fill"
+          showSetupScreen={false}
+        />
+      </RealtimeKitProvider>
+    );
   }
 
   return (

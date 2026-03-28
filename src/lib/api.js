@@ -59,15 +59,18 @@ export const unsubscribe = (email) =>
 
 
 // ── RealtimeKit Call API ─────────────────────────────────────────────────────
+const CLOUDFLARE_MEETING_ID = import.meta.env.VITE_CLOUDFLARE_MEETING_ID;
+
 export const joinCall = async ({ name, email, mode, role, roomName }) => {
   const payload = {
     name,
     role,
     mode,
+    meetingId: CLOUDFLARE_MEETING_ID,
   };
   
   if (email) payload.email = email;
-  if (roomName) payload.roomName = roomName;
+  if (roomName) payload.meetingName = roomName;
   
   return request("/public/realtimekit/join", {
     method: "POST",

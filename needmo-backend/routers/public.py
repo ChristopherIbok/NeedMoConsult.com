@@ -253,11 +253,28 @@ async def realtimekit_join(req: RealtimeKitJoinRequest, db: Session = Depends(ge
         )
     
     preset_name = PRESET_MAP.get(req.role, "group-call-participant")
+    meeting_id = req.meetingId or app_id
     
     try:
         async with httpx.AsyncClient() as client:
+            # First, try to create the meeting if it doesn't exist
+            meeting_response = await client.put(
+                f"https://api.cloudflare.com/client/v4/accounts/{account_id}/realtime/kit/{app_id}/meetings/{meeting_id}",
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {api_token}",
+                },
+                json={
+                    "name": req.meetingName or req.name,
+                },
+                timeout=15.0,
+            )
+            
+            logger.info(f"RealtimeKit meeting creation: {meeting_response.status_code} {meeting_response.text}")
+            
+            # Now add the participant
             response = await client.post(
-                f"https://api.cloudflare.com/client/v4/accounts/{account_id}/realtime/kit/{app_id}/meetings/{req.meetingId}/participants",
+                f"https://api.cloudflare.com/client/v4/accounts/{account_id}/realtime/kit/{app_id}/meetings/{meeting_id}/participants",
                 headers={
                     "Content-Type": "application/json",
                     "Authorization": f"Bearer {api_token}",
@@ -270,23 +287,24 @@ async def realtimekit_join(req: RealtimeKitJoinRequest, db: Session = Depends(ge
                 timeout=15.0,
             )
             
+            logger.info(f"RealtimeKit participant response: {response.status_code} {response.text}")
+            
             if response.status_code in (200, 201):
                 data = response.json()
-                logger.info(f"RealtimeKit response data: {data}")
                 if data.get("success"):
                     auth_token = data.get("data", {}).get("token") or data.get("data", {}).get("authToken")
                     if auth_token:
-                        return {"authToken": auth_token}
+                        return {"authToken": auth_token, "meetingId": meeting_id}
                     raise HTTPException(status_code=500, detail="No auth token in response")
                 raise HTTPException(status_code=500, detail="Failed to create participant")
             else:
                 logger.error(f"RealtimeKit participant creation failed: {response.status_code} {response.text}")
-                raise HTTPException(status_code=500, detail="Failed to join meeting")
+                raise HTTPException(status_code=500, detail=f"Failed to join meeting: {response.text[:200]}")
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"RealtimeKit join error: {e}")
-        raise HTTPException(status_code=500, detail="Failed to join meeting")
+        raise HTTPException(status_code=500, detail=f"Failed to join meeting: {str(e)}")
 
 
 class RealtimeKitVerifyRequest(BaseModel):

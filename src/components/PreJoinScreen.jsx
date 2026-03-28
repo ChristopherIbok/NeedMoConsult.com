@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   Video,
   VideoOff,
@@ -59,20 +59,13 @@ export function PreJoinScreen({
   const [devices, setDevices] = useState({ video: [], audio: [] });
   const [selectedVideoDevice, setSelectedVideoDevice] = useState("");
   const [selectedAudioDevice, setSelectedAudioDevice] = useState("");
+  const [mediaError, setMediaError] = useState(null);
   const videoRef = useRef(null);
   const streamRef = useRef(null);
 
-  useEffect(() => {
-    if (camOn && !streamRef.current) {
-      initializeMedia();
-    }
-    return () => {
-      stopMedia();
-    };
-  }, [camOn, selectedVideoDevice, selectedAudioDevice]);
-
-  const initializeMedia = async () => {
+  const initializeMedia = useCallback(async () => {
     try {
+      setMediaError(null);
       const constraints = {
         video: selectedVideoDevice
           ? { deviceId: { exact: selectedVideoDevice } }
@@ -96,8 +89,18 @@ export function PreJoinScreen({
       });
     } catch (err) {
       console.error("Failed to get media devices:", err);
+      setMediaError(err.name === "NotAllowedError" ? "Camera access denied. Click to enable." : err.message);
     }
-  };
+  }, [selectedVideoDevice, selectedAudioDevice]);
+
+  useEffect(() => {
+    if (camOn && !streamRef.current) {
+      initializeMedia();
+    }
+    return () => {
+      stopMedia();
+    };
+  }, [camOn, initializeMedia]);
 
   const stopMedia = () => {
     if (streamRef.current) {
@@ -150,7 +153,7 @@ export function PreJoinScreen({
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="flex-1">
             <div className="relative aspect-video bg-[#1A2332] rounded-2xl overflow-hidden shadow-2xl border border-white/5">
-              {camOn ? (
+              {camOn && !mediaError ? (
                 <video
                   ref={videoRef}
                   autoPlay
@@ -158,6 +161,19 @@ export function PreJoinScreen({
                   muted
                   className="w-full h-full object-cover"
                 />
+              ) : mediaError ? (
+                <button
+                  onClick={initializeMedia}
+                  className="w-full h-full flex flex-col items-center justify-center gap-3 hover:bg-white/5 transition-colors"
+                >
+                  <div className="w-16 h-16 rounded-full bg-[#D4AF7A]/10 flex items-center justify-center">
+                    <VideoOff className="w-7 h-7 text-[#D4AF7A]/60" />
+                  </div>
+                  <span className="text-[#D4AF7A] text-sm text-center px-4">
+                    {mediaError}
+                  </span>
+                  <span className="text-white/40 text-xs">Click to try again</span>
+                </button>
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center gap-3">
                   <div className="w-16 h-16 rounded-full bg-[#D4AF7A]/10 flex items-center justify-center">

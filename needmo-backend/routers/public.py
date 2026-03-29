@@ -235,6 +235,8 @@ async def realtimekit_join(req: RealtimeKitJoinRequest, db: Session = Depends(ge
     """Join a Cloudflare RealtimeKit meeting."""
     import httpx
     
+    logger.info(f"joinCall request: {req.name}, {req.role}, {req.meetingId}")
+    
     if req.email:
         existing = db.query(models.Waitlist).filter(models.Waitlist.email == req.email).first()
         if not existing:
@@ -245,6 +247,10 @@ async def realtimekit_join(req: RealtimeKitJoinRequest, db: Session = Depends(ge
     account_id = os.getenv("CLOUDFLARE_ACCOUNT_ID")
     app_id = os.getenv("CLOUDFLARE_APP_ID")
     api_token = os.getenv("CLOUDFLARE_API_TOKEN")
+    
+    logger.info(f"CLOUDFLARE_ACCOUNT_ID: {account_id}")
+    logger.info(f"CLOUDFLARE_APP_ID: {app_id}")
+    logger.info(f"CLOUDFLARE_API_TOKEN set: {bool(api_token)}")
     
     if not all([account_id, app_id, api_token]):
         raise HTTPException(

@@ -10,4 +10,13 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  optimizeDeps: {
+    include: ['@cloudflare/realtimekit-react', '@cloudflare/realtimekit-react-ui'],
+    force: true
+  },
+  build: {
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    }
+  }
 })

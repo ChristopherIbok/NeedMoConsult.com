@@ -33,3 +33,9 @@ needmo-backend/.env
 needmo-backend/__pycache__/
 needmo-backend/venv/
 needmo-backend/*.pyc
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example

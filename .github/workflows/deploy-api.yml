@@ -1,10 +1,11 @@
-name: Deploy Cloudflare Workers
+name: Deploy API
 
 on:
   push:
     branches: [main]
     paths:
-      - 'needmo-workers/**'
+      - 'api/**'
+      - '.github/workflows/deploy-api.yml'
   workflow_dispatch:
 
 jobs:
@@ -20,5 +21,5 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy --config needmo-workers/wrangler.jsonc
-          workingDirectory: needmo-workers
+          command: deploy --config api/wrangler.jsonc
+          workingDirectory: api

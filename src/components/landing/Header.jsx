@@ -202,6 +202,26 @@ export default function Header() {
                   </Link>
                 </motion.div>
               ))}
+
+              {/* Join Call Link */}
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: navItems.length * 0.06 }}
+              >
+                <Link
+                  to="/call?role=participant"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 py-4 text-2xl font-bold transition-colors active:scale-[0.98] hover:text-[#D4AF7A]"
+                  style={{
+                    color: "#D4AF7A",
+                    borderBottom: `1px solid ${menuBorder}`,
+                  }}
+                >
+                  <Video className="w-6 h-6" />
+                  Join
+                </Link>
+              </motion.div>
             </nav>
 
             {/* CTA at bottom */}

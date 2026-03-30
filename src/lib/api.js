@@ -4,7 +4,9 @@
  * Drop this in your React/Vite project.
  */
 
-const BASE_URL = import.meta.env.VITE_API_URL; // https://api.needmoconsult.com
+const BASE_URL = import.meta.env.VITE_API_URL || "https://needmo-workers.ibokchris.workers.dev";
+
+console.log("API Base URL:", BASE_URL);
 
 // ── Token storage ─────────────────────────────────────────────────────────────
 export const getToken = () => localStorage.getItem("needmo_token");
@@ -15,10 +17,13 @@ export const clearToken = () => localStorage.removeItem("needmo_token");
 export async function request(path, options = {}) {
   const token = getToken();
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000);
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
+  const url = `${BASE_URL}${path}`;
+  
+  console.log("Making request to:", url);
   
   try {
-    const res = await fetch(`${BASE_URL}${path}`, {
+    const res = await fetch(url, {
       ...options,
       signal: controller.signal,
       headers: {
@@ -28,6 +33,7 @@ export async function request(path, options = {}) {
       },
     });
     clearTimeout(timeoutId);
+    console.log("Response status:", res.status);
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.detail || `API error ${res.status}`);
@@ -35,6 +41,7 @@ export async function request(path, options = {}) {
     return res.json();
   } catch (err) {
     clearTimeout(timeoutId);
+    console.error("Request error:", err);
     if (err.name === 'AbortError') {
       throw new Error('Request timed out. Please check your API is running.');
     }

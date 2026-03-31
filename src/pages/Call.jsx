@@ -67,9 +67,12 @@ function Call() {
           authToken: data.authToken,
           defaults: { video: true, audio: true },
         })
-          .then((returnedClient) => {
+          .then(async (returnedClient) => {
             console.log("returnedClient:", returnedClient);
             console.log("type:", typeof returnedClient);
+            if (returnedClient?.join) {
+              await returnedClient.join();
+            }
             setMeetingClient(returnedClient);
           })
           .catch((clientErr) => {

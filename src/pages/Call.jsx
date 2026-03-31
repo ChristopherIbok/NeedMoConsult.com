@@ -75,7 +75,9 @@ function Call() {
               await returnedClient.join();
               console.log("join() completed");
             }
+            console.log("Setting meetingClient...");
             setMeetingClient(returnedClient);
+            console.log("meetingClient set");
           })
           .catch((clientErr) => {
             console.error("initClient error:", clientErr);

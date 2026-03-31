@@ -131,6 +131,7 @@ function Call() {
   }
 
   // ── Loading bridge: joined but client not ready yet ───────────────────────
+  console.log("Render check - hasJoined:", hasJoined, "authToken:", !!authToken, "meetingClient:", !!meetingClient);
   if (hasJoined && authToken && !meetingClient) {
     return (
       <main className="min-h-screen bg-[#0A0F1A] flex flex-col items-center justify-center gap-3">

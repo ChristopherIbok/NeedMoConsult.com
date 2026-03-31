@@ -15,12 +15,15 @@ import {
 // ─── Inner component (must live inside RealtimeKitProvider) ───────────────────
 function MeetingRoomInner({ isHost, onLeave, meetingName, roomName }) {
   const { meeting } = useRealtimeKitMeeting();
-  console.log("MeetingRoomInner render, meeting:", typeof meeting, meeting);
-
+  console.log("MeetingRoomInner render, meeting:", !!meeting);
+  
   // SDK-driven self state
   const selfName        = useRealtimeKitSelector((m) => m.self?.name);
   const selfAudio       = useRealtimeKitSelector((m) => m.self?.audioEnabled);
   const selfVideo       = useRealtimeKitSelector((m) => m.self?.videoEnabled);
+  const selfJoined      = useRealtimeKitSelector((m) => m.self?.roomJoined);
+  
+  console.log("Self state - name:", selfName, "audio:", selfAudio, "video:", selfVideo, "joined:", selfJoined);
   const joinedMap       = useRealtimeKitSelector((m) => m.participants?.joined);
   const participants    = joinedMap ? Array.from(joinedMap.values()) : [];
 

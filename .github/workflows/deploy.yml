@@ -16,11 +16,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 24
+        cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
@@ -37,7 +37,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: needmo-frontend
-          directory: dist
-          # Optional: Add this if you want to delete old deployments
-          # granularity: "page"
+          command: pages deploy dist --project-name=needmo-frontend

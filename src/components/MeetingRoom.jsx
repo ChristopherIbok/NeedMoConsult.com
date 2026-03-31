@@ -53,6 +53,10 @@ function MeetingRoomInner({ isHost, onLeave, meetingName, roomName }) {
 
   const toggleScreenShare = useCallback(async () => {
     if (!meeting) return;
+    if (!meeting.self?.roomJoined) {
+      console.warn("Cannot screen share: not joined yet");
+      return;
+    }
     try {
       if (isScreenSharing) {
         await meeting.self.disableScreenShare?.();

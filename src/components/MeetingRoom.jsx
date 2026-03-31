@@ -15,6 +15,7 @@ import {
 // ─── Inner component (must live inside RealtimeKitProvider) ───────────────────
 function MeetingRoomInner({ isHost, onLeave, meetingName, roomName }) {
   const { meeting } = useRealtimeKitMeeting();
+  console.log("MeetingRoomInner render, meeting:", !!meeting);
 
   // SDK-driven self state
   const selfName        = useRealtimeKitSelector((m) => m.self?.name);

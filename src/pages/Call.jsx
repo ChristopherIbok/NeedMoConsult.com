@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { RtkMeeting } from "@cloudflare/realtimekit-react-ui";
 import { RealtimeKitProvider, useRealtimeKitClient } from "@cloudflare/realtimekit-react";
 import { joinCall } from "@/lib/api";
@@ -30,53 +30,61 @@ function Call() {
 
   const isHost = role === "host";
 
-  const handleJoin = useCallback(async ({ name, email, mode: joinMode, role: joinRole, roomName: joinRoomName }) => {
-    if (!CLOUDFLARE_MEETING_ID) {
-      setError("Meeting ID not configured");
-      return;
-    }
+  const handleJoin = useCallback(
+    async ({ name, email, mode: joinMode, role: joinRole, roomName: joinRoomName }) => {
+      if (!CLOUDFLARE_MEETING_ID) {
+        setError("Meeting ID not configured");
+        return;
+      }
 
-    setLoading(true);
-    setError(null);
+      setLoading(true);
+      setError(null);
 
-    try {
-      const data = await joinCall({
-        name,
-        email,
-        mode: joinMode,
-        role: joinRole,
-        roomName: joinRoomName || undefined,
-      });
+      try {
+        const data = await joinCall({
+          name,
+          email,
+          mode: joinMode,
+          role: joinRole,
+          roomName: joinRoomName || undefined,
+        });
 
-      setMeetingData({
-        ...data,
-        userName: name,
-        userRole: joinRole,
-        mode: joinMode,
-      });
+        setMeetingData({
+          ...data,
+          userName: name,
+          userRole: joinRole,
+          mode: joinMode,
+        });
 
-      setMode(joinMode);
-      setRole(joinRole);
-      setRoomName(joinRoomName || "");
+        setMode(joinMode);
+        setRole(joinRole);
+        setRoomName(joinRoomName || "");
+        setAuthToken(data.authToken);
+        setHasJoined(true);
 
-      setAuthToken(data.authToken);
-      setHasJoined(true);
-
-      await initClient({
-        authToken: data.authToken,
-        defaults: {
-          video: true,
-          audio: true,
-        },
-      });
-      
-      setLoading(false);
-    } catch (err) {
-      console.error("Join error:", err);
-      setError(err.message || "Failed to join. Please try again.");
-      setLoading(false);
-    }
-  }, [initClient]);
+        // Fire-and-forget — client is reactive, UI will catch it once ready
+        initClient({
+          authToken: data.authToken,
+          defaults: {
+            video: true,
+            audio: true,
+          },
+        }).catch((clientErr) => {
+          console.error("Client init error:", clientErr);
+          setError("Failed to initialize the meeting client. Please try again.");
+          setHasJoined(false);
+          setAuthToken(null);
+        });
+      } catch (err) {
+        console.error("Join error:", err);
+        setError(err.message || "Failed to join. Please try again.");
+      } finally {
+        // Always unblock the UI regardless of what happens above
+        setLoading(false);
+      }
+    },
+    [initClient]
+  );
 
   const handleLeave = useCallback(() => {
     setHasJoined(false);
@@ -86,6 +94,7 @@ function Call() {
     setRole(roleParam);
   }, [modeParam, roleParam]);
 
+  // ── Config guard ──────────────────────────────────────────────────────────
   if (!CLOUDFLARE_MEETING_ID) {
     return (
       <main className="min-h-screen bg-[#0D1117] flex items-center justify-center p-4">
@@ -111,6 +120,17 @@ function Call() {
     );
   }
 
+  // ── Loading bridge: joined but client not ready yet ───────────────────────
+  if (hasJoined && authToken && !client) {
+    return (
+      <main className="min-h-screen bg-[#0D1117] flex flex-col items-center justify-center gap-3">
+        <Loader2 className="w-8 h-8 text-[#D4AF7A] animate-spin" />
+        <p className="text-white/50 text-sm">Connecting to meeting...</p>
+      </main>
+    );
+  }
+
+  // ── Active meeting ────────────────────────────────────────────────────────
   if (hasJoined && authToken && client) {
     return (
       <RealtimeKitProvider value={client}>
@@ -122,6 +142,7 @@ function Call() {
     );
   }
 
+  // ── Pre-join screen ───────────────────────────────────────────────────────
   return (
     <PreJoinScreen
       mode={mode}

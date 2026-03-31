@@ -382,6 +382,7 @@ function ControlBtn({ icon, label, onClick, active = true, danger = false }) {
 
 // ─── Public wrapper — provides the RealtimeKit context ───────────────────────
 export default function MeetingRoom({ meetingClient, isHost, onLeave, meetingName, roomName }) {
+  console.log("MeetingRoom render, meetingClient:", !!meetingClient);
   if (!meetingClient) {
     return (
       <div className="min-h-screen bg-[#0A0F1A] flex items-center justify-center">

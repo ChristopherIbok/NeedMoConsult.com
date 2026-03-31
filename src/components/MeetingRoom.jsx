@@ -15,15 +15,12 @@ import {
 // ─── Inner component (must live inside RealtimeKitProvider) ───────────────────
 function MeetingRoomInner({ isHost, onLeave, meetingName, roomName }) {
   const { meeting } = useRealtimeKitMeeting();
-  console.log("MeetingRoomInner render, meeting:", !!meeting);
   
   // SDK-driven self state
   const selfName        = useRealtimeKitSelector((m) => m.self?.name);
   const selfAudio       = useRealtimeKitSelector((m) => m.self?.audioEnabled);
   const selfVideo       = useRealtimeKitSelector((m) => m.self?.videoEnabled);
   const selfJoined      = useRealtimeKitSelector((m) => m.self?.roomJoined);
-  
-  console.log("Self state - name:", selfName, "audio:", selfAudio, "video:", selfVideo, "joined:", selfJoined);
   const joinedMap       = useRealtimeKitSelector((m) => m.participants?.joined);
   const participants    = joinedMap ? Array.from(joinedMap.values()) : [];
 
@@ -212,6 +209,10 @@ function MeetingRoomInner({ isHost, onLeave, meetingName, roomName }) {
           <div className="h-full bg-[#1A2332] rounded-2xl border border-white/5 overflow-hidden">
             <RtkMeeting mode="fill" showSetupScreen={false} />
           </div>
+          {/* Debug info */}
+          <div className="mt-2 text-xs text-white/30">
+            Self: {selfName} | Audio: {String(selfAudio)} | Video: {String(selfVideo)} | Joined: {String(selfJoined)}
+          </div>
         </main>
 
         {/* ── Participants panel ──────────────────────────────────────────── */}
@@ -386,7 +387,6 @@ function ControlBtn({ icon, label, onClick, active = true, danger = false }) {
 
 // ─── Public wrapper — provides the RealtimeKit context ───────────────────────
 export default function MeetingRoom({ meetingClient, isHost, onLeave, meetingName, roomName }) {
-  console.log("MeetingRoom render, meetingClient:", !!meetingClient);
   if (!meetingClient) {
     return (
       <div className="min-h-screen bg-[#0A0F1A] flex items-center justify-center">

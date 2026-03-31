@@ -205,22 +205,9 @@ function MeetingRoomInner({ isHost, onLeave, meetingName, roomName }) {
 
         {/* Video grid — Cloudflare's reliable prebuilt renderer */}
         <main className="flex-1 p-3 overflow-hidden">
-          {participants.length === 0 ? (
-            // Waiting state
-            <div className="h-full flex flex-col items-center justify-center gap-4">
-              <div className="w-full max-w-2xl h-[65vh] bg-[#1A2332] rounded-2xl border border-white/5 overflow-hidden">
-                <RtkMeeting mode="fill" showSetupScreen={false} />
-              </div>
-              <div className="text-center">
-                <p className="text-white/40 text-sm">Waiting for others to join…</p>
-                <p className="text-white/20 text-xs mt-1">Share the Room ID above to invite participants</p>
-              </div>
-            </div>
-          ) : (
-            <div className="h-full bg-[#1A2332] rounded-2xl border border-white/5 overflow-hidden">
-              <RtkMeeting mode="fill" showSetupScreen={false} />
-            </div>
-          )}
+          <div className="h-full bg-[#1A2332] rounded-2xl border border-white/5 overflow-hidden">
+            <RtkMeeting mode="fill" showSetupScreen={false} />
+          </div>
         </main>
 
         {/* ── Participants panel ──────────────────────────────────────────── */}

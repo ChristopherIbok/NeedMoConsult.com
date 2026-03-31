@@ -71,7 +71,9 @@ function Call() {
             console.log("returnedClient:", returnedClient);
             console.log("type:", typeof returnedClient);
             if (returnedClient?.join) {
+              console.log("Calling join()...");
               await returnedClient.join();
+              console.log("join() completed");
             }
             setMeetingClient(returnedClient);
           })

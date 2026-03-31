@@ -1,116 +1,89 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import { RtkMeeting } from "@cloudflare/realtimekit-react-ui";
-import { RealtimeKitProvider } from "@cloudflare/realtimekit-react";
-import Controls from "./Controls";
 import {
-  X,
-  Settings,
-  Maximize2,
-  Minimize2,
-  CircleDot,
+  RealtimeKitProvider,
+  useRealtimeKitMeeting,
+  useRealtimeKitSelector,
+} from "@cloudflare/realtimekit-react";
+import {
+  Mic, MicOff, Video, VideoOff, PhoneOff,
+  MonitorUp, Users, MessageSquare, Hand,
+  Maximize2, Minimize2, CircleDot, Settings,
+  X, Copy, Check, Send,
 } from "lucide-react";
 
-export function MeetingRoom({
-  client,
-  authToken,
-  isHost,
-  onLeave,
-  meetingName = "",
-}) {
-  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
-  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
-  const [isScreenSharing, setIsScreenSharing] = useState(false);
-  const [isHandRaised, setIsHandRaised] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
-  const [showParticipants, setShowParticipants] = useState(false);
-  const [showChat, setShowChat] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [participants, setParticipants] = useState([]);
-  const [chatMessages, setChatMessages] = useState([]);
+// ─── Inner component (must live inside RealtimeKitProvider) ───────────────────
+function MeetingRoomInner({ isHost, onLeave, meetingName, roomName }) {
+  const { meeting } = useRealtimeKitMeeting();
 
+  // SDK-driven self state
+  const selfName        = useRealtimeKitSelector((m) => m.self?.name);
+  const selfAudio       = useRealtimeKitSelector((m) => m.self?.audioEnabled);
+  const selfVideo       = useRealtimeKitSelector((m) => m.self?.videoEnabled);
+  const joinedMap       = useRealtimeKitSelector((m) => m.participants?.joined);
+  const participants    = joinedMap ? Array.from(joinedMap.values()) : [];
+
+  // Local UI state
+  const [isScreenSharing,  setIsScreenSharing]  = useState(false);
+  const [isHandRaised,     setIsHandRaised]      = useState(false);
+  const [isRecording,      setIsRecording]       = useState(false);
+  const [isFullscreen,     setIsFullscreen]      = useState(false);
+  const [showParticipants, setShowParticipants]  = useState(false);
+  const [showChat,         setShowChat]          = useState(false);
+  const [copied,           setCopied]            = useState(false);
+  const [chatMessages,     setChatMessages]      = useState([]);
+  const [chatInput,        setChatInput]         = useState("");
+  const messagesEndRef = useRef(null);
+
+  // Auto-scroll chat
   useEffect(() => {
-    if (client) {
-      client.on("participant-joined", (participant) => {
-        setParticipants((prev) => [...prev, participant]);
-      });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatMessages]);
 
-      client.on("participant-left", (participant) => {
-        setParticipants((prev) => prev.filter((p) => p.id !== participant.id));
-      });
+  // ─── Controls ──────────────────────────────────────────────────────────────
+  const toggleMic = useCallback(() => {
+    if (!meeting) return;
+    selfAudio ? meeting.self.disableAudio() : meeting.self.enableAudio();
+  }, [meeting, selfAudio]);
 
-      client.on("chat-message", (message) => {
-        setChatMessages((prev) => [...prev, message]);
-      });
+  const toggleCamera = useCallback(() => {
+    if (!meeting) return;
+    selfVideo ? meeting.self.disableVideo() : meeting.self.enableVideo();
+  }, [meeting, selfVideo]);
 
-      return () => {
-        client.off("participant-joined");
-        client.off("participant-left");
-        client.off("chat-message");
-      };
+  const toggleScreenShare = useCallback(async () => {
+    if (!meeting) return;
+    try {
+      if (isScreenSharing) {
+        await meeting.self.disableScreenShare?.();
+      } else {
+        await meeting.self.enableScreenShare?.();
+      }
+      setIsScreenSharing((v) => !v);
+    } catch (e) {
+      console.error("Screen share error:", e);
     }
-  }, [client]);
+  }, [meeting, isScreenSharing]);
 
-  const handleToggleAudio = useCallback(async () => {
-    const newState = !isAudioEnabled;
-    setIsAudioEnabled(newState);
-    if (client) {
-      await client.setAudioEnabled(newState);
+  const toggleHand = useCallback(() => {
+    setIsHandRaised((v) => !v);
+    meeting?.raiseHand?.(!isHandRaised);
+  }, [meeting, isHandRaised]);
+
+  const toggleRecording = useCallback(async () => {
+    if (!meeting || !isHost) return;
+    try {
+      if (isRecording) {
+        await meeting.stopRecording?.();
+        setIsRecording(false);
+      } else {
+        await meeting.startRecording?.();
+        setIsRecording(true);
+      }
+    } catch (e) {
+      console.error("Recording error:", e);
     }
-  }, [client, isAudioEnabled]);
-
-  const handleToggleVideo = useCallback(async () => {
-    const newState = !isVideoEnabled;
-    setIsVideoEnabled(newState);
-    if (client) {
-      await client.setVideoEnabled(newState);
-    }
-  }, [client, isVideoEnabled]);
-
-  const handleToggleScreenShare = useCallback(async () => {
-    const newState = !isScreenSharing;
-    setIsScreenSharing(newState);
-    if (client) {
-      await client.setScreenShareEnabled(newState);
-    }
-  }, [client, isScreenSharing]);
-
-  const handleToggleHand = useCallback(() => {
-    setIsHandRaised(!isHandRaised);
-    if (client && client.raiseHand) {
-      client.raiseHand(!isHandRaised);
-    }
-  }, [client, isHandRaised]);
-
-  const handleToggleParticipants = useCallback(() => {
-    setShowParticipants(!showParticipants);
-    if (showChat) setShowChat(false);
-  }, [showParticipants, showChat]);
-
-  const handleToggleChat = useCallback(() => {
-    setShowChat(!showChat);
-    if (showParticipants) setShowParticipants(false);
-  }, [showParticipants, showChat]);
-
-  const handleEndCall = useCallback(async () => {
-    if (client) {
-      await client.disconnect();
-    }
-    onLeave();
-  }, [client, onLeave]);
-
-  const handleStartRecording = useCallback(async () => {
-    if (client && client.startRecording) {
-      await client.startRecording();
-      setIsRecording(true);
-    }
-  }, [client]);
-
-  const handleStopRecording = useCallback(async () => {
-    if (client && client.stopRecording) {
-      await client.stopRecording();
-      setIsRecording(false);
-    }
-  }, [client]);
+  }, [meeting, isHost, isRecording]);
 
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
@@ -122,239 +95,318 @@ export function MeetingRoom({
     }
   }, []);
 
-  if (!authToken || !client) {
-    return (
-      <div className="min-h-screen bg-[#0D1117] flex items-center justify-center">
-        <div className="text-white/40">Loading meeting...</div>
-      </div>
-    );
-  }
+  const handleLeave = useCallback(async () => {
+    if (meeting) await meeting.leaveRoom?.();
+    onLeave();
+  }, [meeting, onLeave]);
 
+  const copyRoomId = () => {
+    navigator.clipboard.writeText(roomName || meetingName || "").then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  const sendChat = () => {
+    if (!chatInput.trim()) return;
+    meeting?.sendChatMessage?.(chatInput.trim());
+    setChatMessages((prev) => [
+      ...prev,
+      { senderName: selfName || "You", text: chatInput.trim(), timestamp: Date.now() },
+    ]);
+    setChatInput("");
+  };
+
+  const togglePanel = (panel) => {
+    if (panel === "participants") {
+      setShowParticipants((v) => !v);
+      setShowChat(false);
+    } else {
+      setShowChat((v) => !v);
+      setShowParticipants(false);
+    }
+  };
+
+  // ─── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#0D1117] flex flex-col">
-      <header className="flex items-center justify-between px-4 py-3 bg-[#1A2332]/80 backdrop-blur-sm border-b border-white/5">
+    <div className="min-h-screen bg-[#0A0F1A] flex flex-col select-none">
+
+      {/* ── Header ───────────────────────────────────────────────────────── */}
+      <header className="flex items-center justify-between px-5 py-3 bg-[#0D1117]/90 backdrop-blur-sm border-b border-white/5 shrink-0">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-[#D4AF7A]/10 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-[#D4AF7A]/10 border border-[#D4AF7A]/20 flex items-center justify-center">
             <span className="text-[#D4AF7A] text-sm font-bold">N</span>
           </div>
           <div>
-            <h1 className="text-white font-medium text-sm">
+            <h1 className="text-white/90 text-sm font-semibold leading-none">
               {meetingName || "Video Conference"}
             </h1>
-            <p className="text-white/40 text-xs">
-              {participants.length + 1} participants
+            <p className="text-white/30 text-xs mt-0.5">
+              {participants.length + 1} participant{participants.length !== 0 ? "s" : ""}
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Recording indicator */}
           {isRecording && (
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-red-500/20 rounded-full mr-2">
-              <CircleDot className="w-3 h-3 text-red-500 animate-pulse" />
-              <span className="text-red-400 text-xs font-medium">Recording</span>
+            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-red-500/15 rounded-full border border-red-500/20">
+              <CircleDot className="w-3 h-3 text-red-400 animate-pulse" />
+              <span className="text-red-400 text-xs font-medium">REC</span>
             </div>
           )}
 
+          {/* Host recording button */}
           {isHost && (
             <button
-              onClick={isRecording ? handleStopRecording : handleStartRecording}
-              className="px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white text-xs rounded-lg transition-colors"
+              onClick={toggleRecording}
+              className="px-3 py-1.5 bg-white/5 hover:bg-white/10 text-white/60 hover:text-white text-xs rounded-lg transition-all"
             >
-              {isRecording ? "Stop Recording" : "Start Recording"}
+              {isRecording ? "Stop Rec" : "Record"}
             </button>
           )}
 
+          {/* Copy room ID */}
           <button
-            onClick={toggleFullscreen}
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+            onClick={copyRoomId}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/50 hover:text-white/80 text-xs transition-all"
           >
-            {isFullscreen ? (
-              <Minimize2 className="w-4 h-4 text-white/60" />
-            ) : (
-              <Maximize2 className="w-4 h-4 text-white/60" />
-            )}
+            {copied
+              ? <Check className="w-3.5 h-3.5 text-green-400" />
+              : <Copy className="w-3.5 h-3.5" />
+            }
+            <span>{copied ? "Copied!" : "Copy ID"}</span>
           </button>
 
-          <button className="p-2 hover:bg-white/10 rounded-lg transition-colors">
-            <Settings className="w-4 h-4 text-white/60" />
+          {/* Fullscreen */}
+          <button
+            onClick={toggleFullscreen}
+            className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/50 hover:text-white transition-all"
+          >
+            {isFullscreen
+              ? <Minimize2 className="w-4 h-4" />
+              : <Maximize2 className="w-4 h-4" />
+            }
+          </button>
+
+          {/* Settings (placeholder) */}
+          <button className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/50 hover:text-white transition-all">
+            <Settings className="w-4 h-4" />
           </button>
         </div>
       </header>
 
-      <div className="flex-1 flex overflow-hidden">
-        <div className="flex-1 p-4">
-          <div className="h-full bg-[#1A2332] rounded-2xl overflow-hidden border border-white/5">
-            <RealtimeKitProvider value={client}>
-              <RtkMeeting
-                mode="grid"
-                showSetupScreen={false}
-                className="h-full"
-              />
-            </RealtimeKitProvider>
-          </div>
-        </div>
+      {/* ── Main ─────────────────────────────────────────────────────────── */}
+      <div className="flex flex-1 overflow-hidden">
 
-        {showParticipants && (
-          <ParticipantPanel
-            participants={participants}
-            currentUser={{ isHost }}
-            onClose={() => setShowParticipants(false)}
-          />
-        )}
-
-        {showChat && (
-          <ChatPanel
-            messages={chatMessages}
-            currentUser={{ name: "You" }}
-            onSendMessage={(text) => {
-              if (client && client.sendChatMessage) {
-                client.sendChatMessage(text);
-              }
-            }}
-            onClose={() => setShowChat(false)}
-          />
-        )}
-      </div>
-
-      <div className="p-4 flex justify-center">
-        <Controls
-          isAudioEnabled={isAudioEnabled}
-          isVideoEnabled={isVideoEnabled}
-          isScreenSharing={isScreenSharing}
-          isHandRaised={isHandRaised}
-          isHost={isHost}
-          isRecording={isRecording}
-          onToggleAudio={handleToggleAudio}
-          onToggleVideo={handleToggleVideo}
-          onToggleScreenShare={handleToggleScreenShare}
-          onEndCall={handleEndCall}
-          onToggleParticipants={handleToggleParticipants}
-          onToggleChat={handleToggleChat}
-          onToggleHand={handleToggleHand}
-          onSettings={() => {}}
-          participantCount={participants.length + 1}
-        />
-      </div>
-    </div>
-  );
-}
-
-function ParticipantPanel({ participants, currentUser, onClose }) {
-  const allParticipants = [
-    { id: "self", name: "You (You)", isSelf: true, ...currentUser },
-    ...participants.map((p) => ({ ...p, name: p.name || "Anonymous" })),
-  ];
-
-  return (
-    <div className="w-72 bg-[#1A2332] border-l border-white/5 flex flex-col">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
-        <h2 className="text-white font-medium text-sm">Participants</h2>
-        <button onClick={onClose} className="p-1 hover:bg-white/10 rounded">
-          <X className="w-4 h-4 text-white/60" />
-        </button>
-      </div>
-
-      <div className="flex-1 overflow-y-auto p-2">
-        {allParticipants.map((participant) => (
-          <div
-            key={participant.id}
-            className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5"
-          >
-            <div className="w-8 h-8 rounded-full bg-[#D4AF7A]/20 flex items-center justify-center">
-              <span className="text-[#D4AF7A] text-xs font-medium">
-                {participant.name.charAt(0).toUpperCase()}
-              </span>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-white text-sm truncate">
-                {participant.name}
-                {participant.isSelf && (
-                  <span className="text-white/40 ml-1">(You)</span>
-                )}
-              </p>
-              {participant.isHost && (
-                <span className="text-[#D4AF7A] text-xs">Host</span>
-              )}
-            </div>
-            <div className="flex items-center gap-1">
-              {!participant.audioEnabled && (
-                <span className="text-white/30 text-xs">🔇</span>
-              )}
-              {!participant.videoEnabled && (
-                <span className="text-white/30 text-xs">📷</span>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function ChatPanel({ messages, currentUser, onSendMessage, onClose }) {
-  const [input, setInput] = useState("");
-  const messagesEndRef = React.useRef(null);
-
-  React.useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  const handleSend = (e) => {
-    e.preventDefault();
-    if (input.trim()) {
-      onSendMessage(input.trim());
-      setInput("");
-    }
-  };
-
-  return (
-    <div className="w-72 bg-[#1A2332] border-l border-white/5 flex flex-col">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
-        <h2 className="text-white font-medium text-sm">Chat</h2>
-        <button onClick={onClose} className="p-1 hover:bg-white/10 rounded">
-          <X className="w-4 h-4 text-white/60" />
-        </button>
-      </div>
-
-      <div className="flex-1 overflow-y-auto p-3 space-y-3">
-        {messages.length === 0 ? (
-          <p className="text-white/30 text-center text-xs py-8">
-            No messages yet
-          </p>
-        ) : (
-          messages.map((msg, idx) => (
-            <div key={idx} className="group">
-              <div className="flex items-baseline gap-2 mb-1">
-                <span className="text-[#D4AF7A] text-xs font-medium">
-                  {msg.senderName || "Anonymous"}
-                </span>
-                <span className="text-white/30 text-xs">
-                  {msg.timestamp
-                    ? new Date(msg.timestamp).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })
-                    : ""}
-                </span>
+        {/* Video grid — Cloudflare's reliable prebuilt renderer */}
+        <main className="flex-1 p-3 overflow-hidden">
+          {participants.length === 0 ? (
+            // Waiting state
+            <div className="h-full flex flex-col items-center justify-center gap-4">
+              <div className="w-full max-w-2xl h-[65vh] bg-[#1A2332] rounded-2xl border border-white/5 overflow-hidden">
+                <RtkMeeting mode="fill" showSetupScreen={false} />
               </div>
-              <p className="text-white/80 text-sm">{msg.text}</p>
+              <div className="text-center">
+                <p className="text-white/40 text-sm">Waiting for others to join…</p>
+                <p className="text-white/20 text-xs mt-1">Share the Room ID above to invite participants</p>
+              </div>
             </div>
-          ))
+          ) : (
+            <div className="h-full bg-[#1A2332] rounded-2xl border border-white/5 overflow-hidden">
+              <RtkMeeting mode="fill" showSetupScreen={false} />
+            </div>
+          )}
+        </main>
+
+        {/* ── Participants panel ──────────────────────────────────────────── */}
+        {showParticipants && (
+          <aside className="w-64 bg-[#0D1117] border-l border-white/5 flex flex-col shrink-0">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
+              <h2 className="text-white/70 text-xs font-semibold uppercase tracking-wider">
+                Participants ({participants.length + 1})
+              </h2>
+              <button onClick={() => setShowParticipants(false)} className="p-1 hover:bg-white/10 rounded text-white/40 hover:text-white/70 transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <ul className="flex-1 overflow-y-auto p-2 space-y-1">
+              {/* Self */}
+              <li className="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-white/5">
+                <div className="w-7 h-7 rounded-full bg-[#D4AF7A]/20 flex items-center justify-center text-[#D4AF7A] text-xs font-bold shrink-0">
+                  {(selfName ?? "Y").charAt(0).toUpperCase()}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-white/80 text-xs font-medium truncate">{selfName ?? "You"}</p>
+                  <p className="text-[#D4AF7A]/60 text-[10px]">{isHost ? "Host" : "Participant"}</p>
+                </div>
+                <div className="flex items-center gap-1">
+                  {!selfAudio && <MicOff className="w-3 h-3 text-red-400" />}
+                  {!selfVideo && <VideoOff className="w-3 h-3 text-white/30" />}
+                </div>
+              </li>
+              {/* Remote peers */}
+              {participants.map((peer) => (
+                <li key={peer.id} className="flex items-center gap-2.5 px-3 py-2 rounded-xl hover:bg-white/5 transition-colors">
+                  <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-white/50 text-xs font-bold shrink-0">
+                    {(peer.name ?? "P").charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white/70 text-xs truncate">{peer.name ?? "Participant"}</p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {!peer.audioEnabled && <MicOff className="w-3 h-3 text-red-400" />}
+                    {!peer.videoEnabled && <VideoOff className="w-3 h-3 text-white/30" />}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </aside>
         )}
-        <div ref={messagesEndRef} />
+
+        {/* ── Chat panel ─────────────────────────────────────────────────── */}
+        {showChat && (
+          <aside className="w-72 bg-[#0D1117] border-l border-white/5 flex flex-col shrink-0">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
+              <h2 className="text-white/70 text-xs font-semibold uppercase tracking-wider">Chat</h2>
+              <button onClick={() => setShowChat(false)} className="p-1 hover:bg-white/10 rounded text-white/40 hover:text-white/70 transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-3 space-y-3">
+              {chatMessages.length === 0 ? (
+                <p className="text-white/20 text-center text-xs py-8">No messages yet</p>
+              ) : (
+                chatMessages.map((msg, i) => (
+                  <div key={i}>
+                    <div className="flex items-baseline gap-2 mb-0.5">
+                      <span className="text-[#D4AF7A] text-xs font-medium">{msg.senderName}</span>
+                      <span className="text-white/20 text-[10px]">
+                        {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                      </span>
+                    </div>
+                    <p className="text-white/70 text-sm">{msg.text}</p>
+                  </div>
+                ))
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+            <div className="p-3 border-t border-white/5 flex gap-2">
+              <input
+                type="text"
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && sendChat()}
+                placeholder="Type a message…"
+                className="flex-1 bg-[#1A2332] border border-white/10 rounded-lg px-3 py-2 text-white text-xs outline-none focus:border-[#D4AF7A]/40 placeholder:text-white/20"
+              />
+              <button
+                onClick={sendChat}
+                className="w-8 h-8 rounded-lg bg-[#D4AF7A]/20 hover:bg-[#D4AF7A]/30 flex items-center justify-center text-[#D4AF7A] transition-all shrink-0"
+              >
+                <Send className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </aside>
+        )}
       </div>
 
-      <form onSubmit={handleSend} className="p-3 border-t border-white/5">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type a message..."
-          className="w-full bg-[#0D1117] border border-white/10 rounded-lg px-3 py-2 text-white text-sm outline-none focus:border-[#D4AF7A]/60 placeholder:text-white/30"
+      {/* ── Control bar ──────────────────────────────────────────────────── */}
+      <footer className="flex items-center justify-center gap-2 py-4 px-6 border-t border-white/5 bg-[#0D1117]/80 backdrop-blur-sm shrink-0">
+        <ControlBtn
+          active={selfAudio}
+          icon={selfAudio ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
+          label={selfAudio ? "Mute" : "Unmute"}
+          danger={!selfAudio}
+          onClick={toggleMic}
         />
-      </form>
+        <ControlBtn
+          active={selfVideo}
+          icon={selfVideo ? <Video className="w-5 h-5" /> : <VideoOff className="w-5 h-5" />}
+          label={selfVideo ? "Stop Video" : "Start Video"}
+          danger={!selfVideo}
+          onClick={toggleCamera}
+        />
+        <ControlBtn
+          active={isScreenSharing}
+          icon={<MonitorUp className="w-5 h-5" />}
+          label="Share"
+          onClick={toggleScreenShare}
+        />
+        <ControlBtn
+          active={isHandRaised}
+          icon={<Hand className="w-5 h-5" />}
+          label="Raise Hand"
+          onClick={toggleHand}
+        />
+
+        <div className="w-px h-8 bg-white/10 mx-1" />
+
+        <ControlBtn
+          active={showParticipants}
+          icon={<Users className="w-5 h-5" />}
+          label="People"
+          onClick={() => togglePanel("participants")}
+        />
+        <ControlBtn
+          active={showChat}
+          icon={<MessageSquare className="w-5 h-5" />}
+          label="Chat"
+          onClick={() => togglePanel("chat")}
+        />
+
+        <div className="w-px h-8 bg-white/10 mx-1" />
+
+        {/* End call */}
+        <button onClick={handleLeave} className="flex flex-col items-center gap-1">
+          <span className="w-12 h-12 rounded-2xl bg-red-600 hover:bg-red-700 text-white flex items-center justify-center transition-all shadow-lg shadow-red-600/30">
+            <PhoneOff className="w-5 h-5" />
+          </span>
+          <span className="text-white/30 text-[10px]">Leave</span>
+        </button>
+      </footer>
     </div>
   );
 }
 
-export default MeetingRoom;
+// ─── Reusable control button ──────────────────────────────────────────────────
+function ControlBtn({ icon, label, onClick, active = true, danger = false }) {
+  return (
+    <button onClick={onClick} className="flex flex-col items-center gap-1">
+      <span
+        className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-150
+          ${danger
+            ? "bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-500/25"
+            : active
+            ? "bg-[#D4AF7A]/15 hover:bg-[#D4AF7A]/25 text-[#D4AF7A]"
+            : "bg-white/10 hover:bg-white/20 text-white"
+          }`}
+      >
+        {icon}
+      </span>
+      <span className="text-white/30 text-[10px]">{label}</span>
+    </button>
+  );
+}
+
+// ─── Public wrapper — provides the RealtimeKit context ───────────────────────
+export default function MeetingRoom({ meetingClient, isHost, onLeave, meetingName, roomName }) {
+  if (!meetingClient) {
+    return (
+      <div className="min-h-screen bg-[#0A0F1A] flex items-center justify-center">
+        <p className="text-white/30 text-sm">Connecting…</p>
+      </div>
+    );
+  }
+
+  return (
+    <RealtimeKitProvider value={meetingClient}>
+      <MeetingRoomInner
+        isHost={isHost}
+        onLeave={onLeave}
+        meetingName={meetingName}
+        roomName={roomName}
+      />
+    </RealtimeKitProvider>
+  );
+}

@@ -1,10 +1,10 @@
 import React, { useState, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AlertCircle, Loader2 } from "lucide-react";
-import { RtkMeeting } from "@cloudflare/realtimekit-react-ui";
-import { RealtimeKitProvider, useRealtimeKitClient } from "@cloudflare/realtimekit-react";
+import { useRealtimeKitClient } from "@cloudflare/realtimekit-react";
 import { joinCall } from "@/lib/api";
 import PreJoinScreen from "@/components/PreJoinScreen";
+import MeetingRoom from "@/components/MeetingRoom";
 
 const CLOUDFLARE_MEETING_ID = import.meta.env.VITE_CLOUDFLARE_MEETING_ID;
 
@@ -22,11 +22,12 @@ function Call() {
 
   const [authToken, setAuthToken] = useState(null);
   const [meetingData, setMeetingData] = useState(null);
+  const [meetingClient, setMeetingClient] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [hasJoined, setHasJoined] = useState(false);
 
-  const [client, initClient] = useRealtimeKitClient();
+  const [, initClient] = useRealtimeKitClient();
 
   const isHost = role === "host";
 
@@ -62,24 +63,25 @@ function Call() {
         setAuthToken(data.authToken);
         setHasJoined(true);
 
-        // Fire-and-forget — client is reactive, UI will catch it once ready
         initClient({
           authToken: data.authToken,
-          defaults: {
-            video: true,
-            audio: true,
-          },
-        }).catch((clientErr) => {
-          console.error("Client init error:", clientErr);
-          setError("Failed to initialize the meeting client. Please try again.");
-          setHasJoined(false);
-          setAuthToken(null);
-        });
+          defaults: { video: true, audio: true },
+        })
+          .then((returnedClient) => {
+            console.log("returnedClient:", returnedClient);
+            console.log("type:", typeof returnedClient);
+            setMeetingClient(returnedClient);
+          })
+          .catch((clientErr) => {
+            console.error("initClient error:", clientErr);
+            setError("Failed to initialize the meeting client. Please try again.");
+            setHasJoined(false);
+            setAuthToken(null);
+          });
       } catch (err) {
         console.error("Join error:", err);
         setError(err.message || "Failed to join. Please try again.");
       } finally {
-        // Always unblock the UI regardless of what happens above
         setLoading(false);
       }
     },
@@ -90,6 +92,7 @@ function Call() {
     setHasJoined(false);
     setAuthToken(null);
     setMeetingData(null);
+    setMeetingClient(null);
     setMode(modeParam);
     setRole(roleParam);
   }, [modeParam, roleParam]);
@@ -121,24 +124,25 @@ function Call() {
   }
 
   // ── Loading bridge: joined but client not ready yet ───────────────────────
-  if (hasJoined && authToken && !client) {
+  if (hasJoined && authToken && !meetingClient) {
     return (
-      <main className="min-h-screen bg-[#0D1117] flex flex-col items-center justify-center gap-3">
+      <main className="min-h-screen bg-[#0A0F1A] flex flex-col items-center justify-center gap-3">
         <Loader2 className="w-8 h-8 text-[#D4AF7A] animate-spin" />
-        <p className="text-white/50 text-sm">Connecting to meeting...</p>
+        <p className="text-white/40 text-sm">Connecting to meeting…</p>
       </main>
     );
   }
 
   // ── Active meeting ────────────────────────────────────────────────────────
-  if (hasJoined && authToken && client) {
+  if (hasJoined && authToken && meetingClient) {
     return (
-      <RealtimeKitProvider value={client}>
-        <RtkMeeting
-          mode="fill"
-          showSetupScreen={false}
-        />
-      </RealtimeKitProvider>
+      <MeetingRoom
+        meetingClient={meetingClient}
+        isHost={isHost}
+        onLeave={handleLeave}
+        meetingName={meetingData?.roomName || roomName || "Video Conference"}
+        roomName={roomName}
+      />
     );
   }
 

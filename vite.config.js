@@ -1,22 +1,28 @@
-// vite.config.js
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import path from 'path'
+import { viteCommonjs } from '@originjs/vite-plugin-commonjs'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    viteCommonjs(), // transforms CJS → ESM at serve time
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
   optimizeDeps: {
-    include: ['@cloudflare/realtimekit-react', '@cloudflare/realtimekit-react-ui'],
-    force: true
+    exclude: [
+      '@cloudflare/realtimekit-react',
+      '@cloudflare/realtimekit-react-ui',
+    ],
   },
   build: {
+    target: 'esnext',
     commonjsOptions: {
       transformMixedEsModules: true,
-    }
-  }
+    },
+  },
 })

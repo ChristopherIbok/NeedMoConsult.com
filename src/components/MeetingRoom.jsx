@@ -387,7 +387,9 @@ function ControlBtn({ icon, label, onClick, active = true, danger = false }) {
 
 // ─── Public wrapper — provides the RealtimeKit context ───────────────────────
 export default function MeetingRoom({ meetingClient, isHost, onLeave, meetingName, roomName }) {
+  console.log("MeetingRoom called, meetingClient:", !!meetingClient);
   if (!meetingClient) {
+    console.log("MeetingRoom: no client, showing connecting...");
     return (
       <div className="min-h-screen bg-[#0A0F1A] flex items-center justify-center">
         <p className="text-white/30 text-sm">Connecting…</p>
@@ -395,6 +397,7 @@ export default function MeetingRoom({ meetingClient, isHost, onLeave, meetingNam
     );
   }
 
+  console.log("MeetingRoom: rendering provider with client");
   return (
     <RealtimeKitProvider value={meetingClient}>
       <MeetingRoomInner

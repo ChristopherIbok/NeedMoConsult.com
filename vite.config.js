@@ -3,11 +3,11 @@ import { defineConfig } from 'vite'
 import path from 'path'
 import { viteCommonjs } from '@originjs/vite-plugin-commonjs'
 
+import { cloudflare } from "@cloudflare/vite-plugin";
+
 export default defineConfig({
-  plugins: [
-    react(),
-    viteCommonjs(), // transforms CJS → ESM at serve time
-  ],
+  plugins: [react(), // transforms CJS → ESM at serve time
+  viteCommonjs(), cloudflare()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

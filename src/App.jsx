@@ -20,9 +20,6 @@ const mainPageKey = mainPage ?? Object.keys(Pages)[0];
 const MainPage = mainPageKey ? lazy(() => import(`./pages/${mainPageKey}.jsx`)) : null;
 
 const LayoutWrapper = ({ children, currentPageName }) => {
-  if (currentPageName === "Call") {
-    return <>{children}</>;
-  }
   return Layout ? (
     <Layout currentPageName={currentPageName}>{children}</Layout>
   ) : (

@@ -6,7 +6,7 @@ const Office = lazy(() => import("./pages/Office.jsx"));
 const Blog = lazy(() => import("./pages/Blog.jsx"));
 const BlogPost = lazy(() => import("./pages/BlogPost.jsx"));
 const BrandKit = lazy(() => import("./pages/BrandKit.jsx"));
-const Call = lazy(() => import("./pages/Call.jsx"));
+
 const CaseStudy = lazy(() => import("./pages/CaseStudy.jsx"));
 const Contact = lazy(() => import("./pages/Contact.jsx"));
 const Home = lazy(() => import("./pages/Home.jsx"));
@@ -22,7 +22,7 @@ export const PAGES = {
   Blog,
   BlogPost,
   BrandKit,
-  Call,
+
   CaseStudy,
   Contact,
   Home,

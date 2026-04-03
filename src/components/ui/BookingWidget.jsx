@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar, Clock, CheckCircle, Video, ExternalLink } from "lucide-react";
+import { Calendar, Clock, CheckCircle } from "lucide-react";
 
 const timeSlots = [
   "9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM",
@@ -73,7 +73,6 @@ export default function BookingWidget() {
     message: "",
   });
   const [error, setError] = useState(null);
-  const [callUrl, setCallUrl] = useState(null);
 
   const availableDates = getAvailableDates();
 
@@ -84,9 +83,8 @@ export default function BookingWidget() {
   const handleSubmit = async () => {
     setSubmitting(true);
     setError(null);
-    setCallUrl(null);
     try {
-      const result = await createBooking({
+      await createBooking({
         name: formData.name,
         email: formData.email,
         company: formData.company,
@@ -95,7 +93,6 @@ export default function BookingWidget() {
         time: selectedTime,
         message: formData.message,
       });
-      setCallUrl(result.call_url);
       setStep(3);
     } catch (err) {
       setError("Something went wrong. Please try again.");
@@ -106,8 +103,6 @@ export default function BookingWidget() {
   };
 
   if (step === 3) {
-    const callLinkUrl = `/call?name=${encodeURIComponent(formData.name)}`;
-
     return (
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
@@ -127,16 +122,6 @@ export default function BookingWidget() {
           {formatDate(selectedDate)} at {selectedTime}
         </p>
         
-        {callLinkUrl && (
-          <a href={callLinkUrl} target="_blank" rel="noopener noreferrer">
-            <Button className="bg-[#D4AF7A] hover:bg-[#C49A5E] text-white font-semibold h-12 px-8 mb-4">
-              <Video className="w-4 h-4 mr-2" />
-              Join Video Call
-              <ExternalLink className="w-3 h-3 ml-2 opacity-70" />
-            </Button>
-          </a>
-        )}
-        
         <p className="text-gray-500 dark:text-gray-400 text-sm">
           We'll send a confirmation to <strong>{formData.email}</strong> shortly.
         </p>
@@ -146,7 +131,6 @@ export default function BookingWidget() {
             setSelectedDate(null);
             setSelectedTime(null);
             setFormData({ name: "", email: "", company: "", service: "", message: "" });
-            setCallUrl(null);
           }}
           variant="outline"
           className="mt-8"

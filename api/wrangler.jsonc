@@ -1,8 +1,44 @@
+// wrangler.jsonc - Complete Cloudflare Workers configuration
 {
-  "name": "needmo-api",
-  "main": "src/index.js",
-  "compatibility_date": "2025-01-01",
-  "observability": {
-    "enabled": true
-  }
+	"name": "needmo-api",
+	"main": "src/index.js",
+	"compatibility_date": "2025-04-01",
+	"routes": [
+		"api.needmoconsult.com/*",
+		"api.needmoconsult.com"
+	],
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_sqlite_classes": [
+				"MeetingRoom"
+			]
+		}
+	],
+	"vars": {
+		"ENVIRONMENT": "production",
+		"APP_DOMAIN": "needmoconsult.com",
+		"API_DOMAIN": "api.needmoconsult.com"
+	},
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "MEETING_ROOM",
+				"class_name": "MeetingRoom"
+			}
+		]
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "needmo_db",
+			"database_id": "d178030b-740d-4d38-a456-953966247d80"
+		}
+	],
+	"r2_buckets": [
+		{
+			"bucket_name": "needmo-recordings",
+			"binding": "needmo_recordings"
+		}
+	]
 }

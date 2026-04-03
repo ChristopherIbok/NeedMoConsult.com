@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Menu, X, Sun, Moon, Video } from "lucide-react";
+import { Menu, X, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/ui/ThemeProvider";
 import { motion, AnimatePresence } from "framer-motion";
@@ -83,13 +83,6 @@ export default function Header() {
 
             {/* Right Section */}
             <div className="flex items-center gap-2">
-              <Link
-                to="/call?role=participant"
-                className="hidden md:flex items-center gap-2 px-4 py-2 border border-[#D4AF7A] text-[#D4AF7A] hover:bg-[#D4AF7A]/10 rounded-lg transition-colors text-sm font-medium"
-              >
-                <Video className="w-4 h-4" />
-                Join Call
-              </Link>
               <motion.button
                 onClick={toggleTheme}
                 whileTap={{ rotate: 180, scale: 0.85 }}
@@ -203,25 +196,6 @@ export default function Header() {
                 </motion.div>
               ))}
 
-              {/* Join Call Link */}
-              <motion.div
-                initial={{ opacity: 0, x: 30 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: navItems.length * 0.06 }}
-              >
-                <Link
-                  to="/call?role=participant"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 py-4 text-2xl font-bold transition-colors active:scale-[0.98] hover:text-[#D4AF7A]"
-                  style={{
-                    color: "#D4AF7A",
-                    borderBottom: `1px solid ${menuBorder}`,
-                  }}
-                >
-                  <Video className="w-6 h-6" />
-                  Join
-                </Link>
-              </motion.div>
             </nav>
 
             {/* CTA at bottom */}

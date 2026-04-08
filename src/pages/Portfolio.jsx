@@ -51,6 +51,13 @@ const portfolioItems = [
     results: { followers: "", sponsorships: "", income: "" },
     src: "https://assets.needmoconsult.com/Omi-Neklace.mp4",
   },
+  {
+    id: 5, type: "self", category: "content", orientation: "horizontal",
+    client: "Nova", project: "Brand Showreel",
+    description: "Landscape showreel showcasing brand highlights and creative direction.",
+    results: { views: "", engagement: "", reach: "" },
+    src: "https://assets.needmoconsult.com/Nova%201.mp4",
+  },
 ];
 
 const stats = [

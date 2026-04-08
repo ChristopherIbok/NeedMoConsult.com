@@ -11,12 +11,6 @@ import ContactCTA from "@/components/landing/ContactCTA";
 
 const R2 = "https://assets.needmoconsult.com";
 
-const clientToSlug = {
-  "BrightStart Wellness": "brightstart-wellness",
-  "Urban Threads": "urban-threads",
-  "Local Coffee Co.": "local-coffee-co",
-};
-
 const categories = [
   { id: "all",      label: "All Work"         },
   { id: "content",  label: "Content Creation" },
@@ -31,71 +25,31 @@ const categories = [
 const portfolioItems = [
   {
     id: 1, type: "self", category: "content", orientation: "vertical",
-    client: "Upwork Real Estate Test", project: "Conent Editing",
+    client: "Upwork Real Estate Test", project: "Content Editing",
     description: "A Real Estate Dynamic Style video editing for tiktok and instagram.",
     results: { views: "", engagement: "", followers: "" },
-    thumbnail: "",
-    src: "https://assets.needmoconsult.com/Kafeel-Amed-Reall-Estate-Test-Clip.mp4",         // for self-hosted MP4
+    src: "https://assets.needmoconsult.com/Kafeel-Amed-Reall-Estate-Test-Clip.mp4",
   },
   {
     id: 2, type: "self", category: "content", orientation: "vertical",
     client: "Urban Threads", project: "TikTok Ad Campaign",
     description: "Launch campaign for new clothing line targeting Gen Z audience.",
     results: { impressions: "", ctr: "", revenue: "" },
-    thumbnail: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=800&fit=crop",
     src: "https://assets.needmoconsult.com/Kafeel-Amed-Reall-Estate-Test-Clip.mp4",
   },
   {
-    id: 3, type: "image", category: "content", orientation: "horizontal",
-    client: "Local Coffee Co.", project: "Content Calendar & Design",
-    description: "Monthly content strategy with branded templates and cohesive feed aesthetics.",
-    results: { engagement: "+180%", visits: "+40%" },
-    thumbnail: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&h=600&fit=crop",
+    id: 3, type: "self", category: "content", orientation: "vertical",
+    client: "Eunice Thomas", project: "Birthday Celebration Video",
+    description: "Happy birthday video portfolio piece showcasing creative editing.",
+    results: { views: "", engagement: "", followers: "" },
+    src: "https://assets.needmoconsult.com/HAPPY%20BIRTHDAY%20EUNICE%20THOMAS.mp4",
   },
   {
-    id: 4, type: "case-study", category: "strategy", orientation: "horizontal",
-    client: "Tech Startup XYZ", project: "LinkedIn Growth Strategy",
-    description: "B2B content strategy for founder's personal brand that generated qualified leads.",
-    results: { followers: "+15K", deals: "3", leads: "50/mo" },
-    thumbnail: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop",
-    featured: true,
-  },
-  {
-    id: 5, type: "self", category: "content", orientation: "vertical",
+    id: 4, type: "self", category: "content", orientation: "vertical",
     client: "Nik Shevchenko", project: "Content Creation & Management",
     description: "AI Omni Necklace | Product Launch Promo.",
     results: { followers: "", sponsorships: "", income: "" },
-    thumbnail: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=600&h=800&fit=crop",
     src: "https://assets.needmoconsult.com/Omi-Neklace.mp4",
-  },
-  {
-    id: 6, type: "image", category: "paid", orientation: "horizontal",
-    client: "E-commerce Fashion Brand", project: "Meta Ads Campaign",
-    description: "Meta ads campaign (Facebook + Instagram) for holiday season launch.",
-    results: { roas: "5x", revenue: "$100K", customers: "10K" },
-    thumbnail: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=600&fit=crop",
-  },
-  {
-    id: 7, type: "image", category: "content", orientation: "horizontal",
-    client: "Artisan Bakery", project: "Brand Refresh & Content",
-    description: "Complete visual rebrand and content strategy for a local bakery going online.",
-    results: { followers: "+8K", orders: "+120%" },
-    thumbnail: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&h=600&fit=crop",
-  },
-  {
-    id: 8, type: "video", category: "growth", orientation: "horizontal",
-    client: "SaaS Company", project: "Product Launch Campaign",
-    description: "Multi-platform launch strategy for B2B software product.",
-    results: { signups: "2.5K", trials: "800", conversions: "12%" },
-    thumbnail: "https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&h=400&fit=crop",
-    videoId: "dQw4w9WgXcQ",
-  },
-  {
-    id: 9, type: "case-study", category: "strategy", orientation: "horizontal",
-    client: "Restaurant Group", project: "Multi-Location Strategy",
-    description: "Social media strategy for restaurant group with 5 locations.",
-    results: { reach: "2M+", reservations: "+45%" },
-    thumbnail: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=400&fit=crop",
   },
 ];
 
@@ -187,12 +141,23 @@ export default function Portfolio() {
                   >
                     {/* Thumbnail */}
                     <div className={`relative ${aspectClass} overflow-hidden`}>
-                      <img
-                        src={item.thumbnail?.startsWith("http") ? item.thumbnail : `${R2}/${item.thumbnail}`}
-                        alt={`${item.project} - ${item.client}`}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        loading="lazy"
-                      />
+                      {item.thumbnail?.endsWith('.mp4') || item.src?.endsWith('.mp4') ? (
+                        <video
+                          src={item.src || item.thumbnail}
+                          poster={(item.src || item.thumbnail) + '#t=0.1'}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          muted
+                          playsInline
+                          preload="metadata"
+                        />
+                      ) : (
+                        <img
+                          src={item.thumbnail?.startsWith("http") ? item.thumbnail : `${R2}/${item.thumbnail}`}
+                          alt={`${item.project} - ${item.client}`}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                      )}
                       {/* Hover overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-[#1A2332]/90 via-[#1A2332]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-5">
                         <p className="text-white/90 text-sm mb-3 line-clamp-2">{item.description}</p>

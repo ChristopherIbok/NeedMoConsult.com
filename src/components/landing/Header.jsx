@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { Menu, X, Sun, Moon, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/ui/ThemeProvider";
 import { motion, AnimatePresence } from "framer-motion";
@@ -83,6 +83,18 @@ export default function Header() {
 
             {/* Right Section */}
             <div className="flex items-center gap-2">
+              <motion.a
+                href="https://meeting.needmoconsult.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileTap={{ scale: 0.9 }}
+                className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full hover:bg-[#D4AF7A]/20 transition-colors"
+                aria-label="Start Video Call"
+                title="Start Video Call"
+              >
+                <Video className="w-5 h-5 text-[#D4AF7A]" />
+              </motion.a>
+
               <motion.button
                 onClick={toggleTheme}
                 whileTap={{ rotate: 180, scale: 0.85 }}
@@ -175,6 +187,17 @@ export default function Header() {
 
             {/* Nav Links */}
             <nav className="flex flex-col px-6 pt-8 gap-2">
+              <motion.a
+                href="https://meeting.needmoconsult.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 py-4 text-2xl font-bold transition-colors active:scale-[0.98] text-[#D4AF7A]"
+                style={{ borderBottom: `1px solid ${menuBorder}` }}
+              >
+                <Video className="w-6 h-6" />
+                Start Meeting
+              </motion.a>
               {navItems.map((item, i) => (
                 <motion.div
                   key={item.name}

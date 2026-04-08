@@ -80,14 +80,14 @@
   <div id="join-screen" class="join-screen">
     <div class="join-form">
       <h1>NeedMo Meeting</h1>
-      <input type="text" id="meeting-link" placeholder="Meeting Link (e.g., abc123xyz)">
+      <input type="text" id="meeting-link" placeholder="Meeting Link (optional)">
       <input type="text" id="user-name" placeholder="Your Name">
       <div class="auth-section">
-        <input type="email" id="user-email" placeholder="Email (optional)">
-        <input type="password" id="user-password" placeholder="Password (optional)">
+        <input type="email" id="user-email" placeholder="Email">
+        <input type="password" id="user-password" placeholder="Password">
       </div>
-      <button class="btn btn-primary" onclick="joinMeeting()">Join Meeting</button>
-      <button class="btn btn-secondary" onclick="createQuickMeeting()">Create Instant Meeting</button>
+      <button class="btn btn-primary" onclick="joinMeeting()">Login & Join</button>
+      <button class="btn btn-secondary" onclick="createQuickMeeting()">Create New Meeting</button>
     </div>
   </div>
 
@@ -150,43 +150,47 @@
     let recordedChunks = [];
 
     async function joinMeeting() {
+      const email = document.getElementById('user-email').value.trim();
+      const password = document.getElementById('user-password').value.trim();
       let link = document.getElementById('meeting-link').value.trim();
-      const email = document.getElementById('user-email')?.value?.trim();
-      const password = document.getElementById('user-password')?.value?.trim();
       userName = document.getElementById('user-name').value.trim() || 'Anonymous';
       
-      // Check for room param in URL
+      // Check URL for room param
       const urlParams = new URLSearchParams(window.location.search);
       const roomParam = urlParams.get('room');
-      if (roomParam) {
-        link = roomParam;
+      if (roomParam) link = roomParam;
+      
+      // Require login
+      if (!email || !password) {
+        showToast('Please enter email and password');
+        return;
       }
       
-      if (!link) { showToast('Please enter a meeting link'); return; }
+      if (!link) {
+        showToast('Please enter a meeting link or create a new meeting');
+        return;
+      }
       
       meetingId = link.replace(/^.*\//, '').replace(/^.*meeting[/]/, '');
       meetingId = meetingId.replace(/^\?room=/, '');
       
-      if (email && password) {
-        try {
-          const loginRes = await fetch(`${API_URL}/api/auth/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
-          });
-          const loginData = await loginRes.json();
-          if (loginData.access_token) {
-            authToken = loginData.access_token;
-          } else {
-            showToast('Login failed');
-            return;
-          }
-        } catch (e) {
-          showToast('Connection error');
+      // Login first
+      try {
+        const loginRes = await fetch(`${API_URL}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const loginData = await loginRes.json();
+        if (!loginData.access_token) {
+          showToast('Invalid credentials');
           return;
         }
-      } else {
-        authToken = 'test-token';
+        authToken = loginData.access_token;
+        userName = loginData.user?.name || userName;
+      } catch (e) {
+        showToast('Login failed');
+        return;
       }
       
       connectWebSocket();
@@ -202,17 +206,44 @@
     });
 
     async function createQuickMeeting() {
-      const title = document.getElementById('user-name').value.trim() || 'Quick Meeting';
+      const email = document.getElementById('user-email').value.trim();
+      const password = document.getElementById('user-password').value.trim();
+      userName = document.getElementById('user-name').value.trim() || 'Quick Meeting';
+      
+      if (!email || !password) {
+        showToast('Please login first (enter email & password)');
+        return;
+      }
       
       try {
-        const res = await fetch(`${API_URL}/api/meetings/create?title=${encodeURIComponent(title)}`, {
-          method: 'POST'
+        // Login first
+        const loginRes = await fetch(`${API_URL}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const loginData = await loginRes.json();
+        if (!loginData.access_token) {
+          showToast('Invalid credentials');
+          return;
+        }
+        authToken = loginData.access_token;
+        
+        // Create meeting
+        const res = await fetch(`${API_URL}/api/meetings`, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ title: userName, isInstant: true })
         });
         
         const data = await res.json();
-        if (data.slug) {
-          document.getElementById('meeting-link').value = data.slug;
-          showToast('Meeting created! Click Join to enter.');
+        if (data.meeting?.slug) {
+          meetingId = data.meeting.slug;
+          showToast('Meeting created! Joining...');
+          connectWebSocket();
         } else {
           showToast('Failed to create meeting');
         }

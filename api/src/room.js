@@ -8,6 +8,7 @@ export class MeetingRoom {
     this.ctx = ctx;
     this.env = env;
     this.participants = new Map();
+    this.waitingRoom = new Map();
     this.chatMessages = [];
     this.meetingState = {
       startedAt: null,
@@ -57,8 +58,13 @@ export class MeetingRoom {
       return new Response('Unauthorized', { status: 401 });
     }
 
+    const userId = payload.sub;
     const userName = payload.name || 'Anonymous';
     const userRole = payload.role || 'participant';
+    
+    // Check if user is host
+    const isHost = this.meetingState.hostUserId === userId;
+    const finalRole = isHost ? 'host' : userRole;
 
     const { 0: client, 1: server } = new WebSocketPair();
     server.accept();
@@ -66,21 +72,35 @@ export class MeetingRoom {
     const participantId = this.generateId();
     const participant = {
       id: participantId,
-      userId: payload.sub,
+      userId,
       userName,
-      role: userRole,
+      role: finalRole,
+      isHost,
       joinedAt: new Date().toISOString(),
       ws: server
     };
 
-    this.participants.set(participantId, participant);
+    if (this.meetingState.waitingRoom && !isHost) {
+      this.waitingRoom.set(participantId, participant);
+      this.broadcastWaitingRoom();
+      server.send(JSON.stringify({
+        type: 'waiting_room',
+        message: 'Waiting for host approval'
+      }));
+    } else {
+      this.participants.set(participantId, participant);
+      this.broadcastParticipantList();
+    }
 
     server.addEventListener('message', async (event) => {
       await this.handleMessage(participantId, event.data);
     });
 
     server.addEventListener('close', () => {
-      this.removeParticipant(participantId);
+      this.waitingRoom.delete(participantId);
+      this.participants.delete(participantId);
+      this.broadcastWaitingRoom();
+      this.broadcastParticipantList();
     });
 
     this.broadcastParticipantList();
@@ -88,7 +108,8 @@ export class MeetingRoom {
     server.send(JSON.stringify({
       type: 'welcome',
       participantId,
-      participant: { id: participantId, name: userName, role: userRole }
+      isHost,
+      participant: { id: participantId, name: userName, role: finalRole }
     }));
 
     return new Response(null, { status: 101, webSocket: client });
@@ -111,9 +132,63 @@ export class MeetingRoom {
           this.broadcast({ type: 'raise_hand', participantId, userName: participant.userName, raised: msg.raised });
           break;
         case 'toggle_recording':
-          if (participant.role === 'host') {
+          if (participant.isHost) {
             this.meetingState.isRecording = msg.enabled;
             this.broadcast({ type: 'recording_status', isRecording: msg.enabled });
+          }
+          break;
+        case 'mute_participant':
+          if (participant.isHost) {
+            const target = this.participants.get(msg.participantId);
+            if (target) {
+              target.isMuted = true;
+              target.ws?.send(JSON.stringify({ type: 'mute_command', muted: true }));
+              this.broadcast({ type: 'participant_muted', participantId: msg.participantId, muted: true });
+            }
+          }
+          break;
+        case 'remove_participant':
+          if (participant.isHost) {
+            const target = this.participants.get(msg.participantId);
+            if (target) {
+              target.ws?.send(JSON.stringify({ type: 'removed', reason: 'Host removed you' }));
+              target.ws?.close();
+              this.removeParticipant(msg.participantId);
+            }
+          }
+          break;
+        case 'admit_participant':
+          if (participant.isHost) {
+            const waiting = this.waitingRoom.get(msg.participantId);
+            if (waiting) {
+              this.waitingRoom.delete(msg.participantId);
+              this.participants.set(msg.participantId, waiting);
+              waiting.ws?.send(JSON.stringify({ type: 'admitted', message: 'You have been admitted to the meeting' }));
+              this.broadcastParticipantList();
+              this.broadcastWaitingRoom();
+            }
+          }
+          break;
+        case 'deny_participant':
+          if (participant.isHost) {
+            const waiting = this.waitingRoom.get(msg.participantId);
+            if (waiting) {
+              waiting.ws?.send(JSON.stringify({ type: 'denied', message: 'Host denied your access' }));
+              waiting.ws?.close();
+              this.waitingRoom.delete(msg.participantId);
+              this.broadcastWaitingRoom();
+            }
+          }
+          break;
+        case 'admit_all':
+          if (participant.isHost) {
+            for (const [, waiting] of this.waitingRoom) {
+              this.participants.set(waiting.id, waiting);
+              waiting.ws?.send(JSON.stringify({ type: 'admitted', message: 'You have been admitted to the meeting' }));
+            }
+            this.waitingRoom.clear();
+            this.broadcastParticipantList();
+            this.broadcastWaitingRoom();
           }
           break;
       }
@@ -147,6 +222,17 @@ export class MeetingRoom {
   broadcastParticipantList() {
     const list = this.getParticipants();
     this.broadcast({ type: 'participants', list });
+  }
+
+  broadcastWaitingRoom() {
+    const list = this.getWaitingRoom();
+    this.broadcast({ type: 'waiting_room_list', list });
+  }
+
+  getWaitingRoom() {
+    return Array.from(this.waitingRoom.values()).map(p => ({
+      id: p.id, userId: p.userId, name: p.userName, role: p.role, joinedAt: p.joinedAt
+    }));
   }
 
   removeParticipant(participantId) {

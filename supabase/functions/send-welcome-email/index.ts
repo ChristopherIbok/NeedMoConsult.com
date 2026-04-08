@@ -222,7 +222,7 @@ serve(async (req) => {
       body: JSON.stringify({
         from: "hello@needmoconsult.com",
         to: email,
-        subject: "Welcome to the NEEDMO CONSULT Newsletter! 🎉",
+        subject: "Welcome to the NEEDMO CONSULT Newsletter!",
         html,
       }),
     });

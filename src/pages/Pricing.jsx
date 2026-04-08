@@ -146,10 +146,10 @@ export default function Pricing() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.08 }}
-                className={`relative bg-white dark:bg-[#1E2830] rounded-2xl p-4 sm:p-6 border-2 transition-all duration-300 hover:border-[#D4AF7A] overflow-hidden ${
+                className={`relative bg-white dark:bg-[#1E2830] rounded-2xl p-4 sm:p-6 border-2 transition-all duration-300 hover:border-[#D4AF7A] ${
                   pkg.popular
                     ? "border-[#D4AF7A] scale-[1.02] shadow-xl"
-                    : "border-gray-200 dark:border-[#2A3540]"
+                    : "border-gray-200 dark:border-[#2A3540] overflow-hidden"
                 }`}
               >
                 {pkg.popular && (

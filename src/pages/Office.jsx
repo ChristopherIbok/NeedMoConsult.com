@@ -337,6 +337,29 @@ export default function Office() {
   const [subscribers, setSubscribers] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [loadingSubs, setLoadingSubs] = useState(false);
+  
+  // Meetings state
+  const [meetings, setMeetings] = useState([]);
+  const [loadingMeetings, setLoadingMeetings] = useState(false);
+
+  const fetchMeetings = async () => {
+    setLoadingMeetings(true);
+    try {
+      const res = await fetch("https://meeting.needmoconsult.com/api/meetings");
+      const data = await res.json();
+      setMeetings(data.meetings || []);
+    } catch (err) {
+      console.error("Failed to fetch meetings:", err);
+    } finally {
+      setLoadingMeetings(false);
+    }
+  };
+
+  useEffect(() => {
+    if (tab === "meetings") {
+      fetchMeetings();
+    }
+  }, [tab]);
   const [sending, setSending] = useState(false);
   const [sendResult, setSendResult] = useState(null);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -641,7 +664,7 @@ export default function Office() {
   const fetchContacts = async () => {
     try {
       const data = await getContacts();
-      setContacts(data || []);
+      setContacts(data.contacts || []);
     } catch (err) {
       console.error("Failed to fetch contacts:", err);
     }
@@ -724,17 +747,19 @@ export default function Office() {
           <nav className="hidden md:flex items-center gap-2">
           {[
             { id: "projects", label: "Projects & Tasks" },
+            { id: "meetings", label: "Meetings", icon: Video },
             { id: "subscribers", label: "Subscribers", badge: activeCount },
           ].map(item => (
             <button
               key={item.id}
               onClick={() => setTab(item.id)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1 ${
                 tab === item.id
                   ? "bg-[#D4AF7A] text-[#1A2332]"
                   : "text-white/60 hover:text-white hover:bg-white/10"
               }`}
             >
+              {item.icon && <item.icon className="w-4 h-4" />}
               {item.label}
               {item.badge > 0 && <span className="ml-1 text-xs">({item.badge})</span>}
             </button>
@@ -769,16 +794,6 @@ export default function Office() {
           </div>
 
           <div className="flex items-center gap-2 ml-4 border-l border-white/20 pl-4">
-            <a
-              href="/call?role=host"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white/60 hover:text-[#D4AF7A] text-sm flex items-center gap-1"
-            >
-              <Video className="w-4 h-4" />
-              Start Meeting
-            </a>
-            <span className="text-white/20">|</span>
             <a
               href="/"
               target="_blank"
@@ -831,10 +846,19 @@ export default function Office() {
             >
               Welcome Email
             </button>
+            <button
+              onClick={() => { setTab("meetings"); setMobileMenuOpen(false); }}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all text-left flex items-center gap-2 ${
+                tab === "meetings" ? "bg-[#D4AF7A] text-[#1A2332]" : "text-white/60 hover:text-white hover:bg-white/10"
+              }`}
+            >
+              <Video className="w-4 h-4" />
+              Meetings
+            </button>
           </div>
           <div className="flex flex-col gap-2 pt-2 border-t border-white/10">
             <a
-              href="/call?role=host"
+              href="https://meeting.needmoconsult.com"
               target="_blank"
               rel="noopener noreferrer"
               className="text-white/60 hover:text-[#D4AF7A] text-sm flex items-center gap-2 px-4 py-2"
@@ -1834,8 +1858,9 @@ export default function Office() {
                           }
                           setSendingWelcome(true);
                           setWelcomeResult(null);
+                          console.log('[Office] Sending welcome email to:', selectedSubscriber.email);
                           try {
-                            await apiSendWelcomeEmail({
+                            const result = await apiSendWelcomeEmail({
                               email: selectedSubscriber.email,
                               name: selectedSubscriber.name,
                               headline: welcomeForm.headline,
@@ -1843,9 +1868,11 @@ export default function Office() {
                               cta_text: welcomeForm.ctaText,
                               cta_url: welcomeForm.ctaUrl,
                             });
+                            console.log('[Office] Welcome email result:', result);
                             setWelcomeResult({ ok: true, email: selectedSubscriber.email });
                             setSelectedSubscriber(null);
                           } catch (err) {
+                            console.error('[Office] Welcome email error:', err);
                             setWelcomeResult({ error: err.message });
                           }
                           setSendingWelcome(false);
@@ -1858,6 +1885,90 @@ export default function Office() {
                       </button>
                     </Card>
                   </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* ── MEETINGS TAB ── */}
+            {tab === "meetings" && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <div className="flex items-center justify-between mb-8">
+                  <div>
+                    <h1 className="text-2xl font-bold text-[#1A2332] dark:text-white">Meetings</h1>
+                    <p className="text-gray-500 text-sm mt-1">Your video calls and sessions</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button 
+                      onClick={fetchMeetings}
+                      disabled={loadingMeetings}
+                      className="p-2 text-gray-500 hover:text-[#D4AF7A] transition-colors disabled:opacity-50"
+                    >
+                      <Loader2 className={`w-5 h-5 ${loadingMeetings ? 'animate-spin' : ''}`} />
+                    </button>
+                    <a 
+                      href="https://meeting.needmoconsult.com" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-4 py-2 bg-[#D4AF7A] text-[#1A2332] rounded-xl text-sm font-bold hover:bg-[#C49A5E] transition-colors"
+                    >
+                      <Video className="w-4 h-4" />
+                      New Meeting
+                    </a>
+                  </div>
+                </div>
+
+                <div className="bg-white dark:bg-[#1A2332] rounded-2xl overflow-hidden border border-gray-100 dark:border-white/10">
+                  {loadingMeetings ? (
+                    <div className="flex items-center justify-center p-12">
+                      <Loader2 className="w-6 h-6 animate-spin text-[#D4AF7A]" />
+                    </div>
+                  ) : meetings.length === 0 ? (
+                    <div className="text-center p-12">
+                      <Video className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                      <p className="text-gray-500">No meetings yet</p>
+                      <a 
+                        href="https://meeting.needmoconsult.com" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="inline-block mt-4 px-6 py-3 bg-[#D4AF7A] text-[#1A2332] font-bold rounded-xl hover:bg-[#C49A5E] transition-colors"
+                      >
+                        Create Your First Meeting
+                      </a>
+                    </div>
+                  ) : (
+                    <div className="divide-y divide-gray-100 dark:divide-white/10">
+                      {meetings.map((meeting) => (
+                        <div key={meeting.id} className="p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-lg bg-[#D4AF7A]/20 flex items-center justify-center">
+                                <Video className="w-5 h-5 text-[#D4AF7A]" />
+                              </div>
+                              <div>
+                                <h3 className="font-semibold text-[#1A2332] dark:text-white">{meeting.title || "Untitled Meeting"}</h3>
+                                <p className="text-sm text-gray-500">{new Date(meeting.created_at).toLocaleDateString()}</p>
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className={`px-2 py-1 text-xs rounded-full ${
+                                meeting.status === "ACTIVE" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"
+                              }`}>
+                                {meeting.status || "ACTIVE"}
+                              </span>
+                              <a
+                                href={`https://meeting.needmoconsult.com/meeting/${meeting.id}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="px-3 py-1.5 bg-[#D4AF7A] text-[#1A2332] text-sm font-medium rounded-lg hover:bg-[#C49A5E] transition-colors"
+                              >
+                                Join
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </motion.div>
             )}

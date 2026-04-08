@@ -4,8 +4,7 @@
 	"main": "src/index.js",
 	"compatibility_date": "2025-04-01",
 	"routes": [
-		"api.needmoconsult.com/*",
-		"api.needmoconsult.com"
+		{ "pattern": "api.needmoconsult.com/*", "zone_name": "needmoconsult.com" }
 	],
 	"migrations": [
 		{
@@ -39,6 +38,10 @@
 		{
 			"bucket_name": "needmo-recordings",
 			"binding": "needmo_recordings"
+		},
+		{
+			"bucket_name": "needmo-assets",
+			"binding": "needmo_assets"
 		}
 	]
 }

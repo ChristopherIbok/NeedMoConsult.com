@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Briefcase } from "lucide-react";
 
 const TEAM_MEMBERS = [
+  { email: "admin@needmoconsult.com", name: "Admin", role: "owner" },
   { email: "hello@needmoconsult.com", name: "Chris (Owner)", role: "owner" },
   { email: "team@needmoconsult.com", name: "Team Member 1", role: "member" },
   { email: "support@needmoconsult.com", name: "Team Member 2", role: "member" },
@@ -26,9 +26,16 @@ export default function AuthGate({ onAuth }) {
     setLoading(true);
     try {
       const { adminLogin } = await import("@/lib/api");
-      await adminLogin(email, pw);
-      const member = TEAM_MEMBERS.find(m => m.email.toLowerCase() === email.toLowerCase());
-      onAuth(member || { name: email.split("@")[0], email, role: "member" });
+      const result = await adminLogin(email, pw);
+      
+      if (result.access_token) {
+        const member = TEAM_MEMBERS.find(m => m.email.toLowerCase() === email.toLowerCase());
+        onAuth(member || { name: email.split("@")[0], email, role: "member" });
+      } else {
+        setError(true);
+        setShake(true);
+        setTimeout(() => setShake(false), 500);
+      }
     } catch (err) {
       setError(true);
       setShake(true);
@@ -38,7 +45,9 @@ export default function AuthGate({ onAuth }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1A2332] via-[#0D1117] to-[#1A2332] flex items-center justify-center px-4">
+    <div className="min-h-screen relative flex items-center justify-center px-4">
+      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#1A2332]/90 via-[#0D1117]/85 to-[#1A2332]/90" />
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#D4AF7A]/5 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-[#D4AF7A]/3 rounded-full blur-3xl" />
@@ -46,15 +55,13 @@ export default function AuthGate({ onAuth }) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`relative w-full max-w-sm bg-[#0F1824]/90 rounded-2xl p-8 border border-white/10 ${shake ? "animate-shake" : ""}`}
+        className={`relative w-full max-w-sm bg-[#0F1824]/80 backdrop-blur-sm rounded-2xl p-8 border border-white/10 ${shake ? "animate-shake" : ""}`}
         style={{ boxShadow: "0 24px 60px rgba(0,0,0,0.5)" }}
       >
-        <div className="flex justify-center mb-6">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#D4AF7A] to-[#C49A5E] flex items-center justify-center shadow-lg shadow-[#D4AF7A]/20">
-            <Briefcase className="w-6 h-6 text-[#1A2332]" />
-          </div>
+        <div className="flex justify-center mb-4">
+          <img src="https://assets.needmoconsult.com/Logo-Light.webp" alt="NEEDMO" height={40} style={{ height: 40 }} />
         </div>
-        <h1 className="text-white text-xl font-bold text-center mb-1">NEEDMO Office</h1>
+        <h1 className="text-white text-xl font-bold text-center mb-1">Office</h1>
         <p className="text-white/40 text-sm text-center mb-6">Sign in to access your workspace</p>
 
         {showHint && (

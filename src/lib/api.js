@@ -154,11 +154,10 @@ export const getSubscriptionPortal = async () => {
 // ============================================
 
 export const adminLogin = async (email, password) => {
-  const body = new URLSearchParams({ username: email, password });
-  const res = await fetch(`${BASE_URL}/auth/login`, {
+  const res = await fetch(`${BASE_URL}/api/auth/login`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
   });
   const data = await res.json();
   if (data.access_token) {
@@ -169,30 +168,21 @@ export const adminLogin = async (email, password) => {
 
 export const adminLogout = () => clearToken();
 
-export const submitContact = (payload) => request('/public/contact', { method: 'POST', body: JSON.stringify(payload) });
-export const joinWaitlist = (email, name = '') => request('/public/waitlist', { method: 'POST', body: JSON.stringify({ email, name }) });
-export const unsubscribe = (email) => request('/public/unsubscribe', { method: 'POST', body: JSON.stringify({ email }) });
+export const submitContact = (payload) => request('/api/public/contact', { method: 'POST', body: JSON.stringify(payload) });
+export const joinWaitlist = (email, name = '') => request('/api/public/waitlist', { method: 'POST', body: JSON.stringify({ email, name }) });
+export const unsubscribe = (email) => request('/api/public/unsubscribe', { method: 'POST', body: JSON.stringify({ email }) });
 
 export const getDashboardStats = () => request('/admin/stats');
-export const getContacts = (skip = 0, limit = 50) => request(`/admin/contacts?skip=${skip}&limit=${limit}`);
-export const markContactRead = (id) => request(`/admin/contacts/${id}/read`, { method: 'PUT' });
-export const getWaitlist = () => request('/admin/waitlist');
+export const getContacts = (skip = 0, limit = 50) => request(`/api/admin/contacts?skip=${skip}&limit=${limit}`);
+export const markContactRead = (id) => request(`/api/admin/contacts/${id}/read`, { method: 'PUT' });
+export const getWaitlist = () => request('/api/admin/waitlist');
 export const getNewsletters = () => request('/admin/newsletters');
 export const sendNewsletter = (payload) => request('/admin/newsletter/send', { method: 'POST', body: JSON.stringify(payload) });
 export const sendWelcomeEmail = (payload) => request('/admin/welcome-email', { method: 'POST', body: JSON.stringify(payload) });
 export const getBlogPosts = () => request('/public/blog');
 export const getBlogPost = (id) => request(`/public/blog/${id}`);
-export const createBooking = (payload) => request('/public/booking', { method: 'POST', body: JSON.stringify(payload) });
-export const getProjects = () => request('/admin/projects');
-export const createProject = (payload) => request('/admin/projects', { method: 'POST', body: JSON.stringify(payload) });
-export const updateProject = (id, payload) => request(`/admin/projects/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
-export const deleteProject = (id) => request(`/admin/projects/${id}`, { method: 'DELETE' });
-export const getTasks = () => request('/admin/tasks');
-export const getProjectTasks = (projectId) => request(`/admin/projects/${projectId}/tasks`);
-export const createTask = (payload) => request('/admin/tasks', { method: 'POST', body: JSON.stringify(payload) });
-export const updateTask = (id, payload) => request(`/admin/tasks/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
-export const deleteTask = (id) => request(`/admin/tasks/${id}`, { method: 'DELETE' });
-export const getBookings = () => request('/admin/bookings');
-export const deleteBooking = (id) => request(`/admin/bookings/${id}`, { method: 'DELETE' });
+export const createBooking = (payload) => request('/api/public/booking', { method: 'POST', body: JSON.stringify(payload) });
+export const getBookings = () => request('/api/admin/bookings');
+export const deleteBooking = (id) => request(`/api/admin/bookings/${id}`, { method: 'DELETE' });
 export const getSettings = () => request('/admin/settings');
 export const updateSettings = (payload) => request('/admin/settings', { method: 'PUT', body: JSON.stringify(payload) });

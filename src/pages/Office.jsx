@@ -345,7 +345,7 @@ export default function Office() {
   const fetchMeetings = async () => {
     setLoadingMeetings(true);
     try {
-      const res = await fetch("https://meeting.needmoconsult.com/api/meetings");
+      const res = await fetch("https://api.needmoconsult.com/api/meetings");
       const data = await res.json();
       setMeetings(data.meetings || []);
     } catch (err) {
@@ -1939,17 +1939,29 @@ export default function Office() {
                     <div className="divide-y divide-gray-100 dark:divide-white/10">
                       {meetings.map((meeting) => (
                         <div key={meeting.id} className="p-4 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-lg bg-[#D4AF7A]/20 flex items-center justify-center">
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-start gap-3">
+                              <div className="w-10 h-10 rounded-lg bg-[#D4AF7A]/20 flex items-center justify-center shrink-0">
                                 <Video className="w-5 h-5 text-[#D4AF7A]" />
                               </div>
-                              <div>
-                                <h3 className="font-semibold text-[#1A2332] dark:text-white">{meeting.title || "Untitled Meeting"}</h3>
-                                <p className="text-sm text-gray-500">{new Date(meeting.created_at).toLocaleDateString()}</p>
+                              <div className="min-w-0">
+                                <h3 className="font-semibold text-[#1A2332] dark:text-white truncate">{meeting.title || "Untitled Meeting"}</h3>
+                                <p className="text-xs text-gray-400 font-mono">ID: {meeting.id}</p>
+                                {meeting.description && (
+                                  <p className="text-sm text-gray-500 mt-1 line-clamp-2">{meeting.description}</p>
+                                )}
+                                <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-gray-500">
+                                  <span>Created: {new Date(meeting.created_at).toLocaleDateString()}</span>
+                                  {meeting.scheduled_start && (
+                                    <span>Start: {new Date(meeting.scheduled_start).toLocaleString()}</span>
+                                  )}
+                                  {meeting.scheduled_end && (
+                                    <span>End: {new Date(meeting.scheduled_end).toLocaleString()}</span>
+                                  )}
+                                </div>
                               </div>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex flex-col items-end gap-2 shrink-0 ml-4">
                               <span className={`px-2 py-1 text-xs rounded-full ${
                                 meeting.status === "ACTIVE" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-600"
                               }`}>

@@ -92,18 +92,18 @@ export default function VideoPlayer({
             />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-          <motion.button
-            onClick={() => setPlaying(true)}
-            whileTap={{ scale: 0.97 }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 group focus:outline-none focus-visible:ring-4 focus-visible:ring-[#D4AF7A] rounded-full"
-            aria-label={`Play video: ${title}`}
-          >
-            <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg"
-              className="transition-transform duration-300 group-hover:scale-110">
-              <circle cx="36" cy="36" r="36" fill="#D4AF7A" />
-              <polygon points="28,20 28,52 54,36" fill="white" />
-            </svg>
-          </motion.button>
+<motion.button
+  onClick={() => setPlaying(true)}
+  animate={{ scale: [1, 1.1, 1] }}
+  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 group focus:outline-none focus-visible:ring-4 focus-visible:ring-[#D4AF7A] rounded-full"
+  aria-label={`Play video: ${title}`}
+>
+  <svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="36" cy="36" r="36" fill="#D4AF7A" />
+    <polygon points="28,20 28,52 54,36" fill="white" />
+  </svg>
+</motion.button>
         </>
       ) : (
         <>

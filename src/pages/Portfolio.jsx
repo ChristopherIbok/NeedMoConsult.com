@@ -29,6 +29,7 @@ const portfolioItems = [
     description: "A Real Estate Dynamic Style video editing for tiktok and instagram.",
     results: { views: "", engagement: "", followers: "" },
     src: "https://assets.needmoconsult.com/Kafeel-Amed-Reall-Estate-Test-Clip.mp4",
+    thumbnail: "https://assets.needmoconsult.com/thumbnails/Kafeel-Amed-Reall-Estate-Test-Clip-thumb.jpg"
   },
   {
     id: 2, type: "self", category: "content", orientation: "vertical",
@@ -36,6 +37,7 @@ const portfolioItems = [
     description: "Launch campaign for new clothing line targeting Gen Z audience.",
     results: { impressions: "", ctr: "", revenue: "" },
     src: "https://assets.needmoconsult.com/Kafeel-Amed-Reall-Estate-Test-Clip.mp4",
+    thumbnail: "https://assets.needmoconsult.com/thumbnails/Kafeel-Amed-Reall-Estate-Test-Clip-thumb.jpg"
   },
   {
     id: 3, type: "self", category: "content", orientation: "vertical",
@@ -43,6 +45,7 @@ const portfolioItems = [
     description: "Happy birthday video portfolio piece showcasing creative editing.",
     results: { views: "", engagement: "", followers: "" },
     src: "https://assets.needmoconsult.com/HAPPY%20BIRTHDAY%20EUNICE%20THOMAS.mp4",
+    thumbnail: "https://assets.needmoconsult.com/thumbnails/HAPPY-BIRTHDAY-EUNICE-THOMAS-thumb.jpg"
   },
   {
     id: 4, type: "self", category: "content", orientation: "vertical",
@@ -50,6 +53,7 @@ const portfolioItems = [
     description: "AI Omni Necklace | Product Launch Promo.",
     results: { followers: "", sponsorships: "", income: "" },
     src: "https://assets.needmoconsult.com/Omi-Neklace.mp4",
+    thumbnail: "https://assets.needmoconsult.com/thumbnails/Omi-Neklace-thumb.jpg"
   },
   {
     id: 5, type: "self", category: "content", orientation: "horizontal",
@@ -57,6 +61,23 @@ const portfolioItems = [
     description: "Landscape showreel showcasing brand highlights and creative direction.",
     results: { views: "", engagement: "", reach: "" },
     src: "https://assets.needmoconsult.com/Nova%201.mp4",
+    thumbnail: "https://assets.needmoconsult.com/thumbnails/Nova-1-thumb.jpg"
+  },
+  {
+    id: 6, type: "self", category: "content", orientation: "vertical",
+    client: "Upwork Happy Client", project: "8 Creatives - Month One",
+    description: "Completed job for a happy client on Upwork featuring 8 creatives in month one.",
+    results: { views: "", engagement: "", followers: "" },
+    src: "https://assets.needmoconsult.com/8Creatives-Month-One.mp4",
+    thumbnail: "https://assets.needmoconsult.com/thumbnails/8Creatives-Month-One-thumb.jpg"
+  },
+  {
+    id: 7, type: "self", category: "content", orientation: "vertical",
+    client: "Summer Campaign", project: "June in 45 Seconds",
+    description: "A vertical video showcasing summer highlights in a fast-paced 45-second format.",
+    results: { views: "", engagement: "", followers: "" },
+    src: "https://assets.needmoconsult.com/June-in-45sec.mp4",
+    thumbnail: "https://assets.needmoconsult.com/thumbnails/June-in-45sec-thumb.jpg"
   },
 ];
 
@@ -130,12 +151,11 @@ export default function Portfolio() {
             ))}
           </div>
 
-          {/* Masonry-style grid: vertical items take portrait aspect, horizontal take landscape */}
-          <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
-            <AnimatePresence>
-              {filteredItems.map((item, index) => {
-                const isVertical = item.orientation === "vertical";
-                const aspectClass = isVertical ? "aspect-[9/16]" : "aspect-[4/3]";
+           {/* Masonry-style grid: all items take square aspect */}
+           <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
+             <AnimatePresence>
+               {filteredItems.map((item, index) => {
+                 const aspectClass = "aspect-[1/1]";
 
                 return (
                   <motion.div
@@ -148,21 +168,21 @@ export default function Portfolio() {
                   >
                     {/* Thumbnail */}
                     <div className={`relative ${aspectClass} overflow-hidden`}>
-                      {item.thumbnail?.endsWith('.mp4') || item.src?.endsWith('.mp4') ? (
+                      {item.thumbnail ? (
+                        <img
+                          src={item.thumbnail.startsWith("http") ? item.thumbnail : `${R2}/${item.thumbnail}`}
+                          alt={`${item.project} - ${item.client}`}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                      ) : (
                         <video
-                          src={item.src || item.thumbnail}
-                          poster={(item.src || item.thumbnail) + '#t=0.1'}
+                          src={item.src}
+                          poster={(item.src || '') + '#t=0.1'}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                           muted
                           playsInline
                           preload="metadata"
-                        />
-                      ) : (
-                        <img
-                          src={item.thumbnail?.startsWith("http") ? item.thumbnail : `${R2}/${item.thumbnail}`}
-                          alt={`${item.project} - ${item.client}`}
-                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          loading="lazy"
                         />
                       )}
                       {/* Hover overlay */}
@@ -190,11 +210,11 @@ export default function Portfolio() {
                         {categories.find((c) => c.id === item.category)?.label}
                       </Badge>
                       {/* Orientation tag */}
-                      {(item.type === "video" || item.type === "self") && (
-                        <span className="absolute bottom-4 left-4 text-[10px] bg-black/50 text-white px-2 py-0.5 rounded-full uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
-                          {isVertical ? "Vertical" : "Horizontal"}
-                        </span>
-                      )}
+                        {(item.type === "video" || item.type === "self") && (
+                         <span className="absolute bottom-4 left-4 text-[10px] bg-black/50 text-white px-2 py-0.5 rounded-full uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                           {item.orientation === "vertical" ? "Vertical" : "Horizontal"}
+                         </span>
+                       )}
                     </div>
 
                     {/* Card footer */}

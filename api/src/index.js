@@ -3,6 +3,9 @@
  * Complete video conferencing API with authentication
  */
 
+// Video thumbnail generation
+import { handleGenerateThumbnail } from './video-thumbnail.js';
+
 const callTestHTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -509,25 +512,43 @@ const callTestHTML = `<!DOCTYPE html>
 </body>
 </html>`;
 
-const ALLOWED_ORIGINS = [
+const DEFAULT_ALLOWED_ORIGINS = [
   'https://needmoconsult.com',
   'https://www.needmoconsult.com',
   'https://api.needmoconsult.com',
   'http://localhost:5173',
-  'http://localhost:3000'
+  'http://localhost:3000',
 ];
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+const DEFAULT_CORS_HEADERS = {
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-CSRF-Token',
   'Access-Control-Allow-Credentials': 'true',
 };
 
+function getAllowedOrigins(env = {}) {
+  const envOrigins = env.ALLOWED_ORIGINS ? env.ALLOWED_ORIGINS.split(',').map((origin) => origin.trim()).filter(Boolean) : [];
+  return [...new Set([...DEFAULT_ALLOWED_ORIGINS, ...envOrigins])];
+}
+
+function getCorsHeaders(request, env) {
+  const origin = request.headers.get('origin');
+  const allowedOrigins = getAllowedOrigins(env);
+  const allowOrigin = origin && allowedOrigins.includes(origin) ? origin : DEFAULT_ALLOWED_ORIGINS[0];
+  return {
+    'Access-Control-Allow-Origin': allowOrigin,
+    ...DEFAULT_CORS_HEADERS,
+  };
+}
+
 function jsonResponse(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: { 'Content-Type': 'application/json', ...corsHeaders },
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': 'https://needmoconsult.com',
+      ...DEFAULT_CORS_HEADERS,
+    },
   });
 }
 
@@ -797,7 +818,7 @@ async function sendPasswordResetEmail(env, email, name, token) {
 }
 
 // ============================================
-// STRIPE
+// PAYMENTS
 // ============================================
 
 const SUBSCRIPTION_TIERS = {
@@ -806,10 +827,270 @@ const SUBSCRIPTION_TIERS = {
   business: { name: 'Business', maxParticipants: 100, maxDuration: 0, recording: true, transcription: true }
 };
 
+const FLUTTERWAVE_PLAN_AMOUNTS = {
+  pro: { monthly: 15, yearly: 150 },
+  business: { monthly: 30, yearly: 300 }
+};
+
 const STRIPE_PRICES = {
   pro: { monthly: 'price_pro_monthly_id', yearly: 'price_pro_yearly_id' },
   business: { monthly: 'price_business_monthly_id', yearly: 'price_business_yearly_id' }
 };
+
+function getAppUrl(env, path = '') {
+  const domain = env.APP_DOMAIN || 'needmoconsult.com';
+  return `https://${domain}${path}`;
+}
+
+function getApiUrl(env, path = '') {
+  const domain = env.API_DOMAIN || 'api.needmoconsult.com';
+  return `https://${domain}${path}`;
+}
+
+function getFlutterwaveAmount(env, tier, interval) {
+  const key = `FLW_${tier.toUpperCase()}_${interval.toUpperCase()}_AMOUNT`;
+  const configured = Number(env[key]);
+  if (Number.isFinite(configured) && configured > 0) return configured;
+  return FLUTTERWAVE_PLAN_AMOUNTS[tier]?.[interval];
+}
+
+function parseFlutterwaveReference(txRef) {
+  const parts = String(txRef || '').split(':');
+  if (parts.length < 6 || parts[0] !== 'needmo') return null;
+  return {
+    userId: parts[1],
+    tier: parts[2],
+    interval: parts[3],
+    createdAt: parts[4],
+    nonce: parts.slice(5).join(':')
+  };
+}
+
+function parsePublicPaymentReference(txRef) {
+  const parts = String(txRef || '').split(':');
+  if (parts.length < 4 || parts[0] !== 'needmo-pay') return null;
+  return {
+    createdAt: parts[1],
+    nonce: parts[2],
+    source: parts.slice(3).join(':')
+  };
+}
+
+async function sha256Hex(input) {
+  const bytes = new TextEncoder().encode(input);
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+
+async function createFlutterwavePayloadHash(secretKey, amount, currency, email, txRef) {
+  const hashedSecretKey = await sha256Hex(secretKey);
+  return sha256Hex(`${amount}${currency}${email}${txRef}${hashedSecretKey}`);
+}
+
+async function createFlutterwaveCheckout(env, userId, tier, interval) {
+  if (!env.FLW_SECRET_KEY) {
+    throw new Error('Flutterwave secret key is not configured');
+  }
+
+  const user = await dbGetUserById(env, userId);
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  const amount = getFlutterwaveAmount(env, tier, interval);
+  if (!amount) {
+    throw new Error('Invalid subscription plan amount');
+  }
+
+  const currency = env.FLW_CURRENCY || 'USD';
+  const txRef = `needmo:${user.id}:${tier}:${interval}:${Date.now()}:${crypto.randomUUID()}`;
+  const payload = {
+    tx_ref: txRef,
+    amount: String(amount),
+    currency,
+    redirect_url: getApiUrl(env, '/api/subscription/callback'),
+    customer: {
+      email: user.email,
+      name: user.name
+    },
+    customizations: {
+      title: 'NEEDMO CONSULT',
+      description: `${SUBSCRIPTION_TIERS[tier].name} ${interval} plan`,
+      logo: 'https://assets.needmoconsult.com/Logo-Dark.webp'
+    },
+    meta: {
+      user_id: user.id,
+      tier,
+      interval
+    },
+    configurations: {
+      session_duration: 60,
+      max_retry_attempt: 3
+    }
+  };
+
+  payload.payload_hash = await createFlutterwavePayloadHash(
+    env.FLW_SECRET_KEY,
+    payload.amount,
+    payload.currency,
+    payload.customer.email,
+    payload.tx_ref
+  );
+
+  const res = await fetch('https://api.flutterwave.com/v3/payments', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${env.FLW_SECRET_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok || data.status !== 'success' || !data.data?.link) {
+    throw new Error(data.message || 'Unable to create Flutterwave checkout');
+  }
+
+  return { url: data.data.link, txRef };
+}
+
+async function createFlutterwavePaymentLink(env, payment) {
+  if (!env.FLW_SECRET_KEY) {
+    throw new Error('Flutterwave secret key is not configured');
+  }
+
+  const amount = Number(payment.amount);
+  if (!Number.isFinite(amount) || amount <= 0) {
+    throw new Error('Enter a valid payment amount');
+  }
+
+  const currency = payment.currency || env.FLW_CURRENCY || 'USD';
+  const txRef = `needmo-pay:${Date.now()}:${crypto.randomUUID()}:website`;
+  const customerName = String(payment.name || '').trim() || 'NEEDMO customer';
+  const customerEmail = String(payment.email || '').trim().toLowerCase();
+  const description = String(payment.description || '').trim() || 'NEEDMO CONSULT payment';
+
+  if (!customerEmail || !customerEmail.includes('@')) {
+    throw new Error('Enter a valid email address');
+  }
+
+  const payload = {
+    tx_ref: txRef,
+    amount: String(amount),
+    currency,
+    redirect_url: getApiUrl(env, '/api/payments/callback'),
+    customer: {
+      email: customerEmail,
+      name: customerName,
+      phonenumber: String(payment.phone || '').trim()
+    },
+    customizations: {
+      title: 'NEEDMO CONSULT',
+      description,
+      logo: 'https://assets.needmoconsult.com/Logo-Dark.webp'
+    },
+    meta: {
+      source: 'needmoconsult.com/pay',
+      description
+    },
+    configurations: {
+      session_duration: 60,
+      max_retry_attempt: 3
+    }
+  };
+
+  payload.payload_hash = await createFlutterwavePayloadHash(
+    env.FLW_SECRET_KEY,
+    payload.amount,
+    payload.currency,
+    payload.customer.email,
+    payload.tx_ref
+  );
+
+  const res = await fetch('https://api.flutterwave.com/v3/payments', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${env.FLW_SECRET_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  });
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok || data.status !== 'success' || !data.data?.link) {
+    throw new Error(data.message || 'Unable to create Flutterwave payment link');
+  }
+
+  return { url: data.data.link, txRef };
+}
+
+async function verifyFlutterwaveTransaction(env, transactionId) {
+  if (!env.FLW_SECRET_KEY) {
+    throw new Error('Flutterwave secret key is not configured');
+  }
+
+  const res = await fetch(`https://api.flutterwave.com/v3/transactions/${transactionId}/verify`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${env.FLW_SECRET_KEY}`,
+      'Content-Type': 'application/json',
+      'accept': 'application/json'
+    }
+  });
+  const verification = await res.json().catch(() => ({}));
+
+  if (!res.ok || verification.status !== 'success') {
+    throw new Error(verification.message || 'Unable to verify Flutterwave transaction');
+  }
+
+  return verification.data;
+}
+
+async function applyFlutterwaveSubscription(env, transactionId, expectedTxRef = null) {
+  const data = await verifyFlutterwaveTransaction(env, transactionId);
+  const details = parseFlutterwaveReference(data.tx_ref);
+
+  if (!details || (expectedTxRef && data.tx_ref !== expectedTxRef)) {
+    throw new Error('Transaction reference mismatch');
+  }
+
+  const expectedAmount = getFlutterwaveAmount(env, details.tier, details.interval);
+  const expectedCurrency = env.FLW_CURRENCY || 'USD';
+  const paidAmount = Number(data.amount);
+  const chargedAmount = Number(data.charged_amount || data.amount);
+
+  if (
+    data.status !== 'successful' ||
+    data.currency !== expectedCurrency ||
+    !expectedAmount ||
+    (paidAmount < expectedAmount && chargedAmount < expectedAmount)
+  ) {
+    throw new Error('Transaction did not match the expected payment details');
+  }
+
+  await dbUpdateUser(env, details.userId, { subscription_tier: details.tier });
+  return { tier: details.tier, interval: details.interval, txRef: data.tx_ref };
+}
+
+async function verifyPublicFlutterwavePayment(env, transactionId, expectedTxRef = null) {
+  const data = await verifyFlutterwaveTransaction(env, transactionId);
+  const details = parsePublicPaymentReference(data.tx_ref);
+
+  if (!details || (expectedTxRef && data.tx_ref !== expectedTxRef)) {
+    throw new Error('Payment reference mismatch');
+  }
+
+  if (data.status !== 'successful') {
+    throw new Error('Payment was not successful');
+  }
+
+  return {
+    amount: data.amount,
+    currency: data.currency,
+    txRef: data.tx_ref,
+    customer: data.customer
+  };
+}
 
 async function createStripeCheckout(env, userId, priceId, successUrl, cancelUrl) {
   const user = await dbGetUserById(env, userId);
@@ -1018,23 +1299,23 @@ async function addRealtimeKitParticipant(env, meetingId, name, role, customId) {
 async function handleRegister(request, env) {
   const rateKey = `rate:register:${request.headers.get('CF-Connecting-IP')}`;
   if (!await checkRateLimit(env, rateKey)) {
-    return errorResponse('Too many requests. Please try again later.', 429);
+    return withCors(errorResponse('Too many requests. Please try again later.', 429);
   }
   
   const body = await request.json();
   const { email, password, name } = body;
   
   if (!email || !password || !name) {
-    return errorResponse('Missing required fields', 400);
+    return withCors(errorResponse('Missing required fields', 400);
   }
   
   if (password.length < 8) {
-    return errorResponse('Password must be at least 8 characters', 400);
+    return withCors(errorResponse('Password must be at least 8 characters', 400);
   }
   
   const existing = await dbGetUserByEmail(env, email);
   if (existing) {
-    return errorResponse('Email already registered', 400);
+    return withCors(errorResponse('Email already registered', 400);
   }
   
   const passwordHash = await hashPassword(password);
@@ -1046,31 +1327,31 @@ async function handleRegister(request, env) {
     VALUES (?, ?, ?, ?, 'free', 1, datetime('now'), datetime('now'))
   `).bind(userId, email, passwordHash, name).run();
   
-  return jsonResponse({ message: 'Registration successful. You can now login.' });
+  return withCors(jsonResponse({ message: 'Registration successful. You can now login.' });
 }
 
 // POST /api/auth/login
 async function handleLogin(request, env) {
   const rateKey = `rate:login:${request.headers.get('CF-Connecting-IP')}`;
   if (!await checkRateLimit(env, rateKey)) {
-    return errorResponse('Too many requests. Please try again later.', 429);
+    return withCors(errorResponse('Too many requests. Please try again later.', 429);
   }
   
   const body = await request.json();
   const { email, password } = body;
   
   if (!email || !password) {
-    return errorResponse('Missing email or password', 400);
+    return withCors(errorResponse('Missing email or password', 400);
   }
   
   const user = await dbGetUserByEmail(env, email);
   if (!user) {
-    return errorResponse('Invalid credentials', 401);
+    return withCors(errorResponse('Invalid credentials', 401);
   }
   
   const valid = await verifyPassword(password, user.password_hash);
   if (!valid) {
-    return errorResponse('Invalid credentials', 401);
+    return withCors(errorResponse('Invalid credentials', 401);
   }
   
   const token = createToken({
@@ -1082,7 +1363,7 @@ async function handleLogin(request, env) {
     avatar_url: user.avatar_url
   }, env.JWT_SECRET_KEY);
   
-  return jsonResponse({
+  return withCors(jsonResponse({
     access_token: token,
     token_type: 'bearer',
     user: {
@@ -1098,7 +1379,7 @@ async function handleLogin(request, env) {
 
 // POST /api/auth/logout
 async function handleLogout(request, env) {
-  return jsonResponse({ message: 'Logged out successfully' });
+  return withCors(jsonResponse({ message: 'Logged out successfully' });
 }
 
 // POST /api/auth/verify-email
@@ -1107,7 +1388,7 @@ async function handleVerifyEmail(request, env) {
   const { token } = body;
   
   if (!token) {
-    return errorResponse('Missing verification token', 400);
+    return withCors(errorResponse('Missing verification token', 400);
   }
   
   const tokenRow = await env.DB.prepare(`
@@ -1115,20 +1396,20 @@ async function handleVerifyEmail(request, env) {
   `).bind(token).first();
   
   if (!tokenRow) {
-    return errorResponse('Invalid or expired token', 400);
+    return withCors(errorResponse('Invalid or expired token', 400);
   }
   
   await env.DB.prepare('UPDATE users SET email_verified = 1 WHERE id = ?').bind(tokenRow.user_id).run();
   await env.DB.prepare('UPDATE email_verification_tokens SET used = 1 WHERE id = ?').bind(tokenRow.id).run();
   
-  return jsonResponse({ message: 'Email verified successfully' });
+  return withCors(jsonResponse({ message: 'Email verified successfully' });
 }
 
 // POST /api/auth/reset-password
 async function handleResetPasswordRequest(request, env) {
   const rateKey = `rate:reset:${request.headers.get('CF-Connecting-IP')}`;
   if (!await checkRateLimit(env, rateKey, 3, 60)) {
-    return errorResponse('Too many requests', 429);
+    return withCors(errorResponse('Too many requests', 429);
   }
   
   const body = await request.json();
@@ -1136,55 +1417,55 @@ async function handleResetPasswordRequest(request, env) {
   
   const user = await dbGetUserByEmail(env, email);
   if (!user) {
-    return jsonResponse({ message: 'If the email exists, a reset link will be sent' });
+    return withCors(jsonResponse({ message: 'If the email exists, a reset link will be sent' });
   }
   
   const token = generateId();
   await dbSaveEmailToken(env, token, user.id, 'password');
   await sendPasswordResetEmail(env, user.email, user.name, token);
   
-  return jsonResponse({ message: 'If the email exists, a reset link will be sent' });
+  return withCors(jsonResponse({ message: 'If the email exists, a reset link will be sent' });
 }
 
 // POST /api/auth/change-password
 async function handleChangePassword(request, env) {
   const auth = requireAuth(request, env);
-  if (auth.error) return errorResponse(auth.error, auth.status);
+  if (auth.error) return withCors(errorResponse(auth.error, auth.status);
   
   const body = await request.json();
   const { currentPassword, newPassword } = body;
   
   if (!currentPassword || !newPassword) {
-    return errorResponse('Missing passwords', 400);
+    return withCors(errorResponse('Missing passwords', 400);
   }
   
   if (newPassword.length < 8) {
-    return errorResponse('Password must be at least 8 characters', 400);
+    return withCors(errorResponse('Password must be at least 8 characters', 400);
   }
   
   const user = await dbGetUserById(env, auth.payload.sub);
   const valid = await verifyPassword(currentPassword, user.password_hash);
   if (!valid) {
-    return errorResponse('Current password is incorrect', 400);
+    return withCors(errorResponse('Current password is incorrect', 400);
   }
   
   const newHash = await hashPassword(newPassword);
   await dbUpdateUser(env, auth.payload.sub, { password_hash: newHash });
   
-  return jsonResponse({ message: 'Password changed successfully' });
+  return withCors(jsonResponse({ message: 'Password changed successfully' });
 }
 
 // GET /api/user/me
 async function handleGetMe(request, env) {
   const auth = requireAuth(request, env);
-  if (auth.error) return errorResponse(auth.error, auth.status);
+  if (auth.error) return withCors(errorResponse(auth.error, auth.status);
   
   const user = await dbGetUserById(env, auth.payload.sub);
   if (!user) {
-    return errorResponse('User not found', 404);
+    return withCors(errorResponse('User not found', 404);
   }
   
-  return jsonResponse({
+  return withCors(jsonResponse({
     id: user.id,
     email: user.email,
     name: user.name,
@@ -1198,7 +1479,7 @@ async function handleGetMe(request, env) {
 // PUT /api/user/me
 async function handleUpdateMe(request, env) {
   const auth = requireAuth(request, env);
-  if (auth.error) return errorResponse(auth.error, auth.status);
+  if (auth.error) return withCors(errorResponse(auth.error, auth.status);
   
   const body = await request.json();
   const { name, avatarUrl } = body;
@@ -1212,7 +1493,7 @@ async function handleUpdateMe(request, env) {
   }
   
   const user = await dbGetUserById(env, auth.payload.sub);
-  return jsonResponse({
+  return withCors(jsonResponse({
     id: user.id,
     email: user.email,
     name: user.name,
@@ -1225,25 +1506,25 @@ async function handleUpdateMe(request, env) {
 // GET /api/meetings
 async function handleGetMeetings(request, env) {
   const auth = requireAuth(request, env);
-  if (auth.error) return errorResponse(auth.error, auth.status);
+  if (auth.error) return withCors(errorResponse(auth.error, auth.status);
   
   const url = new URL(request.url);
   const filter = url.searchParams.get('filter') || 'all';
   const meetings = await dbGetMeetings(env, auth.payload.sub, filter);
   
-  return jsonResponse({ meetings });
+  return withCors(jsonResponse({ meetings });
 }
 
 // POST /api/meetings
 async function handleCreateMeeting(request, env) {
   const auth = requireAuth(request, env);
-  if (auth.error) return errorResponse(auth.error, auth.status);
+  if (auth.error) return withCors(errorResponse(auth.error, auth.status);
   
   const body = await request.json();
   const { title, description, scheduledStart, scheduledEnd, isInstant, settings } = body;
   
   if (!title) {
-    return errorResponse('Title is required', 400);
+    return withCors(errorResponse('Title is required', 400);
   }
   
   const user = await dbGetUserById(env, auth.payload.sub);
@@ -1286,7 +1567,7 @@ async function handleCreateMeeting(request, env) {
     ? `https://api.needmoconsult.com/meeting/${rtkMeetingId}`
     : null;
 
-  return jsonResponse({
+  return withCors(jsonResponse({
     meeting: {
       id: meetingId,
       title,
@@ -1303,11 +1584,11 @@ async function handleCreateMeeting(request, env) {
 // GET /api/meetings/:id
 async function handleGetMeeting(request, env, id) {
   const auth = requireAuth(request, env);
-  if (auth.error) return errorResponse(auth.error, auth.status);
+  if (auth.error) return withCors(errorResponse(auth.error, auth.status);
   
   const meeting = await dbGetMeetingById(env, id);
   if (!meeting) {
-    return errorResponse('Meeting not found', 404);
+    return withCors(errorResponse('Meeting not found', 404);
   }
   
   const participant = await env.DB.prepare(`
@@ -1315,47 +1596,47 @@ async function handleGetMeeting(request, env, id) {
   `).bind(id, auth.payload.sub).first();
   
   if (!participant && meeting.host_user_id !== auth.payload.sub) {
-    return errorResponse('Not authorized', 403);
+    return withCors(errorResponse('Not authorized', 403);
   }
   
-  return jsonResponse({ meeting });
+  return withCors(jsonResponse({ meeting });
 }
 
 // DELETE /api/meetings/:id
 async function handleDeleteMeeting(request, env, id) {
   const auth = requireAuth(request, env);
-  if (auth.error) return errorResponse(auth.error, auth.status);
+  if (auth.error) return withCors(errorResponse(auth.error, auth.status);
   
   const meeting = await dbGetMeetingById(env, id);
   if (!meeting) {
-    return errorResponse('Meeting not found', 404);
+    return withCors(errorResponse('Meeting not found', 404);
   }
   
   if (meeting.host_user_id !== auth.payload.sub) {
-    return errorResponse('Only the host can delete this meeting', 403);
+    return withCors(errorResponse('Only the host can delete this meeting', 403);
   }
   
   await env.DB.prepare('UPDATE meetings SET status = ? WHERE id = ?').bind('cancelled', id).run();
   
-  return jsonResponse({ message: 'Meeting cancelled' });
+  return withCors(jsonResponse({ message: 'Meeting cancelled' });
 }
 
 // GET /api/recordings
 async function handleGetRecordings(request, env) {
   const auth = requireAuth(request, env);
-  if (auth.error) return errorResponse(auth.error, auth.status);
+  if (auth.error) return withCors(errorResponse(auth.error, auth.status);
   
   const recordings = await dbGetRecordings(env, auth.payload.sub);
-  return jsonResponse({ recordings });
+  return withCors(jsonResponse({ recordings });
 }
 
 // POST /api/recordings/upload
 async function handleUploadRecording(request, env) {
   const auth = requireAuth(request, env);
-  if (auth.error) return errorResponse(auth.error, auth.status);
+  if (auth.error) return withCors(errorResponse(auth.error, auth.status);
   
   if (!env.needmo_recordings) {
-    return errorResponse('Storage not configured', 500);
+    return withCors(errorResponse('Storage not configured', 500);
   }
   
   try {
@@ -1364,10 +1645,10 @@ async function handleUploadRecording(request, env) {
     const meetingId = formData.get('meetingId');
     
     if (!file) {
-      return errorResponse('Missing file', 400);
+      return withCors(errorResponse('Missing file', 400);
     }
     if (!meetingId) {
-      return errorResponse('Missing meetingId', 400);
+      return withCors(errorResponse('Missing meetingId', 400);
     }
 
     const arrayBuffer = await file.arrayBuffer();
@@ -1388,7 +1669,7 @@ async function handleUploadRecording(request, env) {
       VALUES (?, ?, ?, ?, ?, 'ready')
     `).bind(recordingId, meetingId, auth.payload.sub, key, fileSize).run();
 
-    return jsonResponse({ 
+    return withCors(jsonResponse({ 
       success: true, 
       key,
       fileSize,
@@ -1396,7 +1677,7 @@ async function handleUploadRecording(request, env) {
     });
   } catch (e) {
     console.error('[Upload] Error:', e);
-    return errorResponse(`Upload failed: ${e.message}`, 500);
+    return withCors(errorResponse(`Upload failed: ${e.message}`, 500);
   }
 }
 
@@ -1427,7 +1708,7 @@ async function handleQuickCreateMeeting(request, env) {
     }
   }
 
-  return jsonResponse({
+  return withCors(jsonResponse({
     meetingId,
     slug,
     title,
@@ -1439,73 +1720,120 @@ async function handleQuickCreateMeeting(request, env) {
 // POST /api/subscription/create-checkout
 async function handleCreateCheckout(request, env) {
   const auth = requireAuth(request, env);
-  if (auth.error) return errorResponse(auth.error, auth.status);
+  if (auth.error) return withCors(errorResponse(auth.error, auth.status);
   
   const body = await request.json();
   const { tier, interval = 'monthly' } = body;
   
-  if (!STRIPE_PRICES[tier]) {
-    return errorResponse('Invalid tier', 400);
+  if (!FLUTTERWAVE_PLAN_AMOUNTS[tier]) {
+    return withCors(errorResponse('Invalid tier', 400);
   }
   
-  const priceId = STRIPE_PRICES[tier][interval];
-  if (!priceId) {
-    return errorResponse('Invalid subscription interval', 400);
+  if (!FLUTTERWAVE_PLAN_AMOUNTS[tier][interval]) {
+    return withCors(errorResponse('Invalid subscription interval', 400);
   }
   
-  const session = await createStripeCheckout(
-    env,
-    auth.payload.sub,
-    priceId,
-    'https://needmoconsult.com/dashboard?subscription=success',
-    'https://needmoconsult.com/pricing?subscription=cancelled'
-  );
+  const session = await createFlutterwaveCheckout(env, auth.payload.sub, tier, interval);
   
-  return jsonResponse({ url: session.url });
+  return withCors(jsonResponse({ url: session.url });
+}
+
+// POST /api/payments/create
+async function handleCreatePublicPayment(request, env) {
+  const body = await request.json();
+
+  try {
+    const session = await createFlutterwavePaymentLink(env, body);
+    return withCors(jsonResponse({ url: session.url });
+  } catch (e) {
+    return withCors(errorResponse(e.message || 'Unable to create payment link', 400);
+  }
+}
+
+// GET /api/payments/callback
+async function handlePublicPaymentCallback(request, env) {
+  const url = new URL(request.url);
+  const status = url.searchParams.get('status');
+  const txRef = url.searchParams.get('tx_ref');
+  const transactionId = url.searchParams.get('transaction_id');
+
+  if (status !== 'successful' || !transactionId || !txRef) {
+    return Response.redirect(getAppUrl(env, '/pay?payment=cancelled'), 302);
+  }
+
+  try {
+    await verifyPublicFlutterwavePayment(env, transactionId, txRef);
+    return Response.redirect(getAppUrl(env, '/pay?payment=success'), 302);
+  } catch (e) {
+    console.error('Flutterwave public payment verification failed:', e);
+    return Response.redirect(getAppUrl(env, '/pay?payment=failed'), 302);
+  }
+}
+
+// GET /api/subscription/callback
+async function handleSubscriptionCallback(request, env) {
+  const url = new URL(request.url);
+  const status = url.searchParams.get('status');
+  const txRef = url.searchParams.get('tx_ref');
+  const transactionId = url.searchParams.get('transaction_id');
+
+  if (status !== 'successful' || !transactionId || !txRef) {
+    return Response.redirect(getAppUrl(env, '/dashboard?subscription=cancelled'), 302);
+  }
+
+  try {
+    await applyFlutterwaveSubscription(env, transactionId, txRef);
+    return Response.redirect(getAppUrl(env, '/dashboard?subscription=success'), 302);
+  } catch (e) {
+    console.error('Flutterwave callback verification failed:', e);
+    return Response.redirect(getAppUrl(env, '/dashboard?subscription=failed'), 302);
+  }
 }
 
 // POST /api/subscription/webhook
 async function handleSubscriptionWebhook(request, env) {
-  const signature = request.headers.get('stripe-signature');
+  const signature = request.headers.get('verif-hash');
   const body = await request.text();
   
   try {
-    await handleStripeWebhook(env, body, signature);
-    return jsonResponse({ received: true });
+    if (env.FLW_SECRET_HASH && signature !== env.FLW_SECRET_HASH) {
+      return withCors(errorResponse('Invalid webhook signature', 401);
+    }
+
+    const event = JSON.parse(body);
+    const transactionId = event?.data?.id;
+    if (event?.event === 'charge.completed' && transactionId && event.data?.tx_ref) {
+      if (String(event.data.tx_ref).startsWith('needmo-pay:')) {
+        await verifyPublicFlutterwavePayment(env, transactionId, event.data.tx_ref);
+      } else {
+        await applyFlutterwaveSubscription(env, transactionId, event.data.tx_ref);
+      }
+    }
+
+    return withCors(jsonResponse({ received: true });
   } catch (e) {
-    return errorResponse(`Webhook error: ${e.message}`, 400);
+    return withCors(errorResponse(`Webhook error: ${e.message}`, 400);
   }
 }
 
 // GET /api/subscription/portal
 async function handleSubscriptionPortal(request, env) {
   const auth = requireAuth(request, env);
-  if (auth.error) return errorResponse(auth.error, auth.status);
-  
-  const user = await dbGetUserById(env, auth.payload.sub);
-  if (!user.stripe_customer_id) {
-    return errorResponse('No active subscription', 400);
-  }
-  
-  const session = await createStripePortal(
-    env,
-    user.stripe_customer_id,
-    'https://needmoconsult.com/dashboard'
-  );
-  
-  return jsonResponse({ url: session.url });
+  if (auth.error) return withCors(errorResponse(auth.error, auth.status);
+
+  return withCors(errorResponse('Subscription management is handled through Flutterwave receipts for now', 400);
 }
 
 // POST /api/realtimekit/join
 async function handleRealtimeKitJoin(request, env) {
   const auth = requireAuth(request, env);
-  if (auth.error) return errorResponse(auth.error, auth.status);
+  if (auth.error) return withCors(errorResponse(auth.error, auth.status);
   
   const body = await request.json();
   const { meetingId, name } = body;
   
   if (!meetingId) {
-    return errorResponse('Meeting ID or slug required', 400);
+    return withCors(errorResponse('Meeting ID or slug required', 400);
   }
   
   // Accept either meeting ID or slug
@@ -1517,12 +1845,12 @@ async function handleRealtimeKitJoin(request, env) {
   }
   
   if (!meeting) {
-    return errorResponse('Meeting not found', 404);
+    return withCors(errorResponse('Meeting not found', 404);
   }
   
   const rtkMeetingId = meeting.realtimekit_id;
   if (!rtkMeetingId) {
-    return errorResponse('RealtimeKit meeting not initialized', 400);
+    return withCors(errorResponse('RealtimeKit meeting not initialized', 400);
   }
   
   const participant = await env.DB.prepare(`
@@ -1538,10 +1866,10 @@ async function handleRealtimeKitJoin(request, env) {
   
   if (!result.success) {
     console.error('[handleRealtimeKitJoin] Error:', result.error);
-    return errorResponse(result.errors?.[0]?.message || 'Failed to join meeting');
+    return withCors(errorResponse(result.errors?.[0]?.message || 'Failed to join meeting');
   }
   
-  return jsonResponse({
+  return withCors(jsonResponse({
     authToken: result.data?.token || result.data?.authToken,
     meetingId: meeting.id,
     role
@@ -1557,7 +1885,7 @@ async function handleJoinWaitlist(request, env) {
   const { email, name = '' } = body;
 
   if (!email || !email.includes('@')) {
-    return errorResponse('Valid email required', 400);
+    return withCors(errorResponse('Valid email required', 400);
   }
 
   const id = crypto.randomUUID();
@@ -1581,10 +1909,10 @@ async function handleJoinWaitlist(request, env) {
       <p><a href="https://needmoconsult.com">Visit our website to learn more →</a></p>
     `);
     
-    return jsonResponse({ success: true, message: 'Subscribed successfully' });
+    return withCors(jsonResponse({ success: true, message: 'Subscribed successfully' });
   } catch (err) {
     if (err.message?.includes('UNIQUE constraint failed')) {
-      return errorResponse('Email already subscribed', 400);
+      return withCors(errorResponse('Email already subscribed', 400);
     }
     throw err;
   }
@@ -1595,7 +1923,7 @@ async function handleUnsubscribe(request, env) {
   const { email } = body;
 
   if (!email) {
-    return errorResponse('Email required', 400);
+    return withCors(errorResponse('Email required', 400);
   }
 
   await env.DB.prepare(`
@@ -1604,12 +1932,12 @@ async function handleUnsubscribe(request, env) {
     WHERE email = ?
   `).bind(email.toLowerCase()).run();
 
-  return jsonResponse({ success: true, message: 'Unsubscribed successfully' });
+  return withCors(jsonResponse({ success: true, message: 'Unsubscribed successfully' });
 }
 
 async function handleGetWaitlist(request, env) {
   const auth = requireAuth(request, env);
-  if (auth.error) return errorResponse(auth.error, auth.status);
+  if (auth.error) return withCors(errorResponse(auth.error, auth.status);
 
   const { results } = await env.DB.prepare(`
     SELECT id, email, name, status, subscribed_at, unsubscribed_at
@@ -1617,7 +1945,7 @@ async function handleGetWaitlist(request, env) {
     ORDER BY subscribed_at DESC
   `).all();
 
-  return jsonResponse({ 
+  return withCors(jsonResponse({ 
     subscribers: results || [],
     total: results?.length || 0
   });
@@ -1626,13 +1954,13 @@ async function handleGetWaitlist(request, env) {
 // POST /admin/welcome-email
 async function handleSendWelcomeEmail(request, env) {
   const auth = requireAuth(request, env);
-  if (auth.error) return errorResponse(auth.error, auth.status);
+  if (auth.error) return withCors(errorResponse(auth.error, auth.status);
 
   const body = await request.json().catch(() => ({}));
   const { email, name, headline, intro, cta_text, cta_url } = body;
 
   if (!email) {
-    return errorResponse('Email is required', 400);
+    return withCors(errorResponse('Email is required', 400);
   }
 
   const logoUrl = "https://assets.needmoconsult.com/Logo-Dark.webp";
@@ -1697,19 +2025,19 @@ async function handleSendWelcomeEmail(request, env) {
   `;
 
   const result = await sendEmail(env, email, 'Welcome to the NEEDMO CONSULT Newsletter! 🎉', html);
-  return jsonResponse({ ok: true, result });
+  return withCors(jsonResponse({ ok: true, result });
 }
 
 // POST /admin/newsletter/send
 async function handleSendNewsletter(request, env) {
   const auth = requireAuth(request, env);
-  if (auth.error) return errorResponse(auth.error, auth.status);
+  if (auth.error) return withCors(errorResponse(auth.error, auth.status);
 
   const body = await request.json().catch(() => ({}));
   const { to, subject, issue = "001", heroTitle = "", heroIntro = "", articleTitle = "", articleBody = "", articleUrl = "https://needmoconsult.com/blog", pullQuote = "", tips = [], offerTitle = "", offerBody = "", offerUrl = "https://needmoconsult.com/Contact", offerLabel = "Book Free Strategy Call" } = body;
 
   if (!to || !subject) {
-    return errorResponse('Recipients and subject are required', 400);
+    return withCors(errorResponse('Recipients and subject are required', 400);
   }
 
   const date = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
@@ -1754,7 +2082,7 @@ ${offerSection}
 </table></td></tr></table></body></html>`;
 
   await sendEmail(env, recipients, subject, html);
-  return jsonResponse({ success: true, message: `Newsletter sent to ${recipients.length} recipient(s)` });
+  return withCors(jsonResponse({ success: true, message: `Newsletter sent to ${recipients.length} recipient(s)` });
 }
 
 // ============================================
@@ -1766,7 +2094,7 @@ async function handleSubmitContact(request, env) {
   const { name, email, phone, company, message, source } = body;
 
   if (!name || !email || !message) {
-    return errorResponse('Name, email, and message are required', 400);
+    return withCors(errorResponse('Name, email, and message are required', 400);
   }
 
   const id = crypto.randomUUID();
@@ -1807,12 +2135,12 @@ async function handleSubmitContact(request, env) {
   await sendEmail(env, 'hello@needmoconsult.com', `🔔 New Contact: ${name} - ${company || 'No company'}`, adminHtml);
   await sendEmail(env, email.toLowerCase(), 'Thanks for reaching out to NEEDMO CONSULT!', userHtml);
 
-  return jsonResponse({ success: true, message: 'Contact submitted successfully' });
+  return withCors(jsonResponse({ success: true, message: 'Contact submitted successfully' });
 }
 
 async function handleGetContacts(request, env) {
   const auth = requireAuth(request, env);
-  if (auth.error) return errorResponse(auth.error, auth.status);
+  if (auth.error) return withCors(errorResponse(auth.error, auth.status);
 
   const url = new URL(request.url);
   const skip = parseInt(url.searchParams.get('skip') || '0');
@@ -1827,7 +2155,7 @@ async function handleGetContacts(request, env) {
 
   const countResult = await env.DB.prepare('SELECT COUNT(*) as total FROM contacts').first();
 
-  return jsonResponse({ 
+  return withCors(jsonResponse({ 
     contacts: results || [],
     total: countResult?.total || 0,
     skip,
@@ -1837,29 +2165,29 @@ async function handleGetContacts(request, env) {
 
 async function handleUpdateContact(request, env, id) {
   const auth = requireAuth(request, env);
-  if (auth.error) return errorResponse(auth.error, auth.status);
+  if (auth.error) return withCors(errorResponse(auth.error, auth.status);
 
   const body = await request.json().catch(() => ({}));
   const { status } = body;
 
   if (!status || !['new', 'contacted', 'converted', 'lost'].includes(status)) {
-    return errorResponse('Valid status required', 400);
+    return withCors(errorResponse('Valid status required', 400);
   }
 
   await env.DB.prepare(`
     UPDATE contacts SET status = ?, updated_at = datetime('now') WHERE id = ?
   `).bind(status, id).run();
 
-  return jsonResponse({ success: true });
+  return withCors(jsonResponse({ success: true });
 }
 
 async function handleDeleteContact(request, env, id) {
   const auth = requireAuth(request, env);
-  if (auth.error) return errorResponse(auth.error, auth.status);
+  if (auth.error) return withCors(errorResponse(auth.error, auth.status);
 
   await env.DB.prepare('DELETE FROM contacts WHERE id = ?').bind(id).run();
 
-  return jsonResponse({ success: true });
+  return withCors(jsonResponse({ success: true });
 }
 
 // ============================================
@@ -1880,7 +2208,7 @@ async function handleCreateBooking(request, env) {
   const { name, email, phone, service, service_type, date, preferred_date, preferred_time, time, notes } = body;
 
   if (!name || !email || !preferred_date && !date) {
-    return errorResponse('Name, email, and preferred date are required', 400);
+    return withCors(errorResponse('Name, email, and preferred date are required', 400);
   }
 
   const id = crypto.randomUUID();
@@ -1947,7 +2275,7 @@ async function handleCreateBooking(request, env) {
   await sendEmail(env, 'hello@needmoconsult.com', `📅 New Booking: ${name} - ${service_type}`, adminHtml);
   await sendEmail(env, email.toLowerCase(), '🎉 Your Consultation is Confirmed!', userHtml);
 
-  return jsonResponse({ 
+  return withCors(jsonResponse({ 
     success: true, 
     message: 'Booking created successfully',
     booking: {
@@ -1960,7 +2288,7 @@ async function handleCreateBooking(request, env) {
 
 async function handleGetBookings(request, env) {
   const auth = requireAuth(request, env);
-  if (auth.error) return errorResponse(auth.error, auth.status);
+  if (auth.error) return withCors(errorResponse(auth.error, auth.status);
 
   const { results } = await env.DB.prepare(`
     SELECT id, contact_id, name, email, phone, service_type, preferred_date, preferred_time, notes, status, meeting_link, meeting_slug, created_at, updated_at
@@ -1968,34 +2296,34 @@ async function handleGetBookings(request, env) {
     ORDER BY preferred_date ASC
   `).all();
 
-  return jsonResponse({ bookings: results || [] });
+  return withCors(jsonResponse({ bookings: results || [] });
 }
 
 async function handleUpdateBooking(request, env, id) {
   const auth = requireAuth(request, env);
-  if (auth.error) return errorResponse(auth.error, auth.status);
+  if (auth.error) return withCors(errorResponse(auth.error, auth.status);
 
   const body = await request.json().catch(() => ({}));
   const { status } = body;
 
   if (!status || !['pending', 'confirmed', 'cancelled', 'completed'].includes(status)) {
-    return errorResponse('Valid status required', 400);
+    return withCors(errorResponse('Valid status required', 400);
   }
 
   await env.DB.prepare(`
     UPDATE bookings SET status = ?, updated_at = datetime('now') WHERE id = ?
   `).bind(status, id).run();
 
-  return jsonResponse({ success: true });
+  return withCors(jsonResponse({ success: true });
 }
 
 async function handleDeleteBooking(request, env, id) {
   const auth = requireAuth(request, env);
-  if (auth.error) return errorResponse(auth.error, auth.status);
+  if (auth.error) return withCors(errorResponse(auth.error, auth.status);
 
   await env.DB.prepare('DELETE FROM bookings WHERE id = ?').bind(id).run();
 
-  return jsonResponse({ success: true });
+  return withCors(jsonResponse({ success: true });
 }
 
 // ============================================
@@ -2010,7 +2338,7 @@ async function handleRequest(request, env, ctx) {
   console.log(`[REQUEST] ${method} ${path}`);
   
   if (method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: getCorsHeaders(request, env) });
   }
 
   // RealtimeKit meeting redirect - /{uuid} -> Cloudflare RealtimeKit
@@ -2026,7 +2354,7 @@ async function handleRequest(request, env, ctx) {
 
   // Health check
   if (method === 'GET' && path === '/health') {
-    return jsonResponse({
+    return withCors(jsonResponse({
       status: 'ok',
       timestamp: new Date().toISOString(),
       env_keys: Object.keys(env).filter(k => !k.startsWith('_'))
@@ -2143,20 +2471,36 @@ async function handleRequest(request, env, ctx) {
   if (path === '/api/recordings/upload' && method === 'POST') {
     return handleUploadRecording(request, env);
   }
-  if (path === '/api/meetings/create' && method === 'POST') {
-    return handleQuickCreateMeeting(request, env);
-  }
+    if (path === '/api/meetings/create' && method === 'POST') {
+      return handleQuickCreateMeeting(request, env);
+    }
+
+    // Public payment routes
+    if (path === '/api/payments/create' && method === 'POST') {
+      return handleCreatePublicPayment(request, env);
+    }
+    if (path === '/api/payments/callback' && method === 'GET') {
+      return handlePublicPaymentCallback(request, env);
+    }
   
-  // Subscription routes
-  if (path === '/api/subscription/create-checkout' && method === 'POST') {
-    return handleCreateCheckout(request, env);
-  }
-  if (path === '/api/subscription/webhook' && method === 'POST') {
-    return handleSubscriptionWebhook(request, env);
-  }
-  if (path === '/api/subscription/portal' && method === 'GET') {
-    return handleSubscriptionPortal(request, env);
-  }
+    // Subscription routes
+    if (path === '/api/subscription/create-checkout' && method === 'POST') {
+      return handleCreateCheckout(request, env);
+    }
+    if (path === '/api/subscription/callback' && method === 'GET') {
+      return handleSubscriptionCallback(request, env);
+    }
+    if (path === '/api/subscription/webhook' && method === 'POST') {
+      return handleSubscriptionWebhook(request, env);
+    }
+    if (path === '/api/subscription/portal' && method === 'GET') {
+      return handleSubscriptionPortal(request, env);
+    }
+
+    // Video thumbnail routes
+    if (path === '/api/video/thumbnail' && method === 'POST') {
+      return handleGenerateThumbnail(request, env);
+    }
   
   // RealtimeKit
   if (path === '/api/realtimekit/join' && method === 'POST') {
@@ -2220,7 +2564,7 @@ async function handleRequest(request, env, ctx) {
     return stub.fetch(request);
   }
 
-  return errorResponse(`Not found: ${path}`, 404);
+  return withCors(errorResponse(`Not found: ${path}`, 404);
 }
 
 export default {

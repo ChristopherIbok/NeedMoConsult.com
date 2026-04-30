@@ -34,14 +34,18 @@
 			"database_id": "d178030b-740d-4d38-a456-953966247d80"
 		}
 	],
-	"r2_buckets": [
-		{
-			"bucket_name": "needmo-recordings",
-			"binding": "needmo_recordings"
-		},
-		{
-			"bucket_name": "needmo-assets",
-			"binding": "needmo_assets"
-		}
-	]
+  "r2_buckets": [
+    {
+      "bucket_name": "needmo-recordings",
+      "binding": "needmo_recordings"
+    },
+    {
+      "bucket_name": "needmo-assets",
+      "binding": "needmo_assets"
+    },
+    {
+      "bucket_name": "needmo-thumbnail",
+      "binding": "needmo_thumbnail"
+    }
+  ]
 }

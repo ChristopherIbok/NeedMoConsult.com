@@ -149,6 +149,14 @@ export const getSubscriptionPortal = async () => {
   return res.url;
 };
 
+export const createPublicPayment = async (payload) => {
+  const res = await request('/api/payments/create', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+  return res.url;
+};
+
 // ============================================
 // LEGACY / DEPRECATED
 // ============================================

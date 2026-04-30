@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { adminLogin, getWaitlist, sendNewsletter as apiSendNewsletter, sendWelcomeEmail as apiSendWelcomeEmail, getContacts, markContactRead } from "@/lib/api";
+import { adminLogin, getWaitlist, sendNewsletter as apiSendNewsletter, sendWelcomeEmail as apiSendWelcomeEmail, getContacts, markContactRead, getToken } from "@/lib/api";
 import { motion, AnimatePresence } from "framer-motion";
 import AuthGate from "@/components/AuthGate";
 import {
@@ -345,7 +345,11 @@ export default function Office() {
   const fetchMeetings = async () => {
     setLoadingMeetings(true);
     try {
-      const res = await fetch("https://api.needmoconsult.com/api/meetings");
+      const token = getToken();
+      const res = await fetch("https://api.needmoconsult.com/api/meetings", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) throw new Error("Unauthorized");
       const data = await res.json();
       setMeetings(data.meetings || []);
     } catch (err) {

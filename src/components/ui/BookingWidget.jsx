@@ -1,10 +1,18 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { format } from "date-fns";
 import { createBooking } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Calendar as CalendarIcon, Clock, CheckCircle, ChevronDownIcon } from "lucide-react";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -12,14 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar, Clock, CheckCircle } from "lucide-react";
-
-const timeSlots = [
-  "9:00 AM", "9:30 AM", "10:00 AM", "10:30 AM",
-  "11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM",
-  "1:00 PM", "1:30 PM", "2:00 PM", "2:30 PM",
-  "3:00 PM", "3:30 PM", "4:00 PM", "4:30 PM",
-];
+import { Calendar } from "@/components/ui/calendar";
 
 const services = [
   "Content Creation",
@@ -31,39 +32,17 @@ const services = [
   "Not sure yet",
 ];
 
-// Get next 14 available days (excluding Sundays)
-const getAvailableDates = () => {
-  const dates = [];
-  const today = new Date();
-  let count = 0;
-  let i = 1;
-
-  while (count < 14) {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
-    if (date.getDay() !== 0) { // exclude Sundays
-      dates.push(date);
-      count++;
-    }
-    i++;
-  }
-  return dates;
-};
-
 const formatDate = (date) =>
-  date.toLocaleDateString("en-US", {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-  });
+  date ? format(date, "PPP") : "";
 
 const formatDateValue = (date) =>
-  date.toISOString().split("T")[0];
+  date?.toISOString().split("T")[0] || "";
 
 export default function BookingWidget() {
   const [step, setStep] = useState(1); // 1: date/time, 2: details, 3: done
+  const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedTime, setSelectedTime] = useState(null);
+  const [selectedTime, setSelectedTime] = useState("10:30:00");
   const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -73,8 +52,6 @@ export default function BookingWidget() {
     message: "",
   });
   const [error, setError] = useState(null);
-
-  const availableDates = getAvailableDates();
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -179,67 +156,46 @@ export default function BookingWidget() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
           >
-            {/* Date Picker */}
-            <div className="mb-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Calendar className="w-4 h-4 text-[#D4AF7A]" />
-                <Label className="text-[#1A2332] dark:text-white font-medium">
-                  Select a Date
-                </Label>
-              </div>
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-2">
-                {availableDates.map((date) => (
-                  <button
-                    key={date.toISOString()}
-                    onClick={() => setSelectedDate(date)}
-                    className={`p-2 rounded-xl text-center text-xs transition-all border ${
-                      selectedDate?.toDateString() === date.toDateString()
-                        ? "bg-[#D4AF7A] text-white border-[#D4AF7A]"
-                        : "border-gray-200 dark:border-white/10 hover:border-[#D4AF7A] text-[#1A2332] dark:text-white"
-                    }`}
-                  >
-                    <p className="font-medium">
-                      {date.toLocaleDateString("en-US", { weekday: "short" })}
-                    </p>
-                    <p className="text-lg font-bold">{date.getDate()}</p>
-                    <p className="opacity-70">
-                      {date.toLocaleDateString("en-US", { month: "short" })}
-                    </p>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Time Picker */}
-            {selectedDate && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-8"
-              >
-                <div className="flex items-center gap-2 mb-4">
-                  <Clock className="w-4 h-4 text-[#D4AF7A]" />
-                  <Label className="text-[#1A2332] dark:text-white font-medium">
-                    Select a Time
-                  </Label>
-                </div>
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                  {timeSlots.map((time) => (
-                    <button
-                      key={time}
-                      onClick={() => setSelectedTime(time)}
-                      className={`py-2 px-3 rounded-xl text-sm transition-all border ${
-                        selectedTime === time
-                          ? "bg-[#D4AF7A] text-white border-[#D4AF7A]"
-                          : "border-gray-200 dark:border-white/10 hover:border-[#D4AF7A] text-[#1A2332] dark:text-white"
-                      }`}
+            <FieldGroup className="mx-auto max-w-xs flex-row gap-4 mb-8">
+              <Field>
+                <FieldLabel htmlFor="date-picker-optional">Date</FieldLabel>
+                <Popover open={open} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      id="date-picker-optional"
+                      className="w-32 justify-between font-normal"
                     >
-                      {time}
-                    </button>
-                  ))}
-                </div>
-              </motion.div>
-            )}
+                      {selectedDate ? format(selectedDate, "PPP") : "Select date"}
+                      <ChevronDownIcon className="w-4 h-4" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto overflow-hidden p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      captionLayout="dropdown"
+                      defaultMonth={selectedDate || new Date()}
+                      onSelect={(date) => {
+                        setSelectedDate(date);
+                        setOpen(false);
+                      }}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </Field>
+              <Field className="w-32">
+                <FieldLabel htmlFor="time-picker-optional">Time</FieldLabel>
+                <Input
+                  type="time"
+                  id="time-picker-optional"
+                  step="1"
+                  value={selectedTime}
+                  onChange={(event) => setSelectedTime(event.target.value)}
+                  className="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                />
+              </Field>
+            </FieldGroup>
 
             <Button
               onClick={() => setStep(2)}
@@ -259,7 +215,7 @@ export default function BookingWidget() {
           >
             {/* Selected time summary */}
             <div className="flex items-center gap-3 p-4 bg-[#D4AF7A]/10 rounded-xl mb-6">
-              <Calendar className="w-5 h-5 text-[#D4AF7A]" />
+              <CalendarIcon className="w-5 h-5 text-[#D4AF7A]" />
               <div>
                 <p className="text-sm font-semibold text-[#1A2332] dark:text-white">
                   {formatDate(selectedDate)} at {selectedTime}

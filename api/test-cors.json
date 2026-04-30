@@ -1,0 +1,1 @@
+{"rules": [{"allowedOrigins": ["*"], "allowedMethods": ["GET"], "allowedHeaders": ["*"], "exposeHeaders": ["ETag"], "maxAgeSeconds": 86400}]}

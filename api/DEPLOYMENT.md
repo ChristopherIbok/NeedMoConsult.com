@@ -5,7 +5,7 @@
 1. **Cloudflare Account** - Sign up at https://cloudflare.com
 2. **Node.js 18+** - Ensure you have Node.js installed
 3. **Wrangler CLI** - Install globally: `npm install -g wrangler`
-4. **Stripe Account** - For subscription management
+4. **Flutterwave Account** - For subscription payments
 5. **Resend Account** - For sending emails (or SendGrid)
 
 ## Step 1: Clone and Setup
@@ -26,8 +26,9 @@ Create a `.env` file in the `api/` directory:
 ```bash
 # API/.env
 JWT_SECRET_KEY=your-super-secure-jwt-secret-min-32-chars
-STRIPE_SECRET_KEY=sk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...
+FLW_SECRET_KEY=FLWSECK_TEST-...
+FLW_SECRET_HASH=your-dashboard-webhook-secret-hash
+FLW_CURRENCY=USD
 RESEND_API_KEY=re_...
 CLOUDFLARE_ACCOUNT_ID=your-account-id
 CLOUDFLARE_APP_ID=your-app-id
@@ -96,29 +97,27 @@ wrangler deploy
 wrangler secret put JWT_SECRET_KEY
 # Enter your secret when prompted
 
-wrangler secret put STRIPE_SECRET_KEY
-wrangler secret put STRIPE_WEBHOOK_SECRET
+wrangler secret put FLW_SECRET_KEY
+wrangler secret put FLW_SECRET_HASH
 wrangler secret put RESEND_API_KEY
 wrangler secret put CLOUDFLARE_API_TOKEN
 ```
 
-## Step 8: Set Up Stripe
+## Step 8: Set Up Flutterwave
 
-1. Create Products in Stripe Dashboard:
-   - Pro: $15/month
-   - Business: $30/month
+1. Create or log in to your Flutterwave Dashboard and copy your secret key.
 
-2. Add price IDs to `api/src/index.js`:
-   ```javascript
-   const STRIPE_PRICES = {
-     pro: { monthly: 'price_xxx', yearly: 'price_yyy' },
-     business: { monthly: 'price_xxx', yearly: 'price_yyy' }
-   };
-   ```
+2. Configure prices using Worker vars if you need to change the defaults:
+   - `FLW_CURRENCY`: defaults to `USD`
+   - `FLW_PRO_MONTHLY_AMOUNT`: defaults to `15`
+   - `FLW_PRO_YEARLY_AMOUNT`: defaults to `150`
+   - `FLW_BUSINESS_MONTHLY_AMOUNT`: defaults to `30`
+   - `FLW_BUSINESS_YEARLY_AMOUNT`: defaults to `300`
 
-3. Configure Webhook:
+3. Configure the webhook:
    - Endpoint: `https://api.needmoconsult.com/api/subscription/webhook`
-   - Events: `customer.subscription.updated`, `customer.subscription.created`, `customer.subscription.deleted`
+   - Secret hash: same value as `FLW_SECRET_HASH`
+   - Events: payment/charge completed events
 
 ## Step 9: Configure DNS
 
@@ -147,8 +146,10 @@ curl https://api.needmoconsult.com/health
 | Variable | Required | Description |
 |----------|----------|-------------|
 | JWT_SECRET_KEY | Yes | Secret for JWT signing |
-| STRIPE_SECRET_KEY | Yes | Stripe API key |
-| STRIPE_WEBHOOK_SECRET | Yes | Stripe webhook signature |
+| FLW_SECRET_KEY | Yes | Flutterwave secret key |
+| FLW_SECRET_HASH | Yes | Flutterwave dashboard webhook secret hash |
+| FLW_CURRENCY | No | Checkout currency, defaults to USD |
+| FLW_*_AMOUNT | No | Optional plan amount overrides |
 | RESEND_API_KEY | No | Email delivery (optional) |
 | CLOUDFLARE_ACCOUNT_ID | Yes | Cloudflare account |
 | CLOUDFLARE_APP_ID | Yes | RealtimeKit app ID |
@@ -161,7 +162,7 @@ curl https://api.needmoconsult.com/health
 1. **D1 not found**: Ensure database_id matches in wrangler.jsonc
 2. **CORS errors**: Add your domain to ALLOWED_ORIGINS in index.js
 3. **JWT invalid**: Verify JWT_SECRET_KEY is set in Cloudflare
-4. **Stripe webhook fails**: Check STRIPE_WEBHOOK_SECRET matches
+4. **Flutterwave webhook fails**: Check FLW_SECRET_HASH matches the dashboard secret hash
 
 ### View Logs
 

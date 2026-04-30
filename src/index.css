@@ -83,4 +83,17 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  main svg {
+    filter: grayscale(1) contrast(0.9);
+    opacity: 0.84;
+    transition: filter 0.25s ease, opacity 0.25s ease;
+  }
+
+  main a:hover svg,
+  main button:hover svg,
+  main svg:hover {
+    filter: none;
+    opacity: 1;
+  }
 }

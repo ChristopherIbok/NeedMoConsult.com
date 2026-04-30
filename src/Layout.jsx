@@ -113,7 +113,7 @@ export default function Layout({ children }) {
           -webkit-tap-highlight-color: transparent;
         }
       `}</style>
-      <div className="min-h-screen bg-white dark:bg-[#0D1117] transition-colors">
+      <div className="min-h-screen bg-white dark:bg-[#0D1117] transition-colors pb-24 lg:pb-0">
         {!isOffice && <Header />}
         {children}
         {!isOffice && <Footer />}

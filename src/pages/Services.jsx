@@ -212,10 +212,10 @@ export default function Services() {
             <p className="text-[#D4AF7A] text-sm font-semibold uppercase tracking-widest mb-4">
               Our Services
             </p>
-            <h1 className="text-4xl md:text-5xl font-bold text-[#121C2D] dark:text-white mb-6">
+            <h1 className="text-[clamp(2.25rem,6vw,4rem)] font-bold text-[#121C2D] dark:text-white mb-6">
               Everything You Need to Win on Social
             </h1>
-            <p className="text-lg text-[#2D2D3A] dark:text-gray-400">
+            <p className="text-[clamp(1rem,2.2vw,1.125rem)] text-[#2D2D3A] dark:text-gray-400 leading-relaxed">
               From content creation to paid advertising, we offer comprehensive
               social media solutions tailored to your goals and budget.
             </p>
@@ -243,21 +243,21 @@ export default function Services() {
                     <service.icon className="w-7 h-7 text-[#D4AF7A]" />
                   </div>
 
-                  <h2 className="text-3xl md:text-4xl font-bold text-[#121C2D] dark:text-white mb-3">
+                  <h2 className="text-[clamp(1.75rem,4vw,2.75rem)] font-bold text-[#121C2D] dark:text-white mb-3">
                     {service.title}
                   </h2>
-                  <p className="text-lg text-[#D4AF7A] font-medium mb-4">
+                  <p className="text-[clamp(1rem,2.2vw,1.125rem)] text-[#D4AF7A] font-medium mb-4">
                     {service.subtitle}
                   </p>
-                  <p className="text-[#2D2D3A] dark:text-gray-400 leading-relaxed mb-8">
+                  <p className="text-[clamp(0.95rem,2vw,1.05rem)] text-[#2D2D3A] dark:text-gray-400 leading-relaxed mb-8">
                     {service.description}
                   </p>
 
                   <ul className="grid sm:grid-cols-2 gap-3 mb-8">
                     {service.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-3">
-                        <Check className="w-3.5 h-3.5 text-[#D4AF7A] flex-shrink-0 mt-0.5" />
-                        <span className="text-sm text-[#2D2D3A] dark:text-gray-300">
+                      <li key={feature} className="flex min-w-0 items-start gap-3">
+                        <Check className="w-[clamp(0.8rem,1.5vw,0.9rem)] h-[clamp(0.8rem,1.5vw,0.9rem)] text-[#D4AF7A] flex-shrink-0 mt-0.5" />
+                        <span className="text-[clamp(0.9rem,1.8vw,1rem)] text-[#2D2D3A] dark:text-gray-300 break-words">
                           {feature}
                         </span>
                       </li>
@@ -279,7 +279,7 @@ export default function Services() {
                   }`}
                 >
                   <div className="bg-[#F4F4F6] dark:bg-[#1E2830] rounded-3xl p-8 md:p-12">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {service.subServices.map((sub, i) => (
                         <motion.div
                           key={sub.name}
@@ -287,10 +287,10 @@ export default function Services() {
                           whileInView={{ opacity: 1, scale: 1 }}
                           viewport={{ once: true }}
                           transition={{ delay: i * 0.1 }}
-                          className="bg-white dark:bg-[#0D1117] rounded-2xl p-6 text-center shadow-lg"
+                          className="bg-white dark:bg-[#0D1117] rounded-2xl p-6 text-center shadow-lg min-w-0 overflow-hidden"
                         >
-                          <sub.icon className="w-8 h-8 text-[#D4AF7A] mx-auto mb-3" />
-                          <p className="text-sm font-medium text-[#121C2D] dark:text-white">
+                          <sub.icon className="w-[clamp(2rem,4vw,2.5rem)] h-[clamp(2rem,4vw,2.5rem)] text-[#D4AF7A] mx-auto mb-3" />
+                          <p className="text-[clamp(0.95rem,2vw,1rem)] font-medium text-[#121C2D] dark:text-white break-words">
                             {sub.name}
                           </p>
                         </motion.div>
@@ -299,7 +299,7 @@ export default function Services() {
                   </div>
 
                   {/* Decorative */}
-                  <div className="absolute -top-4 -right-4 w-24 h-24 bg-[#D4AF7A]/10 rounded-full blur-xl" />
+                  <div className="hidden lg:block absolute -top-4 -right-4 w-24 h-24 bg-[#D4AF7A]/10 rounded-full blur-xl" />
                 </div>
               </motion.div>
             ))}
@@ -355,13 +355,13 @@ export default function Services() {
                 transition={{ delay: index * 0.1 }}
                 className="relative"
               >
-                <p className="text-6xl font-bold text-[#D4AF7A]/20 mb-4">
+                <p className="text-[clamp(3rem,8vw,4rem)] font-bold text-[#D4AF7A]/20 mb-4">
                   {item.step}
                 </p>
-                <h3 className="text-xl font-bold text-[#121C2D] dark:text-white mb-2">
+                <h3 className="text-[clamp(1.25rem,2.5vw,1.5rem)] font-bold text-[#121C2D] dark:text-white mb-2">
                   {item.title}
                 </h3>
-                <p className="text-[#2D2D3A] dark:text-gray-400 text-sm">
+                <p className="text-[clamp(0.95rem,1.8vw,1rem)] text-[#2D2D3A] dark:text-gray-400">
                   {item.desc}
                 </p>
                 {index < 3 && (

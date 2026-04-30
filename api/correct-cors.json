@@ -1,0 +1,1 @@
+{"rules":[{"allowedOrigins":["https://a47cc687.needmo-frontend.pages.dev"],"allowedMethods":["GET"],"allowedHeaders":["*"],"exposeHeaders":["ETag"],"maxAgeSeconds":86400}]}

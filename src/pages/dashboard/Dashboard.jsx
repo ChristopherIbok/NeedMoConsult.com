@@ -1,6 +1,6 @@
 // src/pages/dashboard/Dashboard.jsx
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import { getMeetings, createMeeting, deleteMeeting, getRecordings, getSubscriptionPortal, createCheckout } from '@/lib/api';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Calendar, Video, Clock, Users, Plus, Trash2, Play, Star } from 'lucide-react';
+import { Calendar, Video, Clock, Plus, Trash2, Star } from 'lucide-react';
 
 const SUBSCRIPTION_TIERS = {
   free: { name: 'Free', color: 'bg-gray-100 text-gray-800' },
@@ -20,6 +20,7 @@ const SUBSCRIPTION_TIERS = {
 export function Dashboard() {
   const { user, isLoading, refreshUser } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [meetings, setMeetings] = useState({ upcoming: [], past: [] });
   const [recordings, setRecordings] = useState([]);
   const [isCreating, setIsCreating] = useState(false);
@@ -37,6 +38,27 @@ export function Dashboard() {
       loadData();
     }
   }, [user]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const subscriptionStatus = params.get('subscription');
+    if (!subscriptionStatus) return;
+
+    const showPaymentStatus = async () => {
+      if (subscriptionStatus === 'success') {
+        await refreshUser();
+        toast.success('Payment verified. Your plan is active.');
+      } else if (subscriptionStatus === 'failed') {
+        toast.error('Payment could not be verified. Please contact support if you were charged.');
+      } else if (subscriptionStatus === 'cancelled') {
+        toast.info('Payment was cancelled.');
+      }
+
+      navigate('/dashboard', { replace: true });
+    };
+
+    showPaymentStatus().catch((e) => toast.error(e.message || 'Unable to refresh your plan status.'));
+  }, [location.search, navigate, refreshUser]);
 
   const loadData = async () => {
     try {
@@ -93,7 +115,7 @@ export function Dashboard() {
       if (e.message.includes('No active subscription')) {
         handleUpgrade();
       } else {
-        toast.error(e.message);
+        toast.info(e.message);
       }
     }
   };

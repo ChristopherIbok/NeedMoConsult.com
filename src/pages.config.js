@@ -13,6 +13,7 @@ const Contact = lazy(() => import("./pages/Contact.jsx"));
 const Home = lazy(() => import("./pages/Home.jsx"));
 const Portfolio = lazy(() => import("./pages/Portfolio.jsx"));
 const Pricing = lazy(() => import("./pages/Pricing.jsx"));
+const Pay = lazy(() => import("./pages/Pay.jsx"));
 const Services = lazy(() => import("./pages/Services.jsx"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy.jsx"));
 const TermsOfUse = lazy(() => import("./pages/TermsOfUse.jsx"));
@@ -30,6 +31,7 @@ export const PAGES = {
   Home,
   Portfolio,
   Pricing,
+  pay: Pay,
   Services,
   PrivacyPolicy,
   TermsOfUse,

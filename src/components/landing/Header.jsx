@@ -1,50 +1,34 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Menu, X, Sun, Moon, Video } from "lucide-react";
+import { Sun, Moon, Video, Layers, DollarSign, Grid, Info, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/ui/ThemeProvider";
 import { motion, AnimatePresence } from "framer-motion";
 import { LogoHorizontal } from "@/components/brand/Logo";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 const navItems = [
-  { name: "Home", page: "Home" },
-  { name: "Services", page: "Services" },
-  { name: "Pricing", page: "Pricing" },
-  { name: "Portfolio", page: "Portfolio" },
-  { name: "Blog", page: "Blog" },
-  { name: "About", page: "About" },
-  { name: "Contact", page: "Contact" },
+  { name: "Services", page: "Services", icon: Layers },
+  { name: "Pricing", page: "Pricing", icon: DollarSign },
+  { name: "Portfolio", page: "Portfolio", icon: Grid },
+  { name: "About", page: "About", icon: Info },
+  { name: "Contact", page: "Contact", icon: Mail },
 ];
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
-  const isMobile = useIsMobile();
   const location = useLocation();
 
   // On home page hero (not scrolled), always use dark mode
   const isHomeHero = location.pathname === "/" || location.pathname === "/Home" || location.pathname === "/home";
   const isDark = isHomeHero && !isScrolled ? true : theme === "dark";
 
-  // Menu colors based on theme
-  const menuBg       = isDark ? "rgba(26, 35, 50, 0.97)" : "#F4F4F6";
-  const menuText     = isDark ? "#FFFFFF" : "#121C2D";
-  const menuMuted    = isDark ? "rgba(255,255,255,0.5)" : "rgba(26,35,50,0.5)";
-  const menuBorder   = isDark ? "rgba(255,255,255,0.1)" : "rgba(26,35,50,0.1)";
-
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  useEffect(() => {
-    document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [mobileMenuOpen]);
 
   return (
     <>
@@ -58,7 +42,7 @@ export default function Header() {
         <div className="site-container">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
-            <Link to={createPageUrl("Home")} className="flex items-center">
+            <Link to="/" className="flex items-center">
               <LogoHorizontal size="md" />
             </Link>
 
@@ -132,109 +116,32 @@ export default function Header() {
                   Book Free Strategy Call
                 </Button>
               </Link>
-
-              {/* Mobile Menu Button */}
-              <button
-                onClick={() => setMobileMenuOpen(true)}
-                className="lg:hidden min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg transition-colors"
-                aria-label="Open menu"
-              >
-                <Menu className="w-6 h-6" style={{ color: isDark ? "#FFFFFF" : "#121C2D" }} />
-              </button>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Mobile Full-Screen Overlay — outside <header> to escape backdrop-blur stacking context */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="fixed inset-0 z-[60] lg:hidden"
-            style={{ backgroundColor: menuBg }}
-          >
-            {/* Top bar */}
-            <div
-              className="flex items-center justify-between px-6 h-16"
-              style={{ borderBottom: `1px solid ${menuBorder}` }}
-            >
-              <LogoHorizontal size="md" forceLight={isDark} forceDark={!isDark} />
-              <div className="flex items-center gap-2">
-                {/* Theme toggle */}
-                <button
-                  onClick={toggleTheme}
-                  className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full transition-colors"
-                  style={{ color: menuMuted }}
-                  aria-label="Toggle theme"
-                >
-                  {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                </button>
-                {/* Close */}
-                <button
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full transition-colors"
-                  style={{ color: menuText }}
-                  aria-label="Close menu"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-            </div>
-
-            {/* Nav Links */}
-            <nav className="flex flex-col px-6 pt-8 gap-2">
-              <motion.a
-                href="https://meeting.needmoconsult.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 py-4 text-2xl font-bold transition-colors active:scale-[0.98] text-[#D4AF7A]"
-                style={{ borderBottom: `1px solid ${menuBorder}` }}
-              >
-                <Video className="w-6 h-6" />
-                Start Meeting
-              </motion.a>
-              {navItems.map((item, i) => (
-                <motion.div
-                  key={item.name}
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.06 }}
-                >
-                  <Link
-                    to={createPageUrl(item.page)}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block py-4 text-2xl font-bold transition-colors active:scale-[0.98] hover:text-[#D4AF7A]"
-                    style={{
-                      color: menuText,
-                      borderBottom: `1px solid ${menuBorder}`,
-                    }}
-                  >
-                    {item.name}
-                  </Link>
-                </motion.div>
-              ))}
-
-            </nav>
-
-            {/* CTA at bottom */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 pb-10">
+      {/* Mobile bottom navigation */}
+      <nav
+        aria-label="Mobile navigation"
+        className="fixed inset-x-0 bottom-0 z-50 border-t border-[#D4AF7A]/15 bg-white/90 px-3 py-3 shadow-[0_-18px_40px_rgba(15,23,42,0.12)] backdrop-blur-xl dark:border-white/10 dark:bg-[#081018]/90 lg:hidden"
+      >
+        <div className="mx-auto grid max-w-3xl grid-cols-5 gap-2">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            return (
               <Link
-                to={createPageUrl("Contact")}
-                onClick={() => setMobileMenuOpen(false)}
+                key={item.name}
+                to={createPageUrl(item.page)}
+                className="group flex h-12 w-12 items-center justify-center rounded-3xl border border-transparent bg-transparent text-[#8C7A5E] transition duration-200 hover:border-transparent hover:text-[#D4AF7A] active:scale-[0.98] dark:text-[#8C7A5E]"
+                aria-label={item.name}
               >
-                <Button className="w-full bg-[#D4AF7A] hover:bg-[#C49A5E] text-[#121C2D] font-bold py-4 text-lg min-h-[56px] active:scale-[0.98] transition-transform">
-                  Book Free Strategy Call
-                </Button>
+                <Icon className="w-6 h-6" />
               </Link>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            );
+          })}
+        </div>
+      </nav>
     </>
   );
 }
